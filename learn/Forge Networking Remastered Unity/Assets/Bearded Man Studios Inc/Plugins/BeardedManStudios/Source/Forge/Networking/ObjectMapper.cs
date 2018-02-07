@@ -74,13 +74,19 @@ namespace BeardedManStudios.Forge.Networking
 			return obj;
 		}
 
-		/// <summary>
-		/// Get a mapped value out of the BMSByte
-		/// </summary>
-		/// <typeparam name="T">Value to get out of it</typeparam>
-		/// <param name="stream">BMSByte to be used</param>
-		/// <returns>Returns a mapped value from the BMSByte</returns>
-		public virtual T Map<T>(BMSByte stream)
+        /// <summary>
+        /// Get a mapped value out of the BMSByte
+        /// </summary>
+        /// <typeparam name="T">Value to get out of it</typeparam>
+        /// <param name="stream">BMSByte to be used</param>
+        /// <returns>Returns a mapped value from the BMSByte</returns>
+        /// <summary>
+        ///从BMSByte中获取映射值
+        /// </ summary>
+        /// <typeparam name =“T”>值类型Class</ typeparam>
+        /// <param name =“stream”>要使用的BMSByte </ param>
+        /// <returns>返回来自BMSByte的映射值 </ returns>
+        public virtual T Map<T>(BMSByte stream)
 		{
 			object obj = null;
 			var genericType = typeof(T);
@@ -150,8 +156,10 @@ namespace BeardedManStudios.Forge.Networking
 		/// <returns>The array that was found</returns>
 		public object MapArray(Type type, BMSByte bytes)
 		{
+            //获取数组中的维数。
 			int rank = type.GetArrayRank();
-			Type targetType = type.GetElementType();
+            // 当在派生类中重写时，返回当前数组、指针或引用类型包含的或引用的对象的 Type。
+            Type targetType = type.GetElementType();
 
 			if (targetType != typeof(byte))
 				throw new Exception("Currently only byte arrays can be sent as arrays");

@@ -17,8 +17,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				}
 			}
 			
-			bool availableCallback = false;
-			NetworkObject obj = null;
+			bool availableCallback = false; //可用回调
+            NetworkObject obj = null;
 			MainThreadManager.Run(() =>
 			{
 				switch (identity)

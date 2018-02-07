@@ -49,10 +49,11 @@ namespace BeardedManStudios.Forge.Networking
 
 		public List<string> BannedAddresses { get; set; }
 
-		/// <summary>
-		/// Used to determine if this server is currently accepting connections
-		/// </summary>
-		public bool AcceptingConnections { get; private set; }
+        /// <summary>
+        /// 用于确定此服务器当前是否正在接受连接
+        /// Used to determine if this server is currently accepting connections
+        /// </summary>
+        public bool AcceptingConnections { get; private set; }
 
 		public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
 		{
@@ -376,15 +377,18 @@ namespace BeardedManStudios.Forge.Networking
 
 		private void SetupClient(BMSByte packet, string incomingEndpoint, IPEndPoint groupEP)
 		{
-			// Check for a local listing request
-			if (packet.Size.Between(2, 4) && packet[0] == BROADCAST_LISTING_REQUEST_1 && packet[1] == BROADCAST_LISTING_REQUEST_2 && packet[2] == BROADCAST_LISTING_REQUEST_3)
+            //检查本地列表请求
+            // Check for a local listing request
+            if (packet.Size.Between(2, 4) && packet[0] == BROADCAST_LISTING_REQUEST_1 && packet[1] == BROADCAST_LISTING_REQUEST_2 && packet[2] == BROADCAST_LISTING_REQUEST_3)
 			{
-				// Don't reply if the server is not currently accepting connections
-				if (!AcceptingConnections)
+                //如果服务器当前不接受连接，则不要回复
+                // Don't reply if the server is not currently accepting connections
+                if (!AcceptingConnections)
 					return;
 
-				// This may be a local listing request so respond with the server flag byte
-				Client.Send(new byte[] { SERVER_BROADCAST_CODE }, 1, groupEP);
+                //这可能是一个本地列表请求，所以用服务器标志字节进行响应
+                // This may be a local listing request so respond with the server flag byte
+                Client.Send(new byte[] { SERVER_BROADCAST_CODE }, 1, groupEP);
 				return;
 			}
 
@@ -545,11 +549,12 @@ namespace BeardedManStudios.Forge.Networking
 			OnPingRecieved(0, Me);
 		}
 
-		/// <summary>
-		/// Pong back to the client
-		/// </summary>
-		/// <param name="playerRequesting"></param>
-		protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
+        /// <summary>
+        /// 回到客户端
+        /// Pong back to the client
+        /// </summary>
+        /// <param name="playerRequesting"></param>
+        protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
 		{
 			Send(playerRequesting, GeneratePong(time));
 		}

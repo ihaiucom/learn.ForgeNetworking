@@ -20,6 +20,9 @@
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 二进制流
+    /// </summary>
 	public class Binary : FrameStream
 	{
 		/// <summary>

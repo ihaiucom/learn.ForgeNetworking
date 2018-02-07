@@ -9,8 +9,9 @@ namespace BeardedManStudios.Forge.Networking
 	{
 		public virtual void NetworkCreateObject(NetWorker networker, int identity, uint id, FrameStream frame, Action<NetworkObject> callback)
 		{
-			//This is the final creation check before failing completely
-			NetworkObject obj = null;
+            // 这是完全失败之前的最终创建检查
+            //This is the final creation check before failing completely
+            NetworkObject obj = null;
 
 			switch (identity)
 			{

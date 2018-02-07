@@ -21,6 +21,9 @@ using System.Text;
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 文本流
+    /// </summary>
 	public class Text : FrameStream
 	{
 		/// <summary>

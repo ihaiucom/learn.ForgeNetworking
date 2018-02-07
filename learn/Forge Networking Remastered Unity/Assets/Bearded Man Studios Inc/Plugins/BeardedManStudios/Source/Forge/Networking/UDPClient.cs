@@ -265,8 +265,9 @@ namespace BeardedManStudios.Forge.Networking
 						}
 						else if (packet.Size.Between(2, 4) && packet[0] == BROADCAST_LISTING_REQUEST_1 && packet[1] == BROADCAST_LISTING_REQUEST_2 && packet[2] == BROADCAST_LISTING_REQUEST_3)
 						{
-							// This may be a local listing request so respond with the client flag byte
-							Client.Send(new byte[] { CLIENT_BROADCAST_CODE }, 1, groupEP);
+                            //这可能是一个本地列表请求，所以用客户端标志字节进行响应
+                            // This may be a local listing request so respond with the client flag byte
+                            Client.Send(new byte[] { CLIENT_BROADCAST_CODE }, 1, groupEP);
 						}
 
 						continue;
@@ -358,21 +359,28 @@ namespace BeardedManStudios.Forge.Networking
 			Client = null;
 		}
 
-		/// <summary>
-		/// Request the ping from the server (pingReceived will be triggered if it receives it)
-		/// This is not a reliable call
-		/// </summary>
-		public override void Ping()
+        /// <summary>
+        /// 请求从服务器ping（pingReceived将被触发，如果它收到）
+        /// 这不是一个可靠的回调
+        /// Request the ping from the server (pingReceived will be triggered if it receives it)
+        /// This is not a reliable call
+        /// </summary>
+        public override void Ping()
 		{
 			Send(GeneratePing());
 		}
 
-		/// <summary>
-		/// A ping was receieved from the server so we need to respond with the pong
-		/// </summary>
-		/// <param name="playerRequesting">The server</param>
-		/// <param name="time">The time that the ping was received for</param>
-		protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
+        /// <summary>
+        /// A ping was receieved from the server so we need to respond with the pong
+        /// </summary>
+        /// <param name="playerRequesting">The server</param>
+        /// <param name="time">The time that the ping was received for</param>
+        /// <summary>
+        ///从服务器接收到一个ping，所以我们需要用乒乓回应
+        /// </ summary>
+        /// <param name =“playerRequesting”>服务器</ param>
+        /// <param name =“time”>接收</ param>的时间
+        protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
 		{
 			Send(GeneratePong(time));
 		}

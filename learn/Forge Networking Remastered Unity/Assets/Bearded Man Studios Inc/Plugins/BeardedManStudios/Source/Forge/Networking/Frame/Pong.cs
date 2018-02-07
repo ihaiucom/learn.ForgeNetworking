@@ -19,6 +19,9 @@
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 回调ping
+    /// </summary>
 	public class Pong : FrameStream
 	{
 		/// <summary>

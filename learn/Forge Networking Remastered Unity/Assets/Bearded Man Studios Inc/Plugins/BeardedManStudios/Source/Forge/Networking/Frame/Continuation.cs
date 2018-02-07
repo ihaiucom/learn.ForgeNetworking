@@ -20,6 +20,9 @@
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 继续，还没看到用的地方
+    /// </summary>
 	public class Continuation : FrameStream
 	{
 		/// <summary>

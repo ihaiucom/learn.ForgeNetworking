@@ -9,14 +9,20 @@ using UnityEngine.SceneManagement;
 
 namespace BeardedManStudios.Forge.Networking.Unity
 {
+    /// <summary>
+    /// 负责： 场景加载，网络对象, 向MasterServer注册
+    /// </summary>
 	public partial class NetworkManager : MonoBehaviour
 	{
 		public static NetworkManager Instance { get; private set; }
-
+        // 网络 场景加载前 事件
 		public UnityAction<int, LoadSceneMode> networkSceneChanging;
-		public UnityAction<Scene, LoadSceneMode> networkSceneLoaded;
-		public event NetWorker.PlayerEvent playerLoadedScene;
+        // 网络 场景加载完 事件
+        public UnityAction<Scene, LoadSceneMode> networkSceneLoaded;
+        // 网络 场景加载完成，并且处理完场景的NetworkBehavior
+        public event NetWorker.PlayerEvent playerLoadedScene;
 
+        // 主网络
 		public NetWorker Networker { get; private set; }
 		public NetWorker MasterServerNetworker { get; private set; }
 		public Dictionary<int, INetworkBehavior> pendingObjects = new Dictionary<int, INetworkBehavior>();
@@ -24,6 +30,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 		private string _masterServerHost;
 		private ushort _masterServerPort;
 
+        // 当前已加载的场景
 		private List<int> loadedScenes = new List<int>();
 
 		public bool IsServer { get { return Networker.IsServer; } }
@@ -87,6 +94,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				Networker.playerAccepted += PlayerAcceptedSceneSetup;
 
 #if FN_WEBSERVER
+                // 启动Web服
 				string pathToFiles = "fnwww/html";
 				Dictionary<string, string> pages = new Dictionary<string, string>();
 				TextAsset[] assets = Resources.LoadAll<TextAsset>(pathToFiles);
@@ -118,6 +126,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				Networker.objectCreated -= CreatePendingObjects;
 		}
 
+        // 向MasterServer 请求匹配的游戏服务器列表
 		public void MatchmakingServersFromMasterServer(string masterServerHost,
 			ushort masterServerPort,
 			int elo,
@@ -209,6 +218,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			}
 		}
 
+        // 生成注册MasterServer的信息数据
 		public JSONNode MasterServerRegisterData(NetWorker server, string id, string serverName, string type, string mode, string comment = "", bool useElo = false, int eloRequired = 0)
 		{
 			// Create the get request with the desired filters
@@ -229,14 +239,22 @@ namespace BeardedManStudios.Forge.Networking.Unity
 
 			return sendData;
 		}
+        /// <summary>
+        /// 向MasterServer注册
+        /// 1. 创建连接
+        /// 2. 发送数据
+        /// </summary>
+        /// <param name="masterServerData">MasterServerRegisterData()方法生成的josn数据</param>
 
-		private void RegisterOnMasterServer(JSONNode masterServerData)
+        private void RegisterOnMasterServer(JSONNode masterServerData)
 		{
-			// The Master Server communicates over TCP
-			TCPMasterClient client = new TCPMasterClient();
+            // Master Server 通过TCP进行通信
+            // The Master Server communicates over TCP
+            TCPMasterClient client = new TCPMasterClient();
 
-			// Once this client has been accepted by the master server it should send it's get request
-			client.serverAccepted += (sender) =>
+            // 一旦这个客户端被主服务器接受，它应该发送它的获取请求
+            // Once this client has been accepted by the master server it should send it's get request
+            client.serverAccepted += (sender) =>
 			{
 				try
 				{
@@ -417,15 +435,21 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			}
 		}
 
-		/// <summary>
-		/// Called automatically when a new player is accepted and sends the player
-		/// the currently loaded scene indexes for the client to load
-		/// </summary>
-		/// <param name="player">The player that was just accepted</param>
-		private void PlayerAcceptedSceneSetup(NetworkingPlayer player, NetWorker sender)
+        /// <summary>
+        /// Called automatically when a new player is accepted and sends the player
+        /// the currently loaded scene indexes for the client to load
+        /// </summary>
+        /// <param name="player">The player that was just accepted</param>
+        /// <summary>
+        ///接受新玩家并自动发送
+        ///当前加载的场景索引为客户端加载
+        /// </ summary>
+        /// <param name =“player”>刚被接受的玩家</ param>
+        private void PlayerAcceptedSceneSetup(NetworkingPlayer player, NetWorker sender)
 		{
 			BMSByte data = ObjectMapper.BMSByte(loadedScenes.Count);
 
+            // 发送当前加载的创建给连接的玩家
 			// Go through all the loaded scene indexes and send them to the connecting player
 			for (int i = 0; i < loadedScenes.Count; i++)
 				ObjectMapper.Instance.MapBytes(data, loadedScenes[i]);
@@ -435,11 +459,14 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			SendFrame(sender, frame, player);
 		}
 
+        // 读取接收的消息
 		private void ReadBinary(NetworkingPlayer player, Binary frame, NetWorker sender)
 		{
 			if (frame.GroupId == MessageGroupIds.VIEW_INITIALIZE)
-			{
-				if (Networker is IServer)
+            {
+                // 其他客户端连接上服务器时， 服务器会通知其加载哪些场景
+                // 其他客户端，读取服务器发来的要加载哪些场景，并进行加载
+                if (Networker is IServer)
 					return;
 
 				int count = frame.StreamData.GetBasicType<int>();
@@ -462,11 +489,13 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				return;
 			}
 
+
 			if (frame.GroupId != MessageGroupIds.VIEW_CHANGE)
 				return;
 
 			if (Networker.IsServer)
 			{
+                // 客户端已经加载了这个场景
 				// The client has loaded the scene
 				if (playerLoadedScene != null)
 					playerLoadedScene(player, Networker);
@@ -474,11 +503,13 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				return;
 			}
 
-			// We need to halt the creation of network objects until we load the scene
-			Networker.PendCreates = true;
+            // 我们需要暂停创建网络对象直到我们加载场景
+            // We need to halt the creation of network objects until we load the scene
+            Networker.PendCreates = true;
 
-			// Get the scene index that the server loaded
-			int sceneIndex = frame.StreamData.GetBasicType<int>();
+            // 获取服务器加载的场景索引
+            // Get the scene index that the server loaded
+            int sceneIndex = frame.StreamData.GetBasicType<int>();
 
 			// Get the mode in which the server loaded the scene
 			int modeIndex = frame.StreamData.GetBasicType<int>();
@@ -499,13 +530,19 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			});
 		}
 
-		/// <summary>
-		/// A wrapper around the various raw send methods for the client and server types
-		/// </summary>
-		/// <param name="networker">The networker that is going to be sending the data</param>
-		/// <param name="frame">The frame that is to be sent across the network</param>
-		/// <param name="targetPlayer">The player to send the frame to, if null then will send to all</param>
-		public static void SendFrame(NetWorker networker, FrameStream frame, NetworkingPlayer targetPlayer = null)
+        /// <summary>
+        /// A wrapper around the various raw send methods for the client and server types
+        /// </summary>
+        /// <param name="networker">The networker that is going to be sending the data</param>
+        /// <param name="frame">The frame that is to be sent across the network</param>
+        /// <param name="targetPlayer">The player to send the frame to, if null then will send to all</param>
+        /// <summary>
+        ///用于客户端和服务器类型的各种原始发送方法的包装
+        /// </ summary>
+        /// <param name =“networker”>将要发送数据的网络设备</ param>
+        /// <param name =“frame”>要通过网络发送的帧</ param>
+        /// <param name =“targetPlayer”>发送帧的播放器，如果为null，则发送给所有</ param>
+        public static void SendFrame(NetWorker networker, FrameStream frame, NetworkingPlayer targetPlayer = null)
 		{
 			if (networker is IServer)
 			{
@@ -554,12 +591,15 @@ namespace BeardedManStudios.Forge.Networking.Unity
 
 			Binary frame = new Binary(Networker.Time.Timestep, false, data, Networker is IServer ? Receivers.All : Receivers.Server, MessageGroupIds.VIEW_CHANGE, Networker is BaseTCP);
 
-			// Send the binary frame to either the server or the clients
-			SendFrame(Networker, frame);
+            //将二进制帧发送到服务器或客户端
+            // Send the binary frame to either the server or the clients
+            SendFrame(Networker, frame);
 
-			// Go through all of the current NetworkBehaviors in the order that Unity finds them in
-			// and associate them with the id that the network will be giving them as a lookup
-			int currentAttachCode = 1;
+            //按照Unity找到的顺序遍历当前的所有NetworkBehavior
+            //并将它们与网络将作为查询给予他们的id相关联
+            // Go through all of the current NetworkBehaviors in the order that Unity finds them in
+            // and associate them with the id that the network will be giving them as a lookup
+            int currentAttachCode = 1;
 			var behaviors = FindObjectsOfType<NetworkBehavior>().Where(b => !b.Initialized)
 				.OrderBy(b => b.GetType().ToString())
 				.OrderBy(b => b.name)
@@ -602,6 +642,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 
 			if (Networker is IServer)
 			{
+                // 如果是服务器， 就给这些行为初始化他们的网络对象
 				// Go through all of the pending NetworkBehavior objects and initialize them on the network
 				foreach (INetworkBehavior behavior in behaviors)
 					behavior.Initialize(Networker);
@@ -609,9 +650,11 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				return;
 			}
 
+            // 客户端，剩余没有网络对象的行为，就添加到等待字典
 			foreach (NetworkBehavior behavior in behaviors)
 				pendingObjects.Add(behavior.TempAttachCode, behavior);
 
+            // 如果等待的网络对象字典已经空了，就不在监听网络对象创建
 			if (pendingNetworkObjects.Count == 0)
 				Networker.objectCreated -= CreatePendingObjects;
 		}

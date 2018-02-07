@@ -21,6 +21,9 @@ using System;
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 帧数据流
+    /// </summary>
 	public abstract class FrameStream : ICloneable
 	{
 		/// <summary>
@@ -185,13 +188,15 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong));
 		}
 
-		/// <summary>
-		/// Creates the frame data using the passed in payload
-		/// </summary>
-		private void CreateFrame(bool useMask, ulong timestep, byte[] payload, Receivers receivers, int groupId, byte routerId, bool isStream)
+        /// <summary>
+        /// 使用传入的有效载荷创建帧数据
+        /// Creates the frame data using the passed in payload
+        /// </summary>
+        private void CreateFrame(bool useMask, ulong timestep, byte[] payload, Receivers receivers, int groupId, byte routerId, bool isStream)
 		{
-			// If we are to use a mask then generate a random mask
-			if (useMask)
+            //如果我们要使用一个蒙版然后生成一个随机蒙版
+            // If we are to use a mask then generate a random mask
+            if (useMask)
 			{
 				mask = new byte[4];
 				new Random().NextBytes(mask);
@@ -204,9 +209,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			RouterId = routerId;
 			Receivers = receivers;
 			UniqueId = UniqueMessageIdCounter++;
-
-			// Generate the frame identity
-			byte[] frame = new byte[10];
+            //生成frame标识
+            // Generate the frame identity
+            byte[] frame = new byte[10];
 
 			// The first byte of the data is always the control byte, which dictates the message type
 			frame[0] = ControlByte;

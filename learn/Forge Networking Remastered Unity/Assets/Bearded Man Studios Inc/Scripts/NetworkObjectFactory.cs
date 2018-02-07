@@ -4,10 +4,12 @@ namespace BeardedManStudios.Forge.Networking.Generated
 {
 	public partial class NetworkObjectFactory
 	{
-		private bool ValidateCreateRequest(NetWorker networker, int identity, uint id, FrameStream frame)
+        // 验证创建请求
+        private bool ValidateCreateRequest(NetWorker networker, int identity, uint id, FrameStream frame)
 		{
-			// TODO:  Write custom code to validate client object create requests
-			return true;
+            // TODO:  编写自定义代码来验证客户端对象创建请求
+            // TODO:  Write custom code to validate client object create requests
+            return true;
 		}
 	}
 }

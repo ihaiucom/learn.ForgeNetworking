@@ -19,12 +19,16 @@
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 发送ping
+    /// </summary>
 	public class Ping : FrameStream
 	{
-		/// <summary>
-		/// Connection close frame is denoted by %x9
-		/// </summary>
-		public const byte CONTROL_BYTE = 137;
+        /// <summary>
+        /// 连接关闭帧由％x9表示
+        /// Connection close frame is denoted by %x9
+        /// </summary>
+        public const byte CONTROL_BYTE = 137;
 
 		public override byte ControlByte { get { return CONTROL_BYTE; } }
 

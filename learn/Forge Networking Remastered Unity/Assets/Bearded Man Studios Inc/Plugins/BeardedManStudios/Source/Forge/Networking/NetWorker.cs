@@ -32,21 +32,28 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public abstract class NetWorker
 	{
-		public const byte SERVER_BROADCAST_CODE = 42;
-		public const byte CLIENT_BROADCAST_CODE = 24;
+        // 服务器广播编号 (检测局域网UDP服务器列表用)
+        public const byte SERVER_BROADCAST_CODE = 42;
+        // 客户端广播编号 (检测局域网UDP服务器列表用)
+        public const byte CLIENT_BROADCAST_CODE = 24;
 
-		public const byte BROADCAST_LISTING_REQUEST_1 = 42;
+        // 广播列表请求  (检测局域网UDP服务器列表用)
+        public const byte BROADCAST_LISTING_REQUEST_1 = 42;
 		public const byte BROADCAST_LISTING_REQUEST_2 = 24;
 		public const byte BROADCAST_LISTING_REQUEST_3 = 9;
 
+        // 默认端口
 		public const ushort DEFAULT_PORT = 15937;
 
-		private static CachedUdpClient localListingsClient;
+        // 本地客户端清单 (检测局域网UDP服务器列表用)
+        private static CachedUdpClient localListingsClient;
 
-		public static IPEndPoint ResolveHost(string host, ushort port)
+        // 解析主机
+        public static IPEndPoint ResolveHost(string host, ushort port)
 		{
-			// Check for any localhost type addresses
-			if (host == "0.0.0.0" || host == "127.0.0.1" || host == "::0")
+            //检查任何本地主机类型的地址
+            // Check for any localhost type addresses
+            if (host == "0.0.0.0" || host == "127.0.0.1" || host == "::0")
 				return new IPEndPoint(IPAddress.Parse(host), port);
 			else if (host == "localhost")
 				return new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
@@ -79,6 +86,7 @@ namespace BeardedManStudios.Forge.Networking
 			return new IPEndPoint(ipAddress, port);
 		}
 
+        // 广播端点
 		public struct BroadcastEndpoints
 		{
 			public string Address { get; private set; }
@@ -93,134 +101,170 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        // 局域网服务器列表
 		public static List<BroadcastEndpoints> LocalEndpoints { get; private set; }
 
+        // 是否在清理Session中
 		public static bool EndingSession { get; private set; }
 
-		#region Delegates
-		/// <summary>
-		/// A base delegate for any kind of network event
-		/// </summary>
-		public delegate void BaseNetworkEvent(NetWorker sender);
+        #region Delegates
+        /// <summary>
+        /// 任何一种网络事件的基本代理
+        /// A base delegate for any kind of network event
+        /// </summary>
+        public delegate void BaseNetworkEvent(NetWorker sender);
 
-		/// <summary>
-		/// Used to fire events that relate to a broadcast endpoint
-		/// </summary>
-		public delegate void BroadcastEndpointEvent(BroadcastEndpoints endpoint, NetWorker sender);
+        /// <summary>
+        /// 用于触发与广播端点相关的事件, 广播局域网服务器列
+        /// Used to fire events that relate to a broadcast endpoint
+        /// </summary>
+        public delegate void BroadcastEndpointEvent(BroadcastEndpoints endpoint, NetWorker sender);
 
-		/// <summary>
-		/// A base delegate for any kind of network ping event
-		/// </summary>
-		/// <param name="ping">The latency between client and server</param>
-		public delegate void PingEvent(double ping, NetWorker sender);
+        /// <summary>
+        /// 任何类型的网络ping事件的基本代理
+        /// A base delegate for any kind of network ping event
+        /// </summary>
+        /// <param name="ping">The latency between client and server</param>
+        public delegate void PingEvent(double ping, NetWorker sender);
 
-		/// <summary>
-		/// Used for any events that relate to a NetworkingPlayer
-		/// </summary>
-		public delegate void PlayerEvent(NetworkingPlayer player, NetWorker sender);
+        /// <summary>
+        /// 用于任何与NetworkingPlayer相关的事件
+        /// Used for any events that relate to a NetworkingPlayer
+        /// </summary>
+        public delegate void PlayerEvent(NetworkingPlayer player, NetWorker sender);
 
-		/// <summary>
-		/// Used for any events that relate to a frame and the target player
-		/// </summary>
-		/// <param name="player">The player the message came from</param>
-		/// <param name="frame">The frame data</param>
-		public delegate void FrameEvent(NetworkingPlayer player, FrameStream frame, NetWorker sender);
+        /// <summary>
+        /// Used for any events that relate to a frame and the target player
+        /// </summary>
+        /// <param name="player">The player the message came from</param>
+        /// <param name="frame">The frame data</param>
+        /// <summary>
+        ///用于任何涉及到帧数据和目标玩家的事件
+        /// </ summary>
+        /// <param name =“player”>消息来自的player</ param>
+        /// <param name =“frame”>帧数据</ param>
+        public delegate void FrameEvent(NetworkingPlayer player, FrameStream frame, NetWorker sender);
 
-		/// <summary>
-		/// Used for any events that relate to a binary frame and the target player
-		/// </summary>
-		/// <param name="player">The player the message came from</param>
-		/// <param name="frame">The frame data</param>
-		public delegate void BinaryFrameEvent(NetworkingPlayer player, Binary frame, NetWorker sender);
+        /// <summary>
+        /// Used for any events that relate to a binary frame and the target player
+        /// </summary>
+        /// <param name="player">The player the message came from</param>
+        /// <param name="frame">The frame data</param>
+        /// <summary>
+        ///用于任何涉及二进制框架和目标玩家的事件
+        /// </ summary>
+        /// <param name =“player”>消息来自</ param>的播放器
+        /// <param name =“frame”>帧数据</ param>
+        public delegate void BinaryFrameEvent(NetworkingPlayer player, Binary frame, NetWorker sender);
 
-		/// <summary>
-		/// Used for any events that relate to a text frame and the target player
-		/// </summary>
-		/// <param name="player">The player the message came from</param>
-		/// <param name="frame">The frame data</param>
-		public delegate void TextFrameEvent(NetworkingPlayer player, Text frame, NetWorker sender);
-		#endregion
+        /// <summary>
+        /// Used for any events that relate to a text frame and the target player
+        /// </summary>
+        /// <param name="player">The player the message came from</param>
+        /// <param name="frame">The frame data</param>
+        /// <summary>
+        ///用于任何涉及文本框架和目标玩家的事件
+        /// </ summary>
+        /// <param name =“player”>消息来自的player</ param>
+        /// <param name =“frame”>帧数据</ param>
+        public delegate void TextFrameEvent(NetworkingPlayer player, Text frame, NetWorker sender);
+        #endregion
 
-		#region Events
-		/// <summary>
-		/// Occurs when a local server has been located by calling the static SetupLocalUdpListings method
-		/// </summary>
-		public static event BroadcastEndpointEvent localServerLocated;
+        #region Events
+        /// <summary>
+        /// 通过调用静态的SetupLocalUdpListings方法找到本地服务器时发生
+        /// Occurs when a local server has been located by calling the static SetupLocalUdpListings method
+        /// </summary>
+        public static event BroadcastEndpointEvent localServerLocated;
 
-		/// <summary>
-		/// Occurs when tcp listener has successfully bound
-		/// </summary>
-		public event BaseNetworkEvent bindSuccessful;
+        /// <summary>
+        /// 当tcp监听器成功绑定时发生
+        /// Occurs when tcp listener has successfully bound
+        /// </summary>
+        public event BaseNetworkEvent bindSuccessful;
 
-		/// <summary>
-		/// Occurs when tcp listener has failed to bind
-		/// </summary>
-		public event BaseNetworkEvent bindFailure;
+        /// <summary>
+        /// 当tcp侦听器绑定失败时发生
+        /// Occurs when tcp listener has failed to bind
+        /// </summary>
+        public event BaseNetworkEvent bindFailure;
 
-		/// <summary>
-		/// Occurs when the server has accepted this client
-		/// </summary>
-		public event BaseNetworkEvent serverAccepted;
+        /// <summary>
+        /// 服务器接受这个客户端时发生
+        /// Occurs when the server has accepted this client
+        /// </summary>
+        public event BaseNetworkEvent serverAccepted;
 
-		/// <summary>
-		/// Occurs when the current socket has completely disconnected
-		/// </summary>
-		public event BaseNetworkEvent disconnected;
+        /// <summary>
+        /// 当当前套接字完全断开时发生
+        /// Occurs when the current socket has completely disconnected
+        /// </summary>
+        public event BaseNetworkEvent disconnected;
 
-		/// <summary>
-		/// Occurs when the current socket was forcibly disconnected
-		/// </summary>
-		public event BaseNetworkEvent forcedDisconnect;
+        /// <summary>
+        /// 当当前套接字被强制断开时发生
+        /// Occurs when the current socket was forcibly disconnected
+        /// </summary>
+        public event BaseNetworkEvent forcedDisconnect;
 
-		/// <summary>
-		/// Occurs when a player has connected
-		/// </summary>
-		public event PlayerEvent playerConnected;
+        /// <summary>
+        /// 玩家连接时发生
+        /// Occurs when a player has connected
+        /// </summary>
+        public event PlayerEvent playerConnected;
 
-		/// <summary>
-		/// Occurs when a player has disconnected
-		/// </summary>
-		public event PlayerEvent playerDisconnected;
+        /// <summary>
+        /// 玩家断开连接时发生
+        /// Occurs when a player has disconnected
+        /// </summary>
+        public event PlayerEvent playerDisconnected;
 
-		/// <summary>
-		/// Occurs when a player has timed out
-		/// </summary>
-		public event PlayerEvent playerTimeout;
+        /// <summary>
+        /// 当玩家超时时发生
+        /// Occurs when a player has timed out
+        /// </summary>
+        public event PlayerEvent playerTimeout;
 
-		/// <summary>
-		/// Occurs when the player has connected and been validated by the server
-		/// </summary>
-		public event PlayerEvent playerAccepted;
+        /// <summary>
+        /// 当玩家连接并被服务器验证时发生
+        /// Occurs when the player has connected and been validated by the server
+        /// </summary>
+        public event PlayerEvent playerAccepted;
 
-		/// <summary>
-		/// Occurs when the player has connected and was not able to be validated by the server
-		/// </summary>
-		public event PlayerEvent playerRejected;
+        /// <summary>
+        /// 当玩家连接并且无法通过服务器验证时发生
+        /// Occurs when the player has connected and was not able to be validated by the server
+        /// </summary>
+        public event PlayerEvent playerRejected;
 
-		/// <summary>
-		/// Occurs when a message is received over the network from a remote machine
-		/// </summary>
-		public event FrameEvent messageReceived;
+        /// <summary>
+        /// 从远程机器通过网络接收到消息时发生
+        /// Occurs when a message is received over the network from a remote machine
+        /// </summary>
+        public event FrameEvent messageReceived;
 
-		/// <summary>
-		/// Occurs when a binary message is received over the network from a remote machine
-		/// </summary>
-		public event BinaryFrameEvent binaryMessageReceived;
+        /// <summary>
+        /// 当从远程计算机接收到二进制消息时发生。
+        /// Occurs when a binary message is received over the network from a remote machine
+        /// </summary>
+        public event BinaryFrameEvent binaryMessageReceived;
 
-		/// <summary>
-		/// Occurs when a binary message is received and its router byte is the byte for Rpc
-		/// </summary>
-		//public event BinaryFrameEvent rpcMessageReceived;
+        /// <summary>
+        /// Occurs when a binary message is received and its router byte is the byte for Rpc
+        /// </summary>
+        //public event BinaryFrameEvent rpcMessageReceived;
 
-		/// <summary>
-		/// Occurs when a text message is received over the network from a remote machine
-		/// </summary>
-		public event TextFrameEvent textMessageReceived;
+        /// <summary>
+        /// 从远程计算机通过网络接收到文本消息时发生
+        /// Occurs when a text message is received over the network from a remote machine
+        /// </summary>
+        public event TextFrameEvent textMessageReceived;
 
-		/// <summary>
-		/// Occurs when a ping is received over the network from a remote machine
-		/// </summary>
-		public event PingEvent onPingPong;
+        /// <summary>
+        /// 从远程机器通过网络接收到ping时发生
+        /// Occurs when a ping is received over the network from a remote machine
+        /// </summary>
+        public event PingEvent onPingPong;
 
 		/// <summary>
 		/// Called when a player has provided it's guid, this is useful for waiting until
@@ -228,15 +272,17 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		public event PlayerEvent playerGuidAssigned;
 
-		/// <summary>
-		/// Occurs when a client get's an id from the server asynchronously that belongs to this NetworkObject
-		/// </summary>
-		public event NetworkObject.CreateEvent objectCreateAttach;
+        /// <summary>
+        /// 当客户端从服务器异步获取属于此NetworkObject的ID时发生
+        /// Occurs when a client get's an id from the server asynchronously that belongs to this NetworkObject
+        /// </summary>
+        public event NetworkObject.CreateEvent objectCreateAttach;
 
-		/// <summary>
-		/// Occurs when a network object has been created on the network
-		/// </summary>
-		public event NetworkObject.NetworkObjectEvent objectCreated;
+        /// <summary>
+        /// 当网络对象已在网络上创建时发生。
+        /// Occurs when a network object has been created on the network
+        /// </summary>
+        public event NetworkObject.NetworkObjectEvent objectCreated;
 
 		/// <summary>
 		/// TODO: COMMENT
@@ -247,81 +293,106 @@ namespace BeardedManStudios.Forge.Networking
 		/// TODO: COMMENT
 		/// </summary>
 		public event NetworkObject.NetworkObjectEvent factoryObjectCreated;
-		#endregion
+        #endregion
 
-		#region Properties
-		/// <summary>
-		/// The list of all of the networked players. This is a wrapper around the native network
-		/// socket with extra meta-data for each connection
-		/// </summary>
-		public List<NetworkingPlayer> Players { get; private set; }
+        #region Properties
+        /// <summary>
+        /// 所有联网玩家的列表。 这是本地网络的一个包装
+        /// 为每个连接添加额外的元数据
+        /// The list of all of the networked players. This is a wrapper around the native network
+        /// socket with extra meta-data for each connection
+        /// </summary>
+        public List<NetworkingPlayer> Players { get; private set; }
 
-		/// <summary>
-		/// A list of all of the players that are to be disconnected. This is useful if a player needs
-		/// to disconnect while they are currently locked
-		/// </summary>
-		protected List<NetworkingPlayer> DisconnectingPlayers { get; private set; }
+        /// <summary>
+        /// 所有要断开连接的玩家的列表。 如果玩家需要，这很有用
+        /// 在当前被锁定时断开连接
+        /// A list of all of the players that are to be disconnected. This is useful if a player needs
+        /// to disconnect while they are currently locked
+        /// </summary>
+        protected List<NetworkingPlayer> DisconnectingPlayers { get; private set; }
 
-		/// <summary>
-		/// A list of all of the players that are to be forcibly disconnected.
-		/// This is useful if a player needs to disconnect while they are currently locked
-		/// </summary>
-		protected List<NetworkingPlayer> ForcedDisconnectingPlayers { get; private set; }
+        /// <summary>
+        /// A list of all of the players that are to be forcibly disconnected.
+        /// This is useful if a player needs to disconnect while they are currently locked
+        /// </summary>
+        /// <summary>
+        ///所有被强行断开的玩家列表。
+        ///如果玩家在当前被锁定时需要断开连接，这非常有用
+        /// </ summary>
+        protected List<NetworkingPlayer> ForcedDisconnectingPlayers { get; private set; }
 
-		/// <summary>
-		/// Represents the maximum allowed connections to this listener
-		/// </summary>
-		/// <value>Gets and sets the max allowed connections connections</value>
-		public int MaxConnections { get; private set; }
+        /// <summary>
+        /// Represents the maximum allowed connections to this listener
+        /// </summary>
+        /// <value>Gets and sets the max allowed connections connections</value>
+        /// <summary>
+        ///表示允许连接到此侦听器的最大连接数
+        /// </ summary>
+        /// <value>获取并设置允许的最大连接数</ value>
+        public int MaxConnections { get; private set; }
 
-		/// <summary>
-		/// This is a count for every player that has successfully connected since the start of this server,
-		/// this also serves to be the unique id for this connection
-		/// </summary>
-		/// <value>The current count of players on the network</value>
-		public uint ServerPlayerCounter { get; protected set; }
+        /// <summary>
+        /// This is a count for every player that has successfully connected since the start of this server,
+        /// this also serves to be the unique id for this connection
+        /// </summary>
+        /// <value>The current count of players on the network</value>
+        /// <summary>
+        ///这是自该服务器启动以来已成功连接的每个玩家的计数，
+        ///这也是这个连接的唯一ID
+        /// </ summary>
+        /// <value>网络上玩家的当前计数</ value>
+        public uint ServerPlayerCounter { get; protected set; }
 
-		/// <summary>
-		/// The port for this networker
-		/// </summary>
-		public ushort Port { get; private set; }
+        /// <summary>
+        /// 这个网络的端口
+        /// The port for this networker
+        /// </summary>
+        public ushort Port { get; private set; }
 
-		/// <summary>
-		/// A helper to determine if this NetWorker is a server
-		/// </summary>
-		public bool IsServer { get { return this is IServer; } }
+        /// <summary>
+        /// 确定此NetWorker是否为服务器的助手
+        /// A helper to determine if this NetWorker is a server
+        /// </summary>
+        public bool IsServer { get { return this is IServer; } }
 
-		/// <summary>
-		/// A handle to the server cache to make cache requests
-		/// </summary>
-		public Cache ServerCache { get; private set; }
+        /// <summary>
+        /// 服务器缓存的一个句柄，用于缓存请求
+        /// A handle to the server cache to make cache requests
+        /// </summary>
+        public Cache ServerCache { get; private set; }
 
-		/// <summary>
-		/// Used to determine how much bandwidth (in bytes) hass been read
-		/// </summary>
-		public ulong BandwidthIn { get; protected set; }
+        /// <summary>
+        /// 用于确定已读取多少带宽（以字节为单位）
+        /// Used to determine how much bandwidth (in bytes) hass been read
+        /// </summary>
+        public ulong BandwidthIn { get; protected set; }
 
-		/// <summary>
-		/// Used to determine how much bandwidth (in bytes) hass been written
-		/// </summary>
-		public ulong BandwidthOut { get; set; }
+        /// <summary>
+        /// 用于确定已写入多少带宽（以字节为单位）
+        /// Used to determine how much bandwidth (in bytes) hass been written
+        /// </summary>
+        public ulong BandwidthOut { get; set; }
 
-		/// <summary>
-		/// Used to simulate packet loss, should be a number between 0.0f and 1.0f (percentage)
-		/// </summary>
-		public float PacketLossSimulation { get; set; }
+        /// <summary>
+        /// 用于模拟丢包，应该是0.0f和1.0f之间的一个数字（百分比）
+        /// Used to simulate packet loss, should be a number between 0.0f and 1.0f (percentage)
+        /// </summary>
+        public float PacketLossSimulation { get; set; }
 
-		/// <summary>
-		/// Used to simulate network latency to test experience at high pings
-		/// </summary>
-		public int LatencySimulation { get; set; }
+        /// <summary>
+        /// 用于模拟网络延迟以测试高端的体验
+        /// Used to simulate network latency to test experience at high pings
+        /// </summary>
+        public int LatencySimulation { get; set; }
 
 		internal bool ObjectCreatedRegistered { get { return objectCreated != null; } }
 
-		/// <summary>
-		/// A cached BMSByte to prevent large amounts of garbage collection on packet sequences
-		/// </summary>
-		public BMSByte PacketSequenceData { get; private set; }
+        /// <summary>
+        /// 缓存的BMSByte，以防止大量的数据包序列垃圾收集
+        /// A cached BMSByte to prevent large amounts of garbage collection on packet sequences
+        /// </summary>
+        public BMSByte PacketSequenceData { get; private set; }
 		#endregion
 
 		/// <summary>
@@ -330,20 +401,22 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		public float ProximityDistance { get; set; }
 
-		/// <summary>
-		/// Allows the newly created network object to be queued for the flush call
-		/// </summary>
-		public bool PendCreates { get; set; }
+        /// <summary>
+        /// 允许新创建的网络对象排队进行刷新调用
+        /// Allows the newly created network object to be queued for the flush call
+        /// </summary>
+        public bool PendCreates { get; set; }
 
 		/// <summary>
 		/// A boolean to tell the read thread to stop reading and close
 		/// </summary>
 		protected bool readThreadCancel = false;
 
-		/// <summary>
-		/// A player reference to the current machine
-		/// </summary>
-		public NetworkingPlayer Me { get; protected set; }
+        /// <summary>
+        /// 当前机器的玩家引用
+        /// A player reference to the current machine
+        /// </summary>
+        public NetworkingPlayer Me { get; protected set; }
 
 		public Dictionary<uint, List<Action<NetworkObject>>> missingObjectBuffer = new Dictionary<uint, List<Action<NetworkObject>>>();
 
@@ -367,20 +440,23 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		protected BMSByte writeBuffer = new BMSByte();
 
-		/// <summary>
-		/// A dictionary of all of the network objects indexed by it's id
-		/// </summary>
-		public Dictionary<uint, NetworkObject> NetworkObjects { get; private set; }
+        /// <summary>
+        /// 由它的id索引的所有网络对象的字典
+        /// A dictionary of all of the network objects indexed by it's id
+        /// </summary>
+        public Dictionary<uint, NetworkObject> NetworkObjects { get; private set; }
 
-		/// <summary>
-		/// A list of all of the network objects
-		/// </summary>
-		public List<NetworkObject> NetworkObjectList { get; private set; }
+        /// <summary>
+        /// 所有网络对象的列表
+        /// A list of all of the network objects
+        /// </summary>
+        public List<NetworkObject> NetworkObjectList { get; private set; }
 
-		/// <summary>
-		/// Used to give a unique id to each of the network objects that are added
-		/// </summary>
-		private uint currentNetworkObjectId = 0;
+        /// <summary>
+        /// 用于为每个添加的网络对象赋予一个唯一的ID
+        /// Used to give a unique id to each of the network objects that are added
+        /// </summary>
+        private uint currentNetworkObjectId = 0;
 
 		/// <summary>
 		/// This object is to track the time for this networker which is also known
@@ -388,20 +464,22 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		public TimeManager Time { get; set; }
 
-		/// <summary>
-		/// Used to determine if this networker has been bound yet
-		/// </summary>
-		public bool IsBound { get; private set; }
+        /// <summary>
+        /// 用于确定这样的网络已被放弃
+        /// Used to determine if this networker has been bound yet
+        /// </summary>
+        public bool IsBound { get; private set; }
 
 		/// <summary>
 		/// Used to determine if this NetWorker has already been disposed to avoid re-connections
 		/// </summary>
 		public bool Disposed { get; private set; }
 
-		/// <summary>
-		/// The unique GUID that will represent all networkers for this process instance
-		/// </summary>
-		public static Guid InstanceGuid { get; private set; }
+        /// <summary>
+        /// 表示此流程实例的所有联网用户的唯一GUID
+        /// The unique GUID that will represent all networkers for this process instance
+        /// </summary>
+        public static Guid InstanceGuid { get; private set; }
 		private static bool setupInstanceGuid = false;
 
 		/// <summary>
@@ -452,10 +530,11 @@ namespace BeardedManStudios.Forge.Networking
 			EndingSession = false;
 		}
 
-		/// <summary>
-		/// Called once the network connection has been bound
-		/// </summary>
-		protected virtual void NetworkInitialize()
+        /// <summary>
+        /// 一旦网络连接被绑定，就被调用
+        /// Called once the network connection has been bound
+        /// </summary>
+        protected virtual void NetworkInitialize()
 		{
 			Task.Queue(() =>
 			{
@@ -563,12 +642,17 @@ namespace BeardedManStudios.Forge.Networking
 			return null;
 		}
 
-		/// <summary>
-		/// Register a networked object with this networker
-		/// </summary>
-		/// <param name="networkObject">The object that is to be registered with this networker</param>
-		/// <returns><c>true</c> if the object was registered successfully, else <c>false</c> if it has already been registered</returns>
-		public bool RegisterNetworkObject(NetworkObject networkObject, uint forceId = 0)
+        /// <summary>
+        /// Register a networked object with this networker
+        /// </summary>
+        /// <param name="networkObject">The object that is to be registered with this networker</param>
+        /// <returns><c>true</c> if the object was registered successfully, else <c>false</c> if it has already been registered</returns>
+        /// <summary>
+        ///注册一个网络对象与这个网络
+        /// </ summary>
+        /// <param name =“networkObject”>要使用此联网器注册的对象</ param>
+        /// <returns> <c> true </ c>如果对象已经成功注册，否则<c> false </ c>已注册</ returns>
+        public bool RegisterNetworkObject(NetworkObject networkObject, uint forceId = 0)
 		{
 			uint id = currentNetworkObjectId;
 
@@ -597,8 +681,9 @@ namespace BeardedManStudios.Forge.Networking
 
 						if (!networkObject.RegisterOnce(currentNetworkObjectId))
 						{
-							// Backtrack since the next call to this method will increment before checking
-							currentNetworkObjectId--;
+                            //返回，因为下次调用这个方法会在检查之前增加
+                            // Backtrack since the next call to this method will increment before checking
+                            currentNetworkObjectId--;
 
 							throw new BaseNetworkException("The supplied network object has already been assigned to a networker and has an id");
 						}
@@ -610,8 +695,9 @@ namespace BeardedManStudios.Forge.Networking
 				}
 			}
 
-			// Assign the network id to the network object
-			networkObject.RegisterOnce(id);
+            //将网络ID分配给网络对象
+            // Assign the network id to the network object
+            networkObject.RegisterOnce(id);
 
 			// When this object is destroyed it needs to remove itself from the list
 			networkObject.onDestroy += (NetWorker sender) =>
@@ -657,10 +743,11 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// A wrapper for the bindSuccessful event call that chindren of this calls can call
-		/// </summary>
-		protected void OnBindSuccessful()
+        /// <summary>
+        /// 这个调用的子项可以调用的绑定成功事件调用的包装器
+        /// A wrapper for the bindSuccessful event call that chindren of this calls can call
+        /// </summary>
+        protected void OnBindSuccessful()
 		{
 			IsBound = true;
 			NetworkInitialize();
@@ -668,20 +755,25 @@ namespace BeardedManStudios.Forge.Networking
 				bindSuccessful(this);
 		}
 
-		/// <summary>
-		/// A wrapper for the bindFailure event call that children of this can call
-		/// </summary>
-		protected void OnBindFailure()
+        /// <summary>
+        /// 这个可以调用的bindFailure事件调用的包装器
+        /// A wrapper for the bindFailure event call that children of this can call
+        /// </summary>
+        protected void OnBindFailure()
 		{
 			if (bindFailure != null)
 				bindFailure(this);
 		}
 
-		/// <summary>
-		/// A wrapper for the playerDisconnected event call that chindren of this can call.
-		/// This also is responsible for adding the player to the lookup
-		/// </summary>
-		protected void OnPlayerConnected(NetworkingPlayer player)
+        /// <summary>
+        /// A wrapper for the playerDisconnected event call that chindren of this can call.
+        /// This also is responsible for adding the player to the lookup
+        /// </summary>
+        /// <summary>
+        ///这个可以调用的playerDisconnected事件调用的包装器。
+        ///这也是将玩家添加到查找的责任
+        /// </ summary>
+        protected void OnPlayerConnected(NetworkingPlayer player)
 		{
 			if (Players.Contains(player))
 				throw new BaseNetworkException("Cannot add player because it already exists in the list");
@@ -744,10 +836,11 @@ namespace BeardedManStudios.Forge.Networking
 				playerTimeout(player, this);
 		}
 
-		/// <summary>
-		/// A wrapper for the playerAccepted event call that chindren of this can call
-		/// </summary>
-		protected void OnPlayerAccepted(NetworkingPlayer player)
+        /// <summary>
+        /// 玩家可以调用的接受的事件调用的包装器
+        /// A wrapper for the playerAccepted event call that chindren of this can call
+        /// </summary>
+        protected void OnPlayerAccepted(NetworkingPlayer player)
 		{
 			player.Accepted = true;
 			player.PendingAccepted = false;
@@ -784,11 +877,12 @@ namespace BeardedManStudios.Forge.Networking
 			this.Port = port;
 		}
 
-		/// <summary>
-		/// A wrapper for the pingReceived event call that children of this can call
-		/// </summary>
-		/// <param name="ping"></param>
-		protected void OnPingRecieved(double ping, NetworkingPlayer player)
+        /// <summary>
+        /// pingreceived事件调用的包装器，可以调用它的子元素
+        /// A wrapper for the pingReceived event call that children of this can call
+        /// </summary>
+        /// <param name="ping"></param>
+        protected void OnPingRecieved(double ping, NetworkingPlayer player)
 		{
 			if (onPingPong != null)
 				onPingPong(ping, this);
@@ -796,10 +890,11 @@ namespace BeardedManStudios.Forge.Networking
 			player.RoundTripLatency = (int)ping;
 		}
 
-		/// <summary>
-		/// A wrapper for the messageReceived event call that chindren of this can call
-		/// </summary>
-		protected void OnMessageReceived(NetworkingPlayer player, FrameStream frame)
+        /// <summary>
+        /// 这个可以调用的messageReceived事件调用的包装器
+        /// A wrapper for the messageReceived event call that chindren of this can call
+        /// </summary>
+        protected void OnMessageReceived(NetworkingPlayer player, FrameStream frame)
 		{
 			if (frame.GroupId == MessageGroupIds.NETWORK_ID_REQUEST && this is IClient)
 			{
@@ -905,10 +1000,11 @@ namespace BeardedManStudios.Forge.Networking
 			Disposed = true;
 		}
 
-		/// <summary>
-		/// When this socket has been forcibly disconnected
-		/// </summary>
-		protected void OnForcedDisconnect()
+        /// <summary>
+        /// 当这个插座被强行断开
+        /// When this socket has been forcibly disconnected
+        /// </summary>
+        protected void OnForcedDisconnect()
 		{
 			IsBound = false;
 
@@ -972,9 +1068,11 @@ namespace BeardedManStudios.Forge.Networking
 			EndingSession = true;
 			CloseLocalListingsClient();
 
-			// Reset the ending session after 1000ms so that we know all the threads have cleaned up
-			// for any remaining threads that may be going for this previous process
-			Task.Queue(() =>
+            //在1000ms后重置结束会话，以便我们知道所有线程已经清理完毕
+            //对于可能正在执行此前一个进程的任何剩余线程
+            // Reset the ending session after 1000ms so that we know all the threads have cleaned up
+            // for any remaining threads that may be going for this previous process
+            Task.Queue(() =>
 			{
 				EndingSession = false;
 			}, 1000);
@@ -996,11 +1094,13 @@ namespace BeardedManStudios.Forge.Networking
 			return new Pong(Time.Timestep, this is TCPClient, payload, Receivers.Target, MessageGroupIds.PONG, this is BaseTCP);
 		}
 
-		/// <summary>
-		/// Request the ping from the server (pingReceived will be triggered if it receives it)
-		/// This is not a reliable call in UDP
-		/// </summary>
-		public abstract void Ping();
+        /// <summary>
+        /// 请求从服务器ping（pingReceived将被触发，如果它收到）
+        /// 这在UDP中不是一个可靠的调用
+        /// Request the ping from the server (pingReceived will be triggered if it receives it)
+        /// This is not a reliable call in UDP
+        /// </summary>
+        public abstract void Ping();
 
 		protected abstract void Pong(NetworkingPlayer playerRequesting, DateTime time);
 
@@ -1013,10 +1113,12 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// A method to find all of the local UDP servers and clients on the network
-		/// </summary>
-		public static void RefreshLocalUdpListings(ushort portNumber = DEFAULT_PORT, int responseBuffer = 1000)
+        /// <summary>
+        /// 找到网络上所有本地UDP服务器和客户端的方法
+        /// 搜索局域网服务器
+        /// A method to find all of the local UDP servers and clients on the network
+        /// </summary>
+        public static void RefreshLocalUdpListings(ushort portNumber = DEFAULT_PORT, int responseBuffer = 1000)
 		{
 			if (localListingsClient != null)
 			{
@@ -1024,18 +1126,21 @@ namespace BeardedManStudios.Forge.Networking
 				localListingsClient = null;
 			}
 
-			// Initialize the list to hold all of the local network endpoints that respond to the request
-			if (LocalEndpoints == null)
+            //初始化列表以保存响应请求的所有本地网络端点
+            // Initialize the list to hold all of the local network endpoints that respond to the request
+            if (LocalEndpoints == null)
 				LocalEndpoints = new List<BroadcastEndpoints>();
 
-			// Make sure to clear out the existing endpoints
-			lock (LocalEndpoints)
+            //确保清除现有的端点
+            // Make sure to clear out the existing endpoints
+            lock (LocalEndpoints)
 			{
 				LocalEndpoints.Clear();
 			}
 
-			// Create a client to write on the network and discover other clients and servers
-			localListingsClient = new CachedUdpClient(19375);
+            //创建一个客户端写在网络上，发现其他客户端和服务器
+            // Create a client to write on the network and discover other clients and servers
+            localListingsClient = new CachedUdpClient(19375);
 			localListingsClient.EnableBroadcast = true;
 			Task.Queue(() => { CloseLocalListingsClient(); }, responseBuffer);
 

@@ -33,8 +33,11 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public class NetworkingPlayer
 	{
+        // 默认玩家超时断线时间 30秒
 		private const uint PLAYER_TIMEOUT_DISCONNECT = 30000;
-		private const int DEFAULT_PING_INTERVAL = 5000;
+
+        // 默认发ping间隔时间 5秒
+        private const int DEFAULT_PING_INTERVAL = 5000;
 
 		/// <summary>
 		/// An event that is called whenever this player has disconnected
@@ -153,13 +156,16 @@ namespace BeardedManStudios.Forge.Networking
 
 		private bool composerReady = false;
 
+        // 当前等待发ping时间
 		private int currentPingWait = 0;
+        // ping的间隔时间
 		public int PingInterval { get; set; }
 
-		/// <summary>
-		/// The amount of time it took for a ping to happen
-		/// </summary>
-		public int RoundTripLatency { get; set; }
+        /// <summary>
+        /// 发生ping所花费的时间
+        /// The amount of time it took for a ping to happen
+        /// </summary>
+        public int RoundTripLatency { get; set; }
 
 		public NetWorker Networker { get; private set; }
 

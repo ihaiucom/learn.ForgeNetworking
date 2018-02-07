@@ -119,9 +119,11 @@ public class MultiplayerMenu : MonoBehaviour
 			SetToggledButtons(true);
 			Debug.LogFormat("Matching Server(s) count[{0}]", response.serverResponse.Count);
 
-			//TODO: YOUR OWN MATCHMAKING EXTRA LOGIC HERE!
-			// I just make it randomly pick a server... you can do whatever you please!
-			if (response != null && response.serverResponse.Count > 0)
+            //TODO: YOUR OWN MATCHMAKING EXTRA LOGIC HERE!
+            // I just make it randomly pick a server... you can do whatever you please!
+            // TODO：您自己的匹配额外的逻辑在这里！
+            //我只是让它随机选择一个服务器...你可以做任何你喜欢的事情！
+            if (response != null && response.serverResponse.Count > 0)
 			{
 				MasterServerResponse.Server server = response.serverResponse[Random.Range(0, response.serverResponse.Count)];
 				//TCPClient client = new TCPClient();
@@ -217,8 +219,9 @@ public class MultiplayerMenu : MonoBehaviour
 		if (networker is IServer)
 		{
 			if (!DontChangeSceneOnConnect)
-				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-			else
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            //SceneManager.LoadScene("GameLogic");
+            else
 				NetworkObject.Flush(networker); //Called because we are already in the correct scene!
 		}
 	}

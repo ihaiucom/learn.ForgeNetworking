@@ -44,10 +44,17 @@ using System.Net.Sockets;
 
 namespace BeardedManStudios.Forge.Networking
 {
+    /// <summary>
+    /// 缓存Udp客户端
+    /// </summary>
 	public class CachedUdpClient : IDisposable
 	{
-		public const char HOST_PORT_CHARACTER_SEPARATOR = '+';
+        // HOST PORT CHARACTER SEPARATOR
+        public const char HOST_PORT_CHARACTER_SEPARATOR = '+';
+
+        // 是否销毁, 关闭Socket
 		private bool disposed = false;
+        // socket是否建立连接
 		private bool active = false;
 		private Socket socket;
 		private AddressFamily family = AddressFamily.InterNetwork;
@@ -153,10 +160,13 @@ namespace BeardedManStudios.Forge.Networking
 
 		void DoConnect(IPEndPoint endPoint)
 		{
-			/* Catch EACCES and turn on SO_BROADCAST then,
+            /*赶上EACCES，然后打开SO_BROADCAST，
+            *因为UDP套接字没有默认设置
+            */
+            /* Catch EACCES and turn on SO_BROADCAST then,
 			 * as UDP Sockets don't have it set by default
 			 */
-			try
+            try
 			{
 				socket.Connect(endPoint);
 			}
@@ -337,7 +347,11 @@ namespace BeardedManStudios.Forge.Networking
 			if (endPoint == null)
 				endPoint = new IPEndPoint(IPAddress.Any, 0);
 
-			int dataRead = socket.ReceiveFrom(recBuffer.byteArr, ref endPoint);
+            // 将数据报接收到数据缓冲区并存储终结点。
+            // buffer Byte 类型的数组，它是存储接收到的数据的位置。
+            // remoteEP 按引用传递的 EndPoint，表示远程服务器。
+            // 返回值 接收到的字节数。
+            int dataRead = socket.ReceiveFrom(recBuffer.byteArr, ref endPoint);
 
 			if (!connections.ContainsKey(endPoint))
 				connections.Add(endPoint, (((IPEndPoint)endPoint).Address.ToString() + HOST_PORT_CHARACTER_SEPARATOR + ((IPEndPoint)endPoint).Port.ToString()));
@@ -362,12 +376,21 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				if (endPoint == null)
 				{
-					return (socket.Send(dgram, 0, bytes,
+                    // 使用指定的 SocketFlags，将指定字节数的数据发送到已连接的 Socket（从指定的偏移量开始）。
+                    //buffer Byte 类型的数组，它包含要发送的数据。
+                    //offset 数据缓冲区中开始发送数据的位置。
+                    // size 要发送的字节数。
+                    // socketFlags SocketFlags 值的按位组合。
+                    // 返回值已发送到 Socket 的字节数。
+
+                    return (socket.Send(dgram, 0, bytes,
 						SocketFlags.None));
 				}
 				else
 				{
-					return (socket.SendTo(dgram, 0, bytes,
+                    // 使用指定的 SocketFlags，将指定字节数的数据发送到指定终结点（从缓冲区中的指定位置开始）
+                    // remoteEP EndPoint，它表示数据的目标位置。
+                    return (socket.SendTo(dgram, 0, bytes,
 						SocketFlags.None,
 						endPoint));
 				}
@@ -591,7 +614,8 @@ namespace BeardedManStudios.Forge.Networking
 			set { socket = value; }
 		}
 
-		public int Available
+        // 获取已经从网络接收且可供读取的数据量。
+        public int Available
 		{
 			get
 			{
@@ -599,7 +623,13 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		public bool DontFragment
+        //获取或设置 Boolean 值，该值指定 Socket 是否允许将 Internet 协议 (IP) 数据报分段。
+        // [备注]
+        //如果数据报大小超过传输介质的最大传送单位(MTU)，则需要将数据报分段。
+        //可以由发送主机（所有版本的 Internet 协议）或中间路由器（仅 Internet 协议版本 4）将数据报分段。
+        //如果必须将一个数据报分段，并且已设置 DontFragment 选项，则该数据报被丢弃并且将 Internet 控制消息协议(ICMP) 错误信息发送回数据报发送方。
+        //对传输控制协议(TCP) 套接字设置此属性不起任何作用。
+        public bool DontFragment
 		{
 			get
 			{
@@ -611,6 +641,9 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 获取或设置一个 Boolean 值，该值指定 Socket 是否可以发送或接收广播数据包。
+        /// </summary>
 		public bool EnableBroadcast
 		{
 			get
@@ -623,7 +656,8 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		public bool ExclusiveAddressUse
+        // 获取或设置 Boolean 值，该值指定 Socket 是否仅允许一个进程绑定到端口。
+        public bool ExclusiveAddressUse
 		{
 			get
 			{
@@ -635,7 +669,8 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		public bool MulticastLoopback
+        // 获取或设置一个值，该值指定传出的多路广播数据包是否传递到发送应用程序。
+        public bool MulticastLoopback
 		{
 			get
 			{
@@ -647,7 +682,8 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		public short Ttl
+        // 	获取或设置一个值，指定 Socket 发送的 Internet 协议 (IP) 数据包的生存时间 (TTL) 值。
+        public short Ttl
 		{
 			get
 			{
@@ -661,12 +697,19 @@ namespace BeardedManStudios.Forge.Networking
 
 		#endregion
 		#region Disposing
+        /// <summary>
+        /// 手动释放
+        /// </summary>
 		void IDisposable.Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
+        /// <summary>
+        /// 释放， 关闭socket
+        /// </summary>
+        /// <param name="disposing">是否是手动释放</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposed)
@@ -682,11 +725,17 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 析构方法， 释放关闭socket
+        /// </summary>
 		~CachedUdpClient()
 		{
 			Dispose(false);
 		}
 
+        /// <summary>
+        /// 检测是否释放， 如果释放就抛错误
+        /// </summary>
 		private void CheckDisposed()
 		{
 			if (disposed)

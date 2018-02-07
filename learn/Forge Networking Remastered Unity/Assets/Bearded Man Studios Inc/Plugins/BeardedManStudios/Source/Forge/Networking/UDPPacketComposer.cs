@@ -213,10 +213,11 @@ namespace BeardedManStudios.Forge.Networking
 			} while (byteIndex < data.Length);
 		}
 
-		/// <summary>
-		/// Go through all of the pending packets and resend them
-		/// </summary>
-		public void ResendPackets(ulong timestep, ref int counter)
+        /// <summary>
+        /// 遍历所有未决的数据包并重新发送
+        /// Go through all of the pending packets and resend them
+        /// </summary>
+        public void ResendPackets(ulong timestep, ref int counter)
 		{
 			lock (PendingPackets)
 			{

@@ -21,6 +21,9 @@ using System.Text;
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 错误消息反馈
+    /// </summary>
 	public class Error : FrameStream
 	{
 		/// <summary>

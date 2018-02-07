@@ -20,6 +20,9 @@
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 断开连接
+    /// </summary>
 	public class ConnectionClose : FrameStream
 	{
 		/// <summary>

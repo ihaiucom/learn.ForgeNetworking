@@ -29,8 +29,9 @@ namespace BeardedManStudios.Forge.Networking.Unity
 		    if (Networker != null)
 				Networker.objectCreated -= CaptureObjects;
 		}
-		
-		private void CaptureObjects(NetworkObject obj)
+
+        // ²¶×½µÄ¶ÔÏó
+        private void CaptureObjects(NetworkObject obj)
 		{
 			if (obj.CreateCode < 0)
 				return;

@@ -23,6 +23,9 @@ using System.Linq;
 
 namespace BeardedManStudios.Forge.Networking.Frame
 {
+    /// <summary>
+    /// 消息解析器
+    /// </summary>
 	public static class Factory
 	{
 		private static byte[] DecodeHead(byte[] bytes, bool useMask, out int indexFirstMask)

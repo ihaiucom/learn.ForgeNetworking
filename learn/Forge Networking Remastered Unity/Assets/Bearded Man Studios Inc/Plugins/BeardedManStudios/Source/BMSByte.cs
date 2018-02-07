@@ -80,11 +80,12 @@ namespace BeardedManStudios
 			StartPointer = 0;
 		}
 
-		/// <summary>
-		/// Manually set the interpreted size of the interal byte array (will resize if larger)
-		/// </summary>
-		/// <param name="newSize">The size to be resized to</param>
-		public void SetSize(int newSize)
+        /// <summary>
+        /// 手动设置内部字节数组的解释大小（如果更大，将调整大小）
+        /// Manually set the interpreted size of the interal byte array (will resize if larger)
+        /// <param name="newSize">The size to be resized to</param>
+        /// </summary>
+        public void SetSize(int newSize)
 		{
 			if (byteArr.Length < newSize)
 				Array.Resize<byte>(ref byteArr, newSize);
@@ -92,12 +93,17 @@ namespace BeardedManStudios
 			Size = newSize;
 		}
 
-		/// <summary>
-		/// Get the starting index (virtual head) of the internal byte array
-		/// </summary>
-		/// <param name="offset">Adds this amount to the internal index to start from there</param>
-		/// <returns></returns>
-		public int StartIndex(int offset = 0)
+        /// <summary>
+        /// Get the starting index (virtual head) of the internal byte array
+        /// </summary>
+        /// <param name="offset">Adds this amount to the internal index to start from there</param>
+        /// <returns></returns>
+        /// <summary>
+        ///获取内部字节数组的起始索引（虚拟头）
+        /// </ summary>
+        /// <param name =“offset”>添加这个数量到内部索引从那里开始</ param>
+        /// <returns> </ returns>
+        public int StartIndex(int offset = 0)
 		{
 			return StartPointer + offset;
 		}
@@ -240,13 +246,19 @@ namespace BeardedManStudios
 			PointToEnd();
 		}
 
-		/// <summary>
-		/// Copies the passed object's bytes starting at the start index and for a specified count to
-		/// the end of the internal byte array and resizes when needed
-		/// </summary>
-		/// <param name="obj">The object to be converted into bytes</param>
-		/// <param name="count">The size in bytes to copy from the start of the passed object</param>
-		public void BlockCopy<T>(object obj, int count)
+        /// <summary>
+        /// Copies the passed object's bytes starting at the start index and for a specified count to
+        /// the end of the internal byte array and resizes when needed
+        /// </summary>
+        /// <param name="obj">The object to be converted into bytes</param>
+        /// <param name="count">The size in bytes to copy from the start of the passed object</param>
+        /// <summary>
+        ///将从开始索引处开始传递的对象的字节和指定的计数复制到
+        ///内部字节数组的末尾，并在需要时调整大小
+        /// </ summary>
+        /// <param name =“obj”>要转换为字节的对象</ param>
+        /// <param name =“count”>从传入对象的起始位置复制的大小（以字节为单位）
+        public void BlockCopy<T>(object obj, int count)
 		{
 			if (count == 0)
 				return;

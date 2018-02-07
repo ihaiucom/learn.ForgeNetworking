@@ -97,7 +97,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 								string protocol = server.Protocol;
 								string address = server.Address;
 								ushort port = server.Port;
-								string name = server.Name;
+								string name = server.Name + " " + address + ":" + port;
 
 								// name, address, port, comment, type, mode, players, maxPlayers, protocol
 								CreateServerOption(name, () =>
@@ -162,7 +162,9 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			else
 				Instantiate(networkManager).GetComponent<NetworkManager>().Initialize(networker);
 
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-		}
+			//SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+
+            SceneManager.LoadScene("GameLogic");
+        }
 	}
 }
