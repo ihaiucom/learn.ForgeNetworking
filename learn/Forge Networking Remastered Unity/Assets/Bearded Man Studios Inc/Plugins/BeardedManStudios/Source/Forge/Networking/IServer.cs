@@ -25,7 +25,9 @@ namespace BeardedManStudios.Forge.Networking
     {
         List<string> BannedAddresses { get; set; }
         void Disconnect(NetworkingPlayer player, bool forced);
+        // 踢玩家
         void BanPlayer(ulong networkId, int minutes);
+        // 提交断线的玩家
         void CommitDisconnects();
         bool AcceptingConnections { get; }
         void StopAcceptingConnections();

@@ -32,6 +32,7 @@ namespace BeardedManStudios.Forge.Networking
 	{
 		private CommonServerLogic commonServerLogic;
 
+        // 玩家字典
 		public Dictionary<string, UDPNetworkingPlayer> udpPlayers = new Dictionary<string, UDPNetworkingPlayer>();
 
 		private UDPNetworkingPlayer currentReadingPlayer = null;
@@ -59,14 +60,17 @@ namespace BeardedManStudios.Forge.Networking
 		{
 			UDPPacketComposer composer = new UDPPacketComposer(this, player, frame, reliable);
 
-			// If this message is reliable then make sure to keep a reference to the composer
-			// so that there are not any run-away threads
-			if (reliable)
+            //如果这个信息是可靠的，那么一定要保持对作曲家的引用
+            //这样就没有任何失控的线程
+            // If this message is reliable then make sure to keep a reference to the composer
+            // so that there are not any run-away threads
+            if (reliable)
 			{
 				lock (pendingComposers)
 				{
-					// Use the completed event to clean up the object from memory
-					composer.completed += ComposerCompleted;
+                    //使用完成的事件从内存中清理对象
+                    // Use the completed event to clean up the object from memory
+                    composer.completed += ComposerCompleted;
 					pendingComposers.Add(composer);
 				}
 			}
@@ -225,24 +229,30 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Disconnects a client
-		/// </summary>
-		/// <param name="client">The target client to be disconnected</param>
-		public void Disconnect(NetworkingPlayer player, bool forced)
+        /// <summary>
+        /// Disconnects a client
+        /// </summary>
+        /// <param name="client">The target client to be disconnected</param>
+        /// <summary>
+        ///断开一个客户端
+        /// </ summary>
+        /// <param name =“client”>要断开连接的目标客户端</ param>
+        public void Disconnect(NetworkingPlayer player, bool forced)
 		{
 			commonServerLogic.Disconnect(player, forced, DisconnectingPlayers, ForcedDisconnectingPlayers);
 		}
 
-		/// <summary>
-		/// Call the base disconnect pending method to remove all pending disconnecting clients
-		/// </summary>
-		private void CleanupDisconnections() { DisconnectPending(RemovePlayer); }
+        /// <summary>
+        /// 调用基本断开挂起的方法来删除所有挂起的断开连接的客户端
+        /// Call the base disconnect pending method to remove all pending disconnecting clients
+        /// </summary>
+        private void CleanupDisconnections() { DisconnectPending(RemovePlayer); }
 
-		/// <summary>
-		/// Commit the disconnects
-		/// </summary>
-		public void CommitDisconnects() { CleanupDisconnections(); }
+        /// <summary>
+        /// 提交断开连接
+        /// Commit the disconnects
+        /// </summary>
+        public void CommitDisconnects() { CleanupDisconnections(); }
 
 		/// <summary>
 		/// Fully remove the player from the network
@@ -273,7 +283,8 @@ namespace BeardedManStudios.Forge.Networking
 				FinalizeRemovePlayer(player, forced);
 		}
 
-		private void FinalizeRemovePlayer(NetworkingPlayer player, bool forced)
+        // 删除玩家
+        private void FinalizeRemovePlayer(NetworkingPlayer player, bool forced)
 		{
 			udpPlayers.Remove(player.Ip + "+" + player.Port);
 			OnPlayerDisconnected(player);
@@ -284,39 +295,49 @@ namespace BeardedManStudios.Forge.Networking
 				DisconnectingPlayers.Remove(player);
 		}
 
-		/// <summary>
-		/// Infinite loop listening for new data from all connected clients on a separate thread.
-		/// This loop breaks when readThreadCancel is set to true
-		/// </summary>
-		private void ReadClients()
+        /// <summary>
+        /// Infinite loop listening for new data from all connected clients on a separate thread.
+        /// This loop breaks when readThreadCancel is set to true
+        /// </summary>
+        /// <summary>
+        ///无限循环在单独的线程上监听来自所有连接客户端的新数据。
+        ///当readThreadCancel设置为true时，此循环中断
+        /// </ summary>
+        private void ReadClients()
 		{
 			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, 0);
 			string incomingEndpoint = string.Empty;
 
 			BMSByte packet = null;
 
-			// Intentional infinite loop
-			while (IsBound)
+            // 故意无限循环
+            // Intentional infinite loop
+            while (IsBound)
 			{
-				// If the read has been flagged to be canceled then break from this loop
-				if (readThreadCancel)
+                //如果读取已被标记为取消，则从此循环中断开
+                // If the read has been flagged to be canceled then break from this loop
+                if (readThreadCancel)
 					return;
 
 				try
 				{
-					// Read a packet from the network
-					packet = Client.Receive(ref groupEP, ref incomingEndpoint);
+                    //从网络读取数据包
+                    // Read a packet from the network
+                    packet = Client.Receive(ref groupEP, ref incomingEndpoint);
 
+                    // 模拟丢包
 					if (PacketLossSimulation > 0.0f && new Random().NextDouble() <= PacketLossSimulation)
 					{
+                        // 丢掉这个消息
 						// Skip this message
 						continue;
 					}
-
+                    // 统计 宽带接收数据大小
 					BandwidthIn += (ulong)packet.Size;
 				}
 				catch
 				{
+                    // 如果出错， 就查找该IP PROT的玩家，将该玩家踢掉
 					UDPNetworkingPlayer player;
 					if (udpPlayers.TryGetValue(incomingEndpoint, out player))
 					{
@@ -432,6 +453,10 @@ namespace BeardedManStudios.Forge.Networking
 			player.Connected = true;
 		}
 
+        /// <summary>
+        /// 接收客户端数据包
+        /// </summary>
+        /// <param name="packet"></param>
 		private void ReadPacket(BMSByte packet)
 		{
 			if (packet.Size < 17)
@@ -439,34 +464,41 @@ namespace BeardedManStudios.Forge.Networking
 
 			try
 			{
-				// Format the byte data into a UDPPacket struct
-				UDPPacket formattedPacket = TranscodePacket(currentReadingPlayer, packet);
+                // 格式的字节数据到一个udppacket结构
+                // Format the byte data into a UDPPacket struct
+                UDPPacket formattedPacket = TranscodePacket(currentReadingPlayer, packet);
 
-				// Check to see if this is a confirmation packet, which is just
-				// a packet to say that the reliable packet has been read
-				if (formattedPacket.isConfirmation)
+                //检查这是否是一个确认数据包，这是正确的
+                //一个数据包说可靠的数据包已被读取
+                // Check to see if this is a confirmation packet, which is just
+                // a packet to say that the reliable packet has been read
+                if (formattedPacket.isConfirmation)
 				{
-					// Called once the player has confirmed that it has been accepted
-					if (formattedPacket.groupId == MessageGroupIds.NETWORK_ID_REQUEST && !currentReadingPlayer.Accepted)
+                    //一旦玩家确认已被接受，则调用
+                    // Called once the player has confirmed that it has been accepted
+                    if (formattedPacket.groupId == MessageGroupIds.NETWORK_ID_REQUEST && !currentReadingPlayer.Accepted)
 					{
 						System.Diagnostics.Debug.WriteLine(string.Format("[{0}] REQUESTED ID RECEIVED", DateTime.Now.Millisecond));
-						// The player has been accepted
-						OnPlayerAccepted(currentReadingPlayer);
+                        //玩家已被接受
+                        // The player has been accepted
+                        OnPlayerAccepted(currentReadingPlayer);
 					}
 
 					OnMessageConfirmed(currentReadingPlayer, formattedPacket);
 					return;
 				}
 
-				// Add the packet to the manager so that it can be tracked and executed on complete
-				currentReadingPlayer.PacketManager.AddPacket(formattedPacket, PacketSequenceComplete, this);
+                //将数据包添加到管理器，以便可以在完成时跟踪和执行
+                // Add the packet to the manager so that it can be tracked and executed on complete
+                currentReadingPlayer.PacketManager.AddPacket(formattedPacket, PacketSequenceComplete, this);
 			}
 			catch (Exception ex)
 			{
 				Logging.BMSLog.LogException(ex);
 
-				// The player is sending invalid data so disconnect them
-				Disconnect(currentReadingPlayer, true);
+                //player发送无效数据，请断开连接
+                // The player is sending invalid data so disconnect them
+                Disconnect(currentReadingPlayer, true);
 			}
 		}
 
@@ -569,6 +601,11 @@ namespace BeardedManStudios.Forge.Networking
 			AcceptingConnections = true;
 		}
 
+        /// <summary>
+        /// 禁止玩家
+        /// </summary>
+        /// <param name="networkId"></param>
+        /// <param name="minutes"></param>
 		public void BanPlayer(ulong networkId, int minutes)
 		{
 			NetworkingPlayer player = Players.FirstOrDefault(p => p.NetworkId == networkId);

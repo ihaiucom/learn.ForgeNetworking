@@ -23,24 +23,33 @@ using System.Collections.Generic;
 
 namespace BeardedManStudios.Forge.Networking.DataStore
 {
-	/// <summary>
-	/// The main class for managing and communicating data from the server cache
-	/// </summary>
-	/// <remarks>
-	/// Cache is used to store any arbitrary data for your game, you can deposit supported data types to the server with a key, then access them again
-	/// on any client by using the key to access the specific data stored. Cache.Set() and Cache.Request() being the two primary ways to use Cache.
-	/// </remarks>
-	public class Cache
+    /// <summary>
+    /// The main class for managing and communicating data from the server cache
+    /// </summary>
+    /// <remarks>
+    /// Cache is used to store any arbitrary data for your game, you can deposit supported data types to the server with a key, then access them again
+    /// on any client by using the key to access the specific data stored. Cache.Set() and Cache.Request() being the two primary ways to use Cache.
+    /// </remarks>
+    /// <summary>
+    ///用于管理和传递来自服务器缓存的数据的主要类
+    /// </ summary>
+    /// <注释>
+    ///缓存用于存储游戏的任意数据，您可以使用密钥将支持的数据类型存入服务器，然后再次访问
+    ///在任何客户端使用密钥访问存储的特定数据。 Cache.Set（）和Cache.Request（）是使用Cache的两个主要方法。
+    /// </ remarks>
+    public class Cache
 	{
 		public const int DEFAULT_CACHE_SERVER_PORT = 15942;
 
-		// Default expiry datetime for a cached object.
-		private readonly DateTime maxDateTime = DateTime.MaxValue;
+        //缓存对象的默认失效日期时间。
+        // Default expiry datetime for a cached object.
+        private readonly DateTime maxDateTime = DateTime.MaxValue;
 
-		/// <summary>
-		/// The memory cache for the data
-		/// </summary>
-		private Dictionary<string, CachedObject> memory = new Dictionary<string, CachedObject>();
+        /// <summary>
+        ///数据的内存缓存
+        /// The memory cache for the data
+        /// </summary>
+        private Dictionary<string, CachedObject> memory = new Dictionary<string, CachedObject>();
 
 		/// <summary>
 		/// The main socket for communicating the cache back and forth
@@ -72,15 +81,17 @@ namespace BeardedManStudios.Forge.Networking.DataStore
 			{ 16, typeof(Color) }*/
 		};
 
-		/// <summary>
-		/// The current id that the callback stack is on
-		/// </summary>
-		private int responseHookIncrementer = 0;
+        /// <summary>
+        /// 回调堆栈所在的当前ID
+        /// The current id that the callback stack is on
+        /// </summary>
+        private int responseHookIncrementer = 0;
 
-		/// <summary>
-		/// The main callback stack for when requesting data
-		/// </summary>
-		private Dictionary<int, Action<object>> responseHooks = new Dictionary<int, Action<object>>();
+        /// <summary>
+        /// 请求数据时的主要回调堆栈
+        /// The main callback stack for when requesting data
+        /// </summary>
+        private Dictionary<int, Action<object>> responseHooks = new Dictionary<int, Action<object>>();
 
 		public Cache(NetWorker socket)
 		{
@@ -95,12 +106,17 @@ namespace BeardedManStudios.Forge.Networking.DataStore
 					memory.Remove(entry.Key);
 		}
 
-		/// <summary>
-		/// Called when the network as interpreted that a cache message has been sent from the server
-		/// </summary>
-		/// <param name="player">The server</param>
-		/// <param name="frame">The data that was received</param>
-		private void BinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
+        /// <summary>
+        /// Called when the network as interpreted that a cache message has been sent from the server
+        /// </summary>
+        /// <param name="player">The server</param>
+        /// <param name="frame">The data that was received</param>
+        /// <summary>
+        ///当网络被解释为缓存消息已经从服务器发送时调用
+        /// </ summary>
+        /// <param name =“player”>服务器</ param>
+        /// <param name =“frame”>收到的数据</ param>
+        private void BinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
 		{
 			if (frame.GroupId != MessageGroupIds.CACHE)
 				return;
@@ -192,25 +208,43 @@ namespace BeardedManStudios.Forge.Networking.DataStore
 			return null;
 		}
 
-		/// <summary>
-		/// Get an object from cache
-		/// </summary>
-		/// <param name="key">The name variable used for storing the desired object</param>
-		/// <returns>The string data at the desired key or null</returns>
-		/// <remarks>
-		/// Allows a client (or the server) to get a value from the Cache, the value is read directly from the server.
-		/// A callback must be specified, this is because the code has to be executed after a moment when the response from the server
-		/// is received. Request can be done like this:
-		/// <code>
-		/// void getServerDescription(){
-		/// Cache.Request<string>("server_description", delegate (object response){
-		///	 Debug.Log(((string) response));
-		/// });
-		/// }
-		/// </code>
-		/// The Cache only supports Forge's supported data Types, you can find a list of supported data Types in the NetSync documentation...
-		/// </remarks>
-		public void Request<T>(string key, Action<object> callback)
+        /// <summary>
+        /// Get an object from cache
+        /// </summary>
+        /// <param name="key">The name variable used for storing the desired object</param>
+        /// <returns>The string data at the desired key or null</returns>
+        /// <remarks>
+        /// Allows a client (or the server) to get a value from the Cache, the value is read directly from the server.
+        /// A callback must be specified, this is because the code has to be executed after a moment when the response from the server
+        /// is received. Request can be done like this:
+        /// <code>
+        /// void getServerDescription(){
+        /// Cache.Request<string>("server_description", delegate (object response){
+        ///	 Debug.Log(((string) response));
+        /// });
+        /// }
+        /// </code>
+        /// The Cache only supports Forge's supported data Types, you can find a list of supported data Types in the NetSync documentation...
+        /// </remarks>
+        /// <summary>
+        ///从缓存中获取对象
+        /// </ summary>
+        /// <param name =“key”>用于存储所需对象的名称变量</ param>
+        /// <returns>所需键的字符串数据或null </ returns>
+        /// <注释>
+        ///允许客户端（或服务器）从缓存中获取值，该值直接从服务器读取。
+        ///必须指定一个回调函数，这是因为代码必须在服务器响应之后执行
+        ///收到。 请求可以这样做：
+        /// <code>
+        /// void getServerDescription（）{
+        /// Cache.Request <string>（“server_description”，delegate（object response）{
+        /// Debug.Log（（（string）response））;
+        ///}）;
+        ///}
+        /// </ code>
+        ///缓存仅支持Forge支持的数据类型，您可以在NetSync文档中找到支持的数据类型列表...
+        /// </ remarks>
+        public void Request<T>(string key, Action<object> callback)
 		{
 			if (callback == null)
 				throw new Exception("A callback is needed when requesting data from the server");
@@ -249,27 +283,42 @@ namespace BeardedManStudios.Forge.Networking.DataStore
 			responseHookIncrementer++;
 		}
 
-		/// <summary>
-		/// Inserts a NEW key/value into cache
-		/// </summary>
-		/// <typeparam name="T">The serializable type of object</typeparam>
-		/// <param name="key">The name variable used for storing the specified object</param>
-		/// <param name="value">The object that is to be stored into cache</param>
-		/// <returns>True if successful insert or False if the key already exists</returns>
-		public bool Insert<T>(string key, T value)
+        /// <summary>
+        /// Inserts a NEW key/value into cache
+        /// </summary>
+        /// <typeparam name="T">The serializable type of object</typeparam>
+        /// <param name="key">The name variable used for storing the specified object</param>
+        /// <param name="value">The object that is to be stored into cache</param>
+        /// <returns>True if successful insert or False if the key already exists</returns>
+        /// <summary>
+        ///将一个新的键/值插入到缓存中
+        /// </ summary>
+        /// <typeparam name =“T”>可序列化的对象类型</ typeparam>
+        /// <param name =“key”>用于存储指定对象的名称变量</ param>
+        /// <param name =“value”>要存储到缓存中的对象</ param>
+        /// <returns>如果成功插入，则返回true;如果键已经存在，则返回False </ returns>
+        public bool Insert<T>(string key, T value)
 		{
 			return Insert(key, value, maxDateTime);
 		}
 
-		/// <summary>
-		/// Inserts a NEW key/value into cache
-		/// </summary>
-		/// <typeparam name="T">The serializable type of object</typeparam>
-		/// <param name="key">The name variable used for storing the specified object</param>
-		/// <param name="value">The object that is to be stored into cache</param>
-		/// <param name="expireAt">The DateTime defining when the cached object should expire</param>
-		/// <returns>True if successful insert or False if the key already exists</returns>
-		public bool Insert<T>(string key, T value, DateTime expireAt)
+        /// <summary>
+        /// Inserts a NEW key/value into cache
+        /// </summary>
+        /// <typeparam name="T">The serializable type of object</typeparam>
+        /// <param name="key">The name variable used for storing the specified object</param>
+        /// <param name="value">The object that is to be stored into cache</param>
+        /// <param name="expireAt">The DateTime defining when the cached object should expire</param>
+        /// <returns>True if successful insert or False if the key already exists</returns>
+        /// <summary>
+        ///将一个新的键/值插入到缓存中
+        /// </ summary>
+        /// <typeparam name =“T”>可序列化的对象类型</ typeparam>
+        /// <param name =“key”>用于存储指定对象的名称变量</ param>
+        /// <param name =“value”>要存储到缓存中的对象</ param>
+        /// <param name =“expireAt”>定义缓存对象何时应该过期的DateTime </ param>
+        /// <returns>如果成功插入，则返回true;如果键已经存在，则返回False </ returns>
+        public bool Insert<T>(string key, T value, DateTime expireAt)
 		{
 			if (!(Socket is IServer))
 				throw new Exception("Inserting cache values is not yet supported for clients!");
@@ -282,16 +331,25 @@ namespace BeardedManStudios.Forge.Networking.DataStore
 			return true;
 		}
 
-		/// <summary>
-		/// Inserts a new key/value or updates a key's value in cache
-		/// </summary>
-		/// <typeparam name="T">The serializable type of object</typeparam>
-		/// <param name="key">The name variable used for storing the specified object</param>
-		/// <param name="value">The object that is to be stored into cache</param>
-		/// <remarks>
-		/// This inputs a value into the cache, this can only be called on the server, you can only input Types forge supports (See NetSync for supported Types).
-		/// </remarks>
-		public void Set<T>(string key, T value)
+        /// <summary>
+        /// Inserts a new key/value or updates a key's value in cache
+        /// </summary>
+        /// <typeparam name="T">The serializable type of object</typeparam>
+        /// <param name="key">The name variable used for storing the specified object</param>
+        /// <param name="value">The object that is to be stored into cache</param>
+        /// <remarks>
+        /// This inputs a value into the cache, this can only be called on the server, you can only input Types forge supports (See NetSync for supported Types).
+        /// </remarks>
+        /// <summary>
+        ///插入新的键/值或更新缓存中的键值
+        /// </ summary>
+        /// <typeparam name =“T”>可序列化的对象类型</ typeparam>
+        /// <param name =“key”>用于存储指定对象的名称变量</ param>
+        /// <param name =“value”>要存储到缓存中的对象</ param>
+        /// <注释>
+        ///这将一个值输入到缓存中，这只能在服务器上调用，您只能输入Types forge支持（请参阅支持的NetSync类型）。
+        /// </ remarks>
+        public void Set<T>(string key, T value)
 		{
 			Set(key, value, maxDateTime);
 		}

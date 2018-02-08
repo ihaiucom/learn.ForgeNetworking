@@ -436,6 +436,10 @@ namespace BeardedManStudios.Forge.Networking.Lobby
 			networkObject.SendRpc(RPC_MESSAGE_RECEIVED, Receivers.All, networkObject.MyPlayerId, message);
 		}
 
+        /// <summary>
+        /// 踢 玩家
+        /// </summary>
+        /// <param name="id"></param>
 		public void KickPlayer(uint id)
 		{
 			if (networkObject.Networker.IsServer)

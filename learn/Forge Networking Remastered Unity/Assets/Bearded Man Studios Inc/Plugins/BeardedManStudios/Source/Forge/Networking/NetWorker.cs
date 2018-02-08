@@ -393,13 +393,15 @@ namespace BeardedManStudios.Forge.Networking
         /// A cached BMSByte to prevent large amounts of garbage collection on packet sequences
         /// </summary>
         public BMSByte PacketSequenceData { get; private set; }
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// The distance from the proximity location in order to receive proximity
-		/// messages from other players
-		/// </summary>
-		public float ProximityDistance { get; set; }
+        /// <summary>
+        /// 接近位置的距离，以便接收接近度
+        /// 来自其他玩家的消息
+        /// The distance from the proximity location in order to receive proximity
+        /// messages from other players
+        /// </summary>
+        public float ProximityDistance { get; set; }
 
         /// <summary>
         /// 允许新创建的网络对象排队进行刷新调用
@@ -407,10 +409,11 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         public bool PendCreates { get; set; }
 
-		/// <summary>
-		/// A boolean to tell the read thread to stop reading and close
-		/// </summary>
-		protected bool readThreadCancel = false;
+        /// <summary>
+        /// 一个布尔值，告诉读取线程停止读取和关闭
+        /// A boolean to tell the read thread to stop reading and close
+        /// </summary>
+        protected bool readThreadCancel = false;
 
         /// <summary>
         /// 当前机器的玩家引用
@@ -418,12 +421,14 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         public NetworkingPlayer Me { get; protected set; }
 
-		public Dictionary<uint, List<Action<NetworkObject>>> missingObjectBuffer = new Dictionary<uint, List<Action<NetworkObject>>>();
+        // 缺少对象缓冲区
+        public Dictionary<uint, List<Action<NetworkObject>>> missingObjectBuffer = new Dictionary<uint, List<Action<NetworkObject>>>();
 
-		/// <summary>
-		/// Determine whether the socket is connected
-		/// </summary>
-		public bool IsConnected
+        /// <summary>
+        /// 确定套接字是否连接
+        /// Determine whether the socket is connected
+        /// </summary>
+        public bool IsConnected
 		{
 			get
 			{
@@ -434,11 +439,13 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// A cached dynamically resizing byte buffer to aid in holding byte memory for a long period of time,
-		/// the max size will be the size of the largest message sent
-		/// </summary>
-		protected BMSByte writeBuffer = new BMSByte();
+        /// <summary>
+        /// 动态调整大小的字节缓冲区以帮助保存长时间的字节内存，
+        /// 最大尺寸将是发送的最大消息的尺寸
+        /// A cached dynamically resizing byte buffer to aid in holding byte memory for a long period of time,
+        /// the max size will be the size of the largest message sent
+        /// </summary>
+        protected BMSByte writeBuffer = new BMSByte();
 
         /// <summary>
         /// 由它的id索引的所有网络对象的字典
@@ -458,11 +465,15 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         private uint currentNetworkObjectId = 0;
 
-		/// <summary>
-		/// This object is to track the time for this networker which is also known
-		/// as a "time step" in this system
-		/// </summary>
-		public TimeManager Time { get; set; }
+        /// <summary>
+        /// This object is to track the time for this networker which is also known
+        /// as a "time step" in this system
+        /// </summary>
+        /// <summary>
+        ///这个对象用来跟踪这个也是已知的联网者的时间
+        ///作为这个系统中的“时间步骤”
+        /// </ summary>
+        public TimeManager Time { get; set; }
 
         /// <summary>
         /// 用于确定这样的网络已被放弃
@@ -470,10 +481,11 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         public bool IsBound { get; private set; }
 
-		/// <summary>
-		/// Used to determine if this NetWorker has already been disposed to avoid re-connections
-		/// </summary>
-		public bool Disposed { get; private set; }
+        /// <summary>
+        /// 用于确定此NetWorker是否已被释放以避免重新连接
+        /// Used to determine if this NetWorker has already been disposed to avoid re-connections
+        /// </summary>
+        public bool Disposed { get; private set; }
 
         /// <summary>
         /// 表示此流程实例的所有联网用户的唯一GUID
@@ -482,30 +494,42 @@ namespace BeardedManStudios.Forge.Networking
         public static Guid InstanceGuid { get; private set; }
 		private static bool setupInstanceGuid = false;
 
-		/// <summary>
-		/// This is the base constructor which is normally used for clients and not classes
-		/// acting as hosts
-		/// </summary>
-		public NetWorker()
+        /// <summary>
+        /// This is the base constructor which is normally used for clients and not classes
+        /// acting as hosts
+        /// </summary>
+        /// <summary>
+        ///这是通常用于客户端而不是类的基础构造函数
+        ///充当主机
+        /// </ summary>
+        public NetWorker()
 		{
 			Initialize();
 		}
 
-		/// <summary>
-		/// Constructor with a given Maximum allowed connections
-		/// </summary>
-		/// <param name="maxConnections">The Maximum connections allowed</param>
-		public NetWorker(int maxConnections)
+        /// <summary>
+        /// Constructor with a given Maximum allowed connections
+        /// </summary>
+        /// <param name="maxConnections">The Maximum connections allowed</param>
+        /// <summary>
+        ///具有给定的最大允许连接的构造函数
+        /// </ summary>
+        /// <param name =“maxConnections”>允许的最大连接数</ param>
+        public NetWorker(int maxConnections)
 		{
 			Initialize();
 			MaxConnections = maxConnections;
 		}
 
-		/// <summary>
-		/// Used to setup any variables and private set properties, time and other 
-		/// network critical variables that relate to a worker
-		/// </summary>
-		private void Initialize()
+        /// <summary>
+        /// Used to setup any variables and private set properties, time and other 
+        /// network critical variables that relate to a worker
+        /// </summary>
+        /// <summary>
+        ///用于设置任何变量和私有属性，时间和其他
+        ///与工作人员相关的网络关键变量
+        /// </ summary>
+        private void Initialize()
 		{
 			PacketSequenceData = new BMSByte();
 
@@ -515,8 +539,9 @@ namespace BeardedManStudios.Forge.Networking
 				setupInstanceGuid = true;
 			}
 
-			// Setup the time if it hasn't been assigned already
-			Time = new TimeManager();
+            //设置时间，如果它还没有被分配
+            // Setup the time if it hasn't been assigned already
+            Time = new TimeManager();
 
 			Players = new List<NetworkingPlayer>();
 			DisconnectingPlayers = new List<NetworkingPlayer>();
@@ -532,6 +557,7 @@ namespace BeardedManStudios.Forge.Networking
 
         /// <summary>
         /// 一旦网络连接被绑定，就被调用
+        /// 启动一个任务，刷新网络对象的属性
         /// Called once the network connection has been bound
         /// </summary>
         protected virtual void NetworkInitialize()
@@ -557,6 +583,10 @@ namespace BeardedManStudios.Forge.Networking
 			});
 		}
 
+        /// <summary>
+        /// 网络对象注册完成
+        /// </summary>
+        /// <param name="networkObject">网络对象</param>
 		public void CompleteInitialization(NetworkObject networkObject)
 		{
 			lock (NetworkObjects)
@@ -569,6 +599,12 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 网络对象注册完成时 调用
+        /// missingObjectBuffer 保存的是该对象在还没被创建完成时，先接受到远程调用的方法 挂起。
+        /// 等网络对象注册完成就调之前挂起时没处理的方法
+        /// </summary>
+        /// <param name="networkObject"></param>
 		public void FlushCreateActions(NetworkObject networkObject)
 		{
 			List<Action<NetworkObject>> actions = null;
@@ -585,6 +621,10 @@ namespace BeardedManStudios.Forge.Networking
 				action(networkObject);
 		}
 
+        /// <summary>
+        /// 迭代玩家列表，执行 参数是NetworkObject的表达式
+        /// </summary>
+        /// <param name="expression">参数是NetworkingPlayer的表达式</param>
 		public void IteratePlayers(Action<NetworkingPlayer> expression)
 		{
 			lock (Players)
@@ -594,6 +634,10 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 迭代网络对象列表，执行 参数是NetworkObject的表达式
+        /// </summary>
+        /// <param name="expression">参数是NetworkObject的表达式</param>
 		public void IterateNetworkObjects(Action<NetworkObject> expression)
 		{
 			lock (Players)
@@ -603,6 +647,11 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 获取NetworkId的玩家
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 		public NetworkingPlayer GetPlayerById(uint id)
 		{
 			lock (Players)
@@ -617,6 +666,11 @@ namespace BeardedManStudios.Forge.Networking
 			return null;
 		}
 
+        /// <summary>
+        /// 查找玩家， 传一个查找方案的表达式进去
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
 		public NetworkingPlayer FindPlayer(Func<NetworkingPlayer, bool> expression)
 		{
 			lock (Players)
@@ -625,6 +679,11 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 查找 Ip、InstanceGuid相等的玩家
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
 		public NetworkingPlayer FindMatchingPlayer(NetworkingPlayer other)
 		{
 			if (other.Networker == this)
@@ -648,7 +707,7 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="networkObject">The object that is to be registered with this networker</param>
         /// <returns><c>true</c> if the object was registered successfully, else <c>false</c> if it has already been registered</returns>
         /// <summary>
-        ///注册一个网络对象与这个网络
+        ///注册一个网络对象与这个网络, 如果forceId是0，会分配一个ID
         /// </ summary>
         /// <param name =“networkObject”>要使用此联网器注册的对象</ param>
         /// <returns> <c> true </ c>如果对象已经成功注册，否则<c> false </ c>已注册</ returns>
@@ -712,23 +771,35 @@ namespace BeardedManStudios.Forge.Networking
 			return true;
 		}
 
-		/// <summary>
-		/// Disconnect this client from the server
-		/// </summary>
-		/// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
-		public abstract void Disconnect(bool forced);
+        /// <summary>
+        /// Disconnect this client from the server
+        /// </summary>
+        /// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
+        /// <summary>
+        ///从服务器断开这个客户端
+        /// </ summary>
+        /// <param name =“forced”>用来判断这个断开连接是故意的<c> false </ c>还是由异常引起<c> true </ c> </ param>
+        public abstract void Disconnect(bool forced);
 
-		/// <summary>
-		/// Reads the frame stream as if it were read on the network
-		/// </summary>
-		/// <param name="frame">The target frame stream to be read</param>
-		public abstract void FireRead(FrameStream frame, NetworkingPlayer currentPlayer);
+        /// <summary>
+        /// Reads the frame stream as if it were read on the network
+        /// </summary>
+        /// <param name="frame">The target frame stream to be read</param>
+        /// <summary>
+        ///读取帧流，就像在网络上读取一样
+        /// </ summary>
+        /// <param name =“frame”>要读取的目标帧流</ param>
+        public abstract void FireRead(FrameStream frame, NetworkingPlayer currentPlayer);
 
-		/// <summary>
-		/// Goes through all of the pending disconnect players and disconnects them
-		/// Pending disconnects are always forced
-		/// </summary>
-		protected void DisconnectPending(Action<NetworkingPlayer, bool> disconnectMethod)
+        /// <summary>
+        /// Goes through all of the pending disconnect players and disconnects them
+        /// Pending disconnects are always forced
+        /// </summary>
+        /// <summary>
+        ///通过所有挂起的断开连接播放器并断开它们
+        ///正在等待断开连接总是被迫
+        /// </ summary>
+        protected void DisconnectPending(Action<NetworkingPlayer, bool> disconnectMethod)
 		{
 			if (DisconnectingPlayers.Count == 0 && ForcedDisconnectingPlayers.Count == 0)
 				return;
@@ -812,11 +883,13 @@ namespace BeardedManStudios.Forge.Networking
 				factoryObjectCreated(obj);
 		}
 
-		/// <summary>
-		/// A wrapper for the bindFailure event call that chindren of this can call.
-		/// This also is responsible for removing the player from the lookup
-		/// </summary>
-		protected void OnPlayerDisconnected(NetworkingPlayer player)
+        /// <summary>
+        /// 这是可以调用的绑定失败事件调用的包装器。 
+        /// 这也是从查找中删除玩家的责任
+        /// A wrapper for the bindFailure event call that chindren of this can call.
+        /// This also is responsible for removing the player from the lookup
+        /// </summary>
+        protected void OnPlayerDisconnected(NetworkingPlayer player)
 		{
 			// Removal of clients can be from any thread
 			lock (Players)

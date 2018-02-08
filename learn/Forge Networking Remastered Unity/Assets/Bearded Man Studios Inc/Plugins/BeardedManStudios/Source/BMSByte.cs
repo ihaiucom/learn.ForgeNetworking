@@ -328,11 +328,15 @@ namespace BeardedManStudios
 			return this;
 		}
 
-		/// <summary>
-		/// Pulls a byte array based off of the BMSByte metadata
-		/// </summary>
-		/// <returns>The array of raw byte data</returns>
-		public byte[] CompressBytes()
+        /// <summary>
+        /// Pulls a byte array based off of the BMSByte metadata
+        /// </summary>
+        /// <returns>The array of raw byte data</returns>
+        /// <summary>
+        ///根据BMSByte元数据拉取一个字节数组
+        /// </ summary>
+        /// <returns>原始字节数据数组</ returns>
+        public byte[] CompressBytes()
 		{
 			byte[] data = new byte[Size];
 			Buffer.BlockCopy(byteArr, StartPointer, data, 0, data.Length);

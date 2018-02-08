@@ -33,6 +33,12 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="playerClient">The client that is to be read from</param>
         /// <param name="usingMask">Changes the algorithm to look for a mask in the bytes to be used</param>
         /// <returns>The bytes that are read for this frame</returns>
+        /// <summary>
+                ///读取当前的客户端流，并从中取出下一组数据
+                /// </ summary>
+                /// <param name =“playerClient”>要从</ param>中读取的客户端
+                /// <param name =“usingMask”>更改算法以查找要使用的字节中的掩码</ param>
+                /// <returns>为这个帧读取的字节</ returns>
         protected byte[] GetNextBytes(NetworkStream stream, int available, bool usingMask)
         {
             // Setup the buffer to have the length of the available bytes for now

@@ -38,10 +38,11 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		public event ComposerEvent completed;
 
-		/// <summary>
-		/// The maximum size allowed for each packet
-		/// </summary>
-		public const ushort PACKET_SIZE = 1200;
+        /// <summary>
+        /// 每个数据包允许的最大大小
+        /// The maximum size allowed for each packet
+        /// </summary>
+        public const ushort PACKET_SIZE = 1200;
 
 		/// <summary>
 		/// A reference to the client worker that this composer belongs to
@@ -90,11 +91,15 @@ namespace BeardedManStudios.Forge.Networking
 			Initialize();
 		}
 
-		/// <summary>
-		/// Send the packet off to the recipient
-		/// </summary>
-		/// <param name="data">The packet data that is to be sent</param>
-		private void Send(byte[] data)
+        /// <summary>
+        /// Send the packet off to the recipient
+        /// </summary>
+        /// <param name="data">The packet data that is to be sent</param>
+        /// <summary>
+        ///将数据包发送给收件人
+        /// </ summary>
+        /// <param name =“data”>要发送的数据包</ param>
+        private void Send(byte[] data)
 		{
 			ClientWorker.Client.Send(data, data.Length, Player.IPEndPointHandle);
 		}
@@ -146,15 +151,17 @@ namespace BeardedManStudios.Forge.Networking
 				completed(this);
 		}
 
-		/// <summary>
-		/// Go through all of the data and compile it into separated packets based on the PACKET_SIZE
-		/// </summary>
-		private void CreatePackets()
+        /// <summary>
+        /// 遍历所有数据，并根据PACKET_SIZE将其编译为独立的数据包
+        /// Go through all of the data and compile it into separated packets based on the PACKET_SIZE
+        /// </summary>
+        private void CreatePackets()
 		{
 			PendingPackets = new Dictionary<int, UDPPacket>();
 
-			// Get all of the data that is available for this frame
-			byte[] data = Frame.GetData(Reliable, Player);
+            //获取可用于该帧的所有数据
+            // Get all of the data that is available for this frame
+            byte[] data = Frame.GetData(Reliable, Player);
 
 			int byteIndex = 0, orderId = 0;
 
@@ -241,11 +248,15 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// This method is called when a packet is received and is a confirmation packet
-		/// </summary>
-		/// <param name="packet">The packet that was received</param>
-		private void MessageConfirmed(NetworkingPlayer player, UDPPacket packet)
+        /// <summary>
+        /// This method is called when a packet is received and is a confirmation packet
+        /// </summary>
+        /// <param name="packet">The packet that was received</param>
+        /// <summary>
+        ///接收数据包时调用此方法，并且是确认数据包
+        /// </ summary>
+        /// <param name =“packet”>收到的数据包</ param>
+        private void MessageConfirmed(NetworkingPlayer player, UDPPacket packet)
 		{
 			// Check to make sure that this packet was sent from this group
 			if (packet.groupId != Frame.GroupId)

@@ -23,10 +23,11 @@ public class ExampleProximityPlayer : ExampleProximityPlayerBehavior
 	/// </summary>
 	public Material matRef = null;
 
-	/// <summary>
-	/// The distance allowed for the proximity between objects in Unity unit space
-	/// </summary>
-	public float proximityDistance = 1.0f;
+    /// <summary>
+    /// Unity单元空间中的对象之间的距离允许的距离
+    /// The distance allowed for the proximity between objects in Unity unit space
+    /// </summary>
+    public float proximityDistance = 1.0f;
 
 	public void Start()
 	{

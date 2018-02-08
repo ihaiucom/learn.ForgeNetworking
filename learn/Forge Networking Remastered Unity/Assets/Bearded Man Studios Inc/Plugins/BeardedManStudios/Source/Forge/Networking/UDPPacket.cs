@@ -21,10 +21,15 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public struct UDPPacket
 	{
+        // 可靠的， 消息的最后一个包， 是否是构造包
 		public bool reliable, endPacket, isConfirmation;
+        // 组好， 序号
 		public int groupId, orderId, retryCount;
+        // 接收方案
 		public Receivers receivers;
+        // 包的编号
 		public ulong uniqueId;
+        // 数据
 		public byte[] rawBytes;
 		public ulong LastSentTimestep { get; private set; }
 

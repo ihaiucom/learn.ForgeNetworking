@@ -167,12 +167,17 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Setup everything required for this client to be accepted by the server and
-		/// construct / send the connection header
-		/// </summary>
-		/// <param name="port">The port that was connected to on the remote host</param>
-		protected virtual void Initialize(string host, ushort port)
+        /// <summary>
+        /// Setup everything required for this client to be accepted by the server and
+        /// construct / send the connection header
+        /// </summary>
+        /// <param name="port">The port that was connected to on the remote host</param>
+        /// <summary>
+        ///设置这个客户端所需要的一切，以便服务器和服务器接受
+        ///构造/发送连接头
+        /// </ summary>
+        /// <param name =“port”>在远程主机上连接的端口</ param>
+        protected virtual void Initialize(string host, ushort port)
 		{
 			// By default pending creates should be true and flushed when ready
 			PendCreates = true;

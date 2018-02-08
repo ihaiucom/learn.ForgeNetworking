@@ -61,17 +61,21 @@ namespace BeardedManStudios.Forge.Networking
 		{
 			UDPPacketComposer composer = new UDPPacketComposer();
 
-			// If this message is reliable then make sure to keep a reference to the composer
-			// so that there are not any run-away threads
-			if (reliable)
+            //如果这个信息是可靠的，那么一定要保持对作曲家的引用
+            //这样就没有任何失控的线程
+            // If this message is reliable then make sure to keep a reference to the composer
+            // so that there are not any run-away threads
+            if (reliable)
 			{
-				// Use the completed event to clean up the object from memory
-				composer.completed += ComposerCompleted;
+                //使用完成的事件从内存中清理对象
+                // Use the completed event to clean up the object from memory
+                composer.completed += ComposerCompleted;
 				pendingComposers.Add(composer);
 			}
 
-			//TODO: New constructor for setting up callbacks before regular constructor (as seen above)
-			composer.Init(this, Server, frame, reliable);
+            // TODO：在正则构造函数之前设置回调的新构造函数（如上所示）
+            //TODO: New constructor for setting up callbacks before regular constructor (as seen above)
+            composer.Init(this, Server, frame, reliable);
 		}
 
 		/// <summary>
@@ -184,11 +188,15 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Disconnect this client from the server
-		/// </summary>
-		/// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
-		public override void Disconnect(bool forced)
+        /// <summary>
+        /// Disconnect this client from the server
+        /// </summary>
+        /// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
+        /// <summary>
+        ///从服务器断开这个客户端
+        /// </ summary>
+        /// <param name =“forced”>用来判断这个断开连接是故意的<c> false </ c>还是由异常引起<c> true </ c> </ param>
+        public override void Disconnect(bool forced)
 		{
 			if (Client == null)
 				return;
@@ -212,11 +220,15 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Infinite loop listening for new data from all connected clients on a separate thread.
-		/// This loop breaks when readThreadCancel is set to true
-		/// </summary>
-		private void ReadNetwork()
+        /// <summary>
+        /// Infinite loop listening for new data from all connected clients on a separate thread.
+        /// This loop breaks when readThreadCancel is set to true
+        /// </summary>
+        /// <summary>
+        ///无限循环在单独的线程上监听来自所有连接客户端的新数据。
+        ///当readThreadCancel设置为true时，此循环中断
+        /// </ summary>
+        private void ReadNetwork()
 		{
 			IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, 0);
 			string incomingEndpoint = string.Empty;
@@ -227,8 +239,9 @@ namespace BeardedManStudios.Forge.Networking
 				// Intentional infinite loop
 				while (IsBound)
 				{
-					// If the read has been flagged to be canceled then break from this loop
-					if (readThreadCancel)
+                    //如果读取已被标记为取消，则从此循环中断开
+                    // If the read has been flagged to be canceled then break from this loop
+                    if (readThreadCancel)
 						return;
 
 					try
@@ -299,8 +312,9 @@ namespace BeardedManStudios.Forge.Networking
 						if (packet.Size < 17)
 							continue;
 
-						// Format the byte data into a UDPPacket struct
-						UDPPacket formattedPacket = TranscodePacket(Server, packet);
+                        // 格式的字节数据到一个udppacket结构
+                        // Format the byte data into a UDPPacket struct
+                        UDPPacket formattedPacket = TranscodePacket(Server, packet);
 
 						// Check to see if this is a confirmation packet, which is just
 						// a packet to say that the reliable packet has been read
@@ -316,8 +330,9 @@ namespace BeardedManStudios.Forge.Networking
 							continue;
 						}
 
-						// Add the packet to the manager so that it can be tracked and executed on complete
-						packetManager.AddPacket(formattedPacket, PacketSequenceComplete, this);
+                        //将数据包添加到管理器，以便可以在完成时跟踪和执行
+                        // Add the packet to the manager so that it can be tracked and executed on complete
+                        packetManager.AddPacket(formattedPacket, PacketSequenceComplete, this);
 					}
 				}
 			}

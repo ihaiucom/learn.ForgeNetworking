@@ -16,23 +16,28 @@ namespace BeardedManStudios.Forge.Networking
 
 		public bool PlayerIsReceiver(NetworkingPlayer player, FrameStream frame, float proximityDistance, NetworkingPlayer skipPlayer = null)
 		{
-			// Don't send messages to a player who has not been accepted by the server yet
-			if ((!player.Accepted && !player.PendingAccepted) || player == skipPlayer)
+            // 不要将消息发送给尚未被服务器接受的播放器
+            // Don't send messages to a player who has not been accepted by the server yet
+            if ((!player.Accepted && !player.PendingAccepted) || player == skipPlayer)
 				return false;
 
 			if (player == frame.Sender)
 			{
-				// Don't send a message to the sending player if it was meant for others
-				if (frame.Receivers == Receivers.Others || frame.Receivers == Receivers.OthersBuffered || frame.Receivers == Receivers.OthersProximity)
+                //如果发送给其他人，则不要发送消息给发送方
+                // Don't send a message to the sending player if it was meant for others
+                if (frame.Receivers == Receivers.Others || frame.Receivers == Receivers.OthersBuffered || frame.Receivers == Receivers.OthersProximity)
 					return false;
 			}
 
-			// Check to see if the request is based on proximity
-			if (frame.Receivers == Receivers.AllProximity || frame.Receivers == Receivers.OthersProximity)
+            //检查请求是否基于邻近
+            // Check to see if the request is based on proximity
+            if (frame.Receivers == Receivers.AllProximity || frame.Receivers == Receivers.OthersProximity)
 			{
-				// If the target player is not in the same proximity zone as the sender
-				// then it should not be sent to that player
-				if (player.ProximityLocation.Distance(frame.Sender.ProximityLocation) > proximityDistance)
+                //如果目标玩家与发件人不在同一个邻近区域
+                //那么它不应该被发送给那个玩家
+                // If the target player is not in the same proximity zone as the sender
+                // then it should not be sent to that player
+                if (player.ProximityLocation.Distance(frame.Sender.ProximityLocation) > proximityDistance)
 				{
 					return false;
 				}
@@ -41,18 +46,20 @@ namespace BeardedManStudios.Forge.Networking
 			return true;
 		}
 
-		/// <summary>
-		/// Checks all of the clients to see if any of them are timed out
-		/// </summary>
-		public void CheckClientTimeout(Action<NetworkingPlayer> timeoutDisconnect)
+        /// <summary>
+        /// 检查所有的客户端，看他们是否超时
+        /// Checks all of the clients to see if any of them are timed out
+        /// </summary>
+        public void CheckClientTimeout(Action<NetworkingPlayer> timeoutDisconnect)
 		{
 			List<NetworkingPlayer> timedoutPlayers = new List<NetworkingPlayer>();
 			while (server.IsBound)
 			{
 				server.IteratePlayers((player) =>
 				{
-					// Don't process the server during this check
-					if (player == server.Me)
+                    //在此检查期间不要处理服务器
+                    // Don't process the server during this check
+                    if (player == server.Me)
 						return;
 
 					if (player.TimedOut())
@@ -69,16 +76,21 @@ namespace BeardedManStudios.Forge.Networking
 					timedoutPlayers.Clear();
 				}
 
-				// Wait a second before checking again
-				Thread.Sleep(1000);
+                //再等一下再等一下
+                // Wait a second before checking again
+                Thread.Sleep(1000);
 			}
 		}
 
-		/// <summary>
-		/// Disconnects a client
-		/// </summary>
-		/// <param name="client">The target client to be disconnected</param>
-		public void Disconnect(NetworkingPlayer player, bool forced,
+        /// <summary>
+        /// Disconnects a client
+        /// </summary>
+        /// <param name="client">The target client to be disconnected</param>
+        /// <summary>
+        ///断开一个客户端
+        /// </ summary>
+        /// <param name =“client”>要断开连接的目标客户端</ param>
+        public void Disconnect(NetworkingPlayer player, bool forced,
 			List<NetworkingPlayer> DisconnectingPlayers, List<NetworkingPlayer> ForcedDisconnectingPlayers)
 		{
 			if (player.IsDisconnecting || DisconnectingPlayers.Contains(player) || ForcedDisconnectingPlayers.Contains(player))
