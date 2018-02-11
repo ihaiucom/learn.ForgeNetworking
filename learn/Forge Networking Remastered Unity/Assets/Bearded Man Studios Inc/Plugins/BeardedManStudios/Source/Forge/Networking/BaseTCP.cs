@@ -41,9 +41,11 @@ namespace BeardedManStudios.Forge.Networking
                 /// <returns>为这个帧读取的字节</ returns>
         protected byte[] GetNextBytes(NetworkStream stream, int available, bool usingMask)
         {
+            //将缓冲区设置为现在有可用字节的长度
             // Setup the buffer to have the length of the available bytes for now
             byte[] bytes = new byte[available];
 
+            //确定当前长度是否是第二个字节或更多的值
             // Read the first 2 bytes, the first byte being the control fram id,
             // and the second being the initial data length check
             stream.Read(bytes, 0, 2);

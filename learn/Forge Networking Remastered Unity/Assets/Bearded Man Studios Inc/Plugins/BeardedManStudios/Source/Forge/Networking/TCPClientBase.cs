@@ -32,13 +32,14 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public abstract class TCPClientBase : BaseTCP, IClient
 	{
-		/// <summary>
-		/// The reference to the raw client that is connected to the server
-		/// </summary>
+        /// <summary>
+        /// 连接到服务器的原始客户端的引用
+        /// The reference to the raw client that is connected to the server
+        /// </summary>
 #if WINDOWS_UWP
 		public StreamSocket client { get; private set; }
 #else
-		public TcpClient client { get; private set; }
+        public TcpClient client { get; private set; }
 #endif
 
 		/// <summary>
