@@ -25,10 +25,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
     /// </summary>
 	public class ConnectionClose : FrameStream
 	{
-		/// <summary>
-		/// Connection close frame is denoted by %x8
-		/// </summary>
-		public const byte CONTROL_BYTE = 136;
+        /// <summary>
+        /// 连接关闭帧由％x8表示
+        /// Connection close frame is denoted by %x8
+        /// </summary>
+        public const byte CONTROL_BYTE = 136;
 
 		public override byte ControlByte { get { return CONTROL_BYTE; } }
 

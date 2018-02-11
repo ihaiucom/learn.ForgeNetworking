@@ -343,12 +343,17 @@ namespace BeardedManStudios
 			return data;
 		}
 
-		/// <summary>
-		/// Inserts a set of bytes at a specified index into the internal byte array
-		/// </summary>
-		/// <param name="start">The index that the new byte array will be inserted from in the internal byte array</param>
-		/// <param name="data">The bytes that will be inserted at the specified point</param>
-		public void InsertRange(int start, byte[] data)
+        /// <summary>
+        /// Inserts a set of bytes at a specified index into the internal byte array
+        /// </summary>
+        /// <param name="start">The index that the new byte array will be inserted from in the internal byte array</param>
+        /// <param name="data">The bytes that will be inserted at the specified point</param>
+        /// <summary>
+        ///将指定索引处的一组字节插入到内部字节数组中
+        /// </ summary>
+        /// <param name =“start”>新字节数组将从内部字节数组中插入的索引</ param>
+        /// <param name =“data”>将在指定点插入的字节</ param>
+        public void InsertRange(int start, byte[] data)
 		{
 			if (byteArr.Length <= Size + data.Length)
 				Array.Resize<byte>(ref byteArr, data.Length + Size);

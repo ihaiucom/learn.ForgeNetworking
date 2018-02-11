@@ -29,26 +29,31 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public class UDPClient : BaseUDP, IClient
 	{
-		/// <summary>
-		/// The max amount of tries that this client will attempt to connect to the server
-		/// where there is 3 seconds between each attempt
-		/// </summary>
-		public const int CONNECT_TRIES = 10;
+        /// <summary>
+        /// 此客户端尝试连接到服务器的最大尝试次数
+        /// 每次尝试之间有3秒钟
+        /// The max amount of tries that this client will attempt to connect to the server
+        /// where there is 3 seconds between each attempt
+        /// </summary>
+        public const int CONNECT_TRIES = 10;
 
-		/// <summary>
-		/// The hash that is / was validated by the server
-		/// </summary>
-		private string headerHash = string.Empty;
+        /// <summary>
+        /// 被服务器验证的散列
+        /// The hash that is / was validated by the server
+        /// </summary>
+        private string headerHash = string.Empty;
 
-		/// <summary>
-		/// Used to determine if the client has requested to be accepted by the server
-		/// </summary>
-		private bool headerExchanged = false;
+        /// <summary>
+        /// 用于确定客户端是否请求被服务器接受
+        /// Used to determine if the client has requested to be accepted by the server
+        /// </summary>
+        private bool headerExchanged = false;
 
-		/// <summary>
-		/// The identity of the server as a player
-		/// </summary>
-		private NetworkingPlayer server = null;
+        /// <summary>
+        /// 作为玩家的服务器的身份
+        /// The identity of the server as a player
+        /// </summary>
+        private NetworkingPlayer server = null;
 		public NetworkingPlayer Server { get { return server; } }
 
 		public UDPPacketManager packetManager = new UDPPacketManager();
@@ -343,18 +348,28 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 接收完 消息的完整数据包 处理
+        /// </summary>
+        /// <param name="data">消息的 完整数据</param>
+        /// <param name="groupId">消息组ID</param>
+        /// <param name="receivers">接收方 方案</param>
+        /// <param name="isReliable">是否 可靠的消息</param>
 		private void PacketSequenceComplete(BMSByte data, int groupId, byte receivers, bool isReliable)
 		{
-			// Pull the frame from the sent message
-			FrameStream frame = Factory.DecodeMessage(data.CompressBytes(), false, groupId, Server, receivers);
+            //从发送的消息中拉出帧
+            // Pull the frame from the sent message
+            FrameStream frame = Factory.DecodeMessage(data.CompressBytes(), false, groupId, Server, receivers);
 
 			if (isReliable)
 			{
 				frame.ExtractReliableId();
 
-				// TODO:  If the current reliable index for this player is not at
-				// the specified index, then it needs to wait for the correct ordering
-				Server.WaitReliable(frame);
+                // TODO:  If the current reliable index for this player is not at
+                // the specified index, then it needs to wait for the correct ordering
+                // TODO：如果这个玩家当前的可靠指数不是
+                //指定的索引，那么它需要等待正确的排序
+                Server.WaitReliable(frame);
 			}
 			else
 				FireRead(frame, Server);

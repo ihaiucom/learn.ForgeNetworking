@@ -38,18 +38,24 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		public Binary(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId) { }
 		public Binary(byte[] frame, int payloadStart, int groupId, NetworkingPlayer sender, byte receivers) : base(frame, payloadStart, groupId, sender, receivers) { }
 
-		/// <summary>
-		/// Take an existing byte[] frame and map it to this data type
-		/// </summary>
-		/// <param name="frame">The existing frame data</param>
-		/// <param name="payloadStart">The index that the payload starts at in the frame byte[]</param>
-		protected override void ReadFrame(byte[] frame, int payloadStart, byte receivers = 255)
+        /// <summary>
+        /// Take an existing byte[] frame and map it to this data type
+        /// </summary>
+        /// <param name="frame">The existing frame data</param>
+        /// <param name="payloadStart">The index that the payload starts at in the frame byte[]</param>
+        /// <summary>
+        ///获取一个现有的byte []帧并将其映射到这个数据类型
+        /// </ summary>
+        /// <param name =“frame”>现有的帧数据</ param>
+        /// <param name =“payloadStart”>有效载荷在帧中开始的索引byte [] </ param>
+        protected override void ReadFrame(byte[] frame, int payloadStart, byte receivers = 255)
 		{
 			// Read the router byte
 			RouterId = frame[payloadStart];
 
-			// Move the start of the payload since we have read the router byte
-			payloadStart++;
+            //因为我们已经读取了路由器字节，所以移动负载的开始
+            // Move the start of the payload since we have read the router byte
+            payloadStart++;
 
 			base.ReadFrame(frame, payloadStart, receivers);
 		}

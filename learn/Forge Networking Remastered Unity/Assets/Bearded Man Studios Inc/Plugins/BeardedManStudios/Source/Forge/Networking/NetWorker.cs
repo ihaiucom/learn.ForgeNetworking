@@ -847,7 +847,7 @@ namespace BeardedManStudios.Forge.Networking
         protected void OnPlayerConnected(NetworkingPlayer player)
 		{
 			if (Players.Contains(player))
-				throw new BaseNetworkException("Cannot add player because it already exists in the list");
+				throw new BaseNetworkException("无法添加播放器，因为它已经存在于列表中 Cannot add player because it already exists in the list");
 
 			// Removal of clients can be from any thread
 			lock (Players)
@@ -923,8 +923,8 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				currentObjects = NetworkObjects.Values.ToArray();
 			}
-
-			NetworkObject.PlayerAccepted(player, currentObjects);
+            // 服务器发送目前所有的网络对象给他
+            NetworkObject.PlayerAccepted(player, currentObjects);
 
 			if (playerAccepted != null)
 				playerAccepted(player, this);
@@ -969,29 +969,38 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         protected void OnMessageReceived(NetworkingPlayer player, FrameStream frame)
 		{
+            // 客户端被服务器接收
 			if (frame.GroupId == MessageGroupIds.NETWORK_ID_REQUEST && this is IClient)
 			{
 				Time.SetStartTime(frame.TimeStep);
+                // 读取玩家ID， 创建客户端自己的NetworkingPlayer
 				Me = new NetworkingPlayer(frame.StreamData.GetBasicType<uint>(), "0.0.0.0", false, null, this);
 				Me.AssignPort(Port);
 				OnServerAccepted();
 				return;
 			}
 
+            // 收到ping
 			if (frame.GroupId == MessageGroupIds.PING || frame.GroupId == MessageGroupIds.PONG)
 			{
+                // 发送ping时的 发送者时间
 				long receivedTimestep = frame.StreamData.GetBasicType<long>();
 				DateTime received = new DateTime(receivedTimestep);
+
+                // 现在接收到反馈ping的时间 - 自己发送ping是的时间
 				TimeSpan ms = DateTime.UtcNow - received;
 
 				if (frame.GroupId == MessageGroupIds.PING)
-					Pong(player, received);
+                    // 反馈ping, 将发送ping时的 发送者时间 一起发给他
+                    Pong(player, received);
 				else
+                    // 接收都ping的反馈
 					OnPingRecieved(ms.TotalMilliseconds, player);
 
 				return;
 			}
 
+            // 二进制消息
 			if (frame is Binary)
 			{
 				byte routerId = ((Binary)frame).RouterId;
@@ -1007,6 +1016,9 @@ namespace BeardedManStudios.Forge.Networking
 
 					if (targetObject == null)
 					{
+                        // 收到该网络对象的消息包
+                        // 但是该玩家机器上还没有创建网络对象
+                        // 就将该消息缓存器来，等待网络对象创建完再掉用
 						lock (missingObjectBuffer)
 						{
 							if (!missingObjectBuffer.ContainsKey(id))
@@ -1018,23 +1030,28 @@ namespace BeardedManStudios.Forge.Networking
 							});
 						}
 
-						// TODO:  If the server is missing an object, it should have a timed buffer
-						// that way useless messages are not setting around in memory
+                        // TODO:  If the server is missing an object, it should have a timed buffer
+                        // that way useless messages are not setting around in memory
+                        // TODO：如果服务器缺少一个对象，它应该有一个定时缓冲区
+                        //这种无用的消息不会在内存中设置
 
-						return;
+                        return;
 					}
 
 					ExecuteRouterAction(routerId, targetObject, (Binary)frame, player);
 				}
+                // 创建网络对象
 				else if (routerId == RouterIds.NETWORK_OBJECT_ROUTER_ID)
 				{
 					NetworkObject.CreateNetworkObject(this, player, (Binary)frame);
 				}
-				else if (routerId == RouterIds.ACCEPT_MULTI_ROUTER_ID)
+                // 在服务器接受客户端时，将服务器现有的所有网络对象 发给该玩家，让他创建
+                else if (routerId == RouterIds.ACCEPT_MULTI_ROUTER_ID)
 					NetworkObject.CreateMultiNetworkObject(this, player, (Binary)frame);
 				else if (binaryMessageReceived != null)
 					binaryMessageReceived(player, (Binary)frame, this);
 			}
+            // 文本消息
 			else if (frame is Text && textMessageReceived != null)
 				textMessageReceived(player, (Text)frame, this);
 
@@ -1044,6 +1061,7 @@ namespace BeardedManStudios.Forge.Networking
 
 		private void ExecuteRouterAction(byte routerId, NetworkObject networkObject, Binary frame, NetworkingPlayer player)
 		{
+            // 执行RPC函数
 			if (routerId == RouterIds.RPC_ROUTER_ID)
 				networkObject.InvokeRpc(player, frame.TimeStep, frame.StreamData, frame.Receivers);
 			else if (routerId == RouterIds.BINARY_DATA_ROUTER_ID)
@@ -1052,10 +1070,11 @@ namespace BeardedManStudios.Forge.Networking
 				networkObject.CreateConfirmed(player);
 		}
 
-		/// <summary>
-		/// When this socket has been disconnected
-		/// </summary>
-		protected void OnDisconnected()
+        /// <summary>
+        /// 当这个插座已经断开
+        /// When this socket has been disconnected
+        /// </summary>
+        protected void OnDisconnected()
 		{
 			IsBound = false;
 
@@ -1087,10 +1106,12 @@ namespace BeardedManStudios.Forge.Networking
 			Disposed = true;
 		}
 
-		/// <summary>
-		/// A wrapper around calling the serverAccepted event from child classes
-		/// </summary>
-		protected void OnServerAccepted()
+        /// <summary>
+        /// 客户端被服务器接受
+        /// 从子类调用serverAccepted事件的包装器
+        /// A wrapper around calling the serverAccepted event from child classes
+        /// </summary>
+        protected void OnServerAccepted()
 		{
 			Me.Connected = true;
 
@@ -1098,11 +1119,16 @@ namespace BeardedManStudios.Forge.Networking
 				serverAccepted(this);
 		}
 
-		/// <summary>
-		/// A wrapper around calling the playerGuidAssigned event from child classes
-		/// </summary>
-		/// <param name="player">The player which the guid was assigned to</param>
-		protected void OnPlayerGuidAssigned(NetworkingPlayer player)
+        /// <summary>
+        /// A wrapper around calling the playerGuidAssigned event from child classes
+        /// </summary>
+        /// <param name="player">The player which the guid was assigned to</param>
+        /// <summary>
+        ///从子类调用playerGuidAssigned事件的包装器
+        ///收到玩家的InstanceGuid，给玩家设置完InstanceGuid
+        /// </ summary>
+        /// <param name =“player”> guid分配给的玩家</ param>
+        protected void OnPlayerGuidAssigned(NetworkingPlayer player)
 		{
 			if (playerGuidAssigned != null)
 				playerGuidAssigned(player, this);

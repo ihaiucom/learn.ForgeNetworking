@@ -117,13 +117,17 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				byte messageType = 130;
 
-				// Get the frame that was sent by the server, the server
-				// does not send masked data, only the client so send false for mask
-				FrameStream frame = Factory.ReadFrameStream(messageType, bytes, 0, MessageGroupIds.TCP_FIND_GROUP_ID, Server);
+                // Get the frame that was sent by the server, the server
+                // does not send masked data, only the client so send false for mask
+                //获取由服务器，服务器发送的帧
+                //不发送被屏蔽的数据，只有客户端发送false为掩码
+                FrameStream frame = Factory.ReadFrameStream(messageType, bytes, 0, MessageGroupIds.TCP_FIND_GROUP_ID, Server);
 
-				// A message has been successfully read from the network so relay that
-				// to all methods registered to the event
-				OnMessageReceived(Server, frame);
+                // A message has been successfully read from the network so relay that
+                // to all methods registered to the event
+                //已成功从网络读取消息，以便中继
+                //注册到事件的所有方法
+                OnMessageReceived(Server, frame);
 			}
 		}
 #endif

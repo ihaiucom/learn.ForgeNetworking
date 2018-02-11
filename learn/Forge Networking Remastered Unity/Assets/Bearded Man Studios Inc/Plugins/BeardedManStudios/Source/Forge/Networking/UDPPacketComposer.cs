@@ -27,16 +27,21 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public class UDPPacketComposer
 	{
-		/// <summary>
-		/// A base for any composer based events
-		/// </summary>
-		/// <param name="composer">The composer that fired off the event</param>
-		public delegate void ComposerEvent(UDPPacketComposer composer);
+        /// <summary>
+        /// A base for any composer based events
+        /// </summary>
+        /// <param name="composer">The composer that fired off the event</param>
+        /// <summary>
+        ///任何基于作曲者的事件的基础
+        /// </ summary>
+        /// <param name =“composer”>发起事件的作曲家</ param>
+        public delegate void ComposerEvent(UDPPacketComposer composer);
 
-		/// <summary>
-		/// Occurs when this composer has completed all of its messaging tasks
-		/// </summary>
-		public event ComposerEvent completed;
+        /// <summary>
+        /// 在这个作曲家完成了所有消息传递任务时发生
+        /// Occurs when this composer has completed all of its messaging tasks
+        /// </summary>
+        public event ComposerEvent completed;
 
         /// <summary>
         /// 每个数据包允许的最大大小
@@ -44,31 +49,39 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         public const ushort PACKET_SIZE = 1200;
 
-		/// <summary>
-		/// A reference to the client worker that this composer belongs to
-		/// </summary>
-		public BaseUDP ClientWorker { get; private set; }
+        /// <summary>
+        /// 这个作曲家所属的客户工作者的引用
+        /// A reference to the client worker that this composer belongs to
+        /// </summary>
+        public BaseUDP ClientWorker { get; private set; }
 
-		/// <summary>
-		/// The target player in question that will be receiving this data
-		/// </summary>
-		public NetworkingPlayer Player { get; private set; }
+        /// <summary>
+        /// 将会收到这个数据的目标玩家
+        /// The target player in question that will be receiving this data
+        /// </summary>
+        public NetworkingPlayer Player { get; private set; }
 
-		/// <summary>
-		/// The frame that is to be sent to the user
-		/// </summary>
-		public FrameStream Frame { get; private set; }
+        /// <summary>
+        /// 要发送给用户的帧
+        /// The frame that is to be sent to the user
+        /// </summary>
+        public FrameStream Frame { get; private set; }
 
-		/// <summary>
-		/// If this message is reliable so that the object knows if it needs to attempt to resend packets
-		/// </summary>
-		public bool Reliable { get; private set; }
+        /// <summary>
+        /// 如果这个消息是可靠的，以便对象知道是否需要尝试重新发送数据包
+        /// If this message is reliable so that the object knows if it needs to attempt to resend packets
+        /// </summary>
+        public bool Reliable { get; private set; }
 
-		/// <summary>
-		/// The list of packets that are to be resent if it is reliable, otherwise it is just the
-		/// list of packets that is to be sent and forgotten about
-		/// </summary>
-		public Dictionary<int, UDPPacket> PendingPackets { get; private set; }
+        /// <summary>
+        /// The list of packets that are to be resent if it is reliable, otherwise it is just the
+        /// list of packets that is to be sent and forgotten about
+        /// </summary>
+        /// <summary>
+        ///如果可靠的话将被重新发送的数据包的列表，否则就是
+        ///要发送和忘记的数据包列表
+        /// </ summary>
+        public Dictionary<int, UDPPacket> PendingPackets { get; private set; }
 
 		public UDPPacketComposer() { }
 
@@ -108,39 +121,48 @@ namespace BeardedManStudios.Forge.Networking
 		{
 			CreatePackets();
 
-			// If this is a reliable message then we need to make sure to try and resend the message
-			// at a given interval, later on this could be sent at the players last ping + time buffer
-			if (Reliable)
+            //如果这是一个可靠的消息，那么我们需要确保尝试并重新发送消息
+            //以给定的时间间隔，稍后可以在玩家最后一次ping +时间缓冲区发送
+            // If this is a reliable message then we need to make sure to try and resend the message
+            // at a given interval, later on this could be sent at the players last ping + time buffer
+            if (Reliable)
 			{
-				// Make sure to register that this composer is to listen for completed packets to know
-				// when each of the packets have been confirmed by the recipient
-				ClientWorker.messageConfirmed += MessageConfirmed;
+                // 确保注册，这个作曲家是听完整的数据包知道
+                //当每个数据包已经被接收者确认时
+                // Make sure to register that this composer is to listen for completed packets to know
+                // when each of the packets have been confirmed by the recipient
+                ClientWorker.messageConfirmed += MessageConfirmed;
 
 				Player.QueueComposer(this);
 			}
 			else
 			{
-				// TODO:  Probably should run this off the main thread
-				// Go through all of the packets that were created and send them out immediately
-				foreach (KeyValuePair<int, UDPPacket> kv in PendingPackets)
+                // TODO：可能应该从主线程中运行
+                //查看所有创建的数据包，并立即发送出去
+                // TODO:  Probably should run this off the main thread
+                // Go through all of the packets that were created and send them out immediately
+                foreach (KeyValuePair<int, UDPPacket> kv in PendingPackets)
 				{
 					Send(kv.Value.rawBytes);
 
 					ClientWorker.BandwidthOut += (ulong)kv.Value.rawBytes.Length;
 
-					// Spread the packets apart by 1 ms to prevent any clobbering that may happen
-					// on the socket layer for sending too much data
-					Thread.Sleep(1);
+                     // 传播数据包1毫秒，以防止任何可能发生的破坏
+                    //在套接字层发送太多的数据
+                    // Spread the packets apart by 1 ms to prevent any clobbering that may happen
+                    // on the socket layer for sending too much data
+                    Thread.Sleep(1);
 				}
 
 				Cleanup();
 			}
 		}
 
-		/// <summary>
-		/// Cleans up the thread, pending packets, and fires off any completion events
-		/// </summary>
-		private void Cleanup()
+        /// <summary>
+        /// 清理线程，挂起的数据包，并触发任何完成事件
+        /// Cleans up the thread, pending packets, and fires off any completion events
+        /// </summary>
+        private void Cleanup()
 		{
 			lock (PendingPackets)
 			{
@@ -165,7 +187,11 @@ namespace BeardedManStudios.Forge.Networking
 
 			int byteIndex = 0, orderId = 0;
 
-			byte[] trailer = new byte[9];
+            // int groupId 
+            // int orderId
+            // trailer[8] = Reliable (0x1) | endPacket(0x2) | Receivers <<4
+            byte[] trailer = new byte[9];
+
 
 			Buffer.BlockCopy(BitConverter.GetBytes(Frame.GroupId), 0, trailer, 0, sizeof(int));
 
@@ -178,44 +204,58 @@ namespace BeardedManStudios.Forge.Networking
 				bool endPacket = remainingPacketSize <= PACKET_SIZE;
 				int length = 0;
 
-				// We need to add the time step to this packet if it is not the end
-				if (!endPacket)
+                //如果不是结束的话，我们需要把这个时间步添加到这个包中
+                // We need to add the time step to this packet if it is not the end
+                if (!endPacket)
 				{
-					// We need to backtrack the length of the added timestamp
-					length -= sizeof(ulong);
+                    //我们需要回溯添加的时间戳的长度
+                    // We need to backtrack the length of the added timestamp
+                    length -= sizeof(ulong);
 					remainingPacketSize += -length;
 				}
 
-				// Create the packet space in memory and assign it to the correct length
-				byte[] packet = new byte[Math.Min(PACKET_SIZE, remainingPacketSize)];
+                //在内存中创建数据包空间并将其分配给正确的长度
+                // dataPartEnd, trailer
+                // dataPart,UniqueId, trailer
+                // Create the packet space in memory and assign it to the correct length
+                byte[] packet = new byte[Math.Min(PACKET_SIZE, remainingPacketSize)];
 
 				length += packet.Length - trailer.Length;
 
-				// Copy the bytes from the source into the new packet
-				Buffer.BlockCopy(data, byteIndex, packet, 0, length);
+                //将来自源的字节复制到新的数据包中
+                // Copy the bytes from the source into the new packet
+                Buffer.BlockCopy(data, byteIndex, packet, 0, length);
 
-				// Make sure we count every byte so we end the loop correctly and also so we know
-				// if this is the last packet in the sequence
-				byteIndex += length;
+                 // 确保我们计数每个字节，所以我们正确地结束循环，所以我们知道
+                 //如果这是序列中的最后一个数据包
+                 // Make sure we count every byte so we end the loop correctly and also so we know
+                 // if this is the last packet in the sequence
+                 byteIndex += length;
 
 				if (endPacket)
 				{
 					trailer[trailer.Length - 1] |= 0x2;
 
-					// Add the receivers to the end header byte
-					trailer[trailer.Length - 1] |= (byte)(((int)Frame.Receivers) << 4);
+                    //将接收器添加到结束标头字节
+                    // Add the receivers to the end header byte
+                    trailer[trailer.Length - 1] |= (byte)(((int)Frame.Receivers) << 4);
 				}
-				else    // We need to copy the unique id into this message
-					Buffer.BlockCopy(BitConverter.GetBytes(Frame.UniqueId), 0, packet, length, sizeof(ulong));
+				else
+                    //我们需要将唯一的ID复制到这个消息中
+                    // We need to copy the unique id into this message
+                    Buffer.BlockCopy(BitConverter.GetBytes(Frame.UniqueId), 0, packet, length, sizeof(ulong));
 
-				// Set the order id for this packet in the trailer
-				Buffer.BlockCopy(BitConverter.GetBytes(orderId), 0, trailer, sizeof(int), sizeof(int));
+                //在预告片中设置这个数据包的顺序号
+                // Set the order id for this packet in the trailer
+                Buffer.BlockCopy(BitConverter.GetBytes(orderId), 0, trailer, sizeof(int), sizeof(int));
 
-				// Copy the trailer to the end of the packet
-				Buffer.BlockCopy(trailer, 0, packet, packet.Length - trailer.Length, trailer.Length);
+                //将预告片复制到数据包的末尾
+                // Copy the trailer to the end of the packet
+                Buffer.BlockCopy(trailer, 0, packet, packet.Length - trailer.Length, trailer.Length);
 
-				// Create and add the new packet to pending packets so that it can be sent out
-				PendingPackets.Add(orderId, new UDPPacket(Reliable, endPacket, Frame.GroupId, orderId, Frame.UniqueId, packet, false, Frame.Receivers));
+                //创建新的数据包并将其添加到挂起的数据包中，以便将其发送出去
+                // Create and add the new packet to pending packets so that it can be sent out
+                PendingPackets.Add(orderId, new UDPPacket(Reliable, endPacket, Frame.GroupId, orderId, Frame.UniqueId, packet, false, Frame.Receivers));
 				orderId++;
 			} while (byteIndex < data.Length);
 		}
@@ -258,12 +298,14 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name =“packet”>收到的数据包</ param>
         private void MessageConfirmed(NetworkingPlayer player, UDPPacket packet)
 		{
-			// Check to make sure that this packet was sent from this group
-			if (packet.groupId != Frame.GroupId)
+            //检查以确保这个数据包是从这个组发送的
+            // Check to make sure that this packet was sent from this group
+            if (packet.groupId != Frame.GroupId)
 				return;
 
-			// Check to make sure that the packet was sent from this composer
-			if (packet.uniqueId != Frame.UniqueId)
+            //检查以确保数据包是从这个作曲家发送的
+            // Check to make sure that the packet was sent from this composer
+            if (packet.uniqueId != Frame.UniqueId)
 				return;
 
 			if (player != Player)
@@ -273,11 +315,13 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				UDPPacket foundPacket;
 
-				// Check to see if we already received a confirmation for this packet
-				if (!PendingPackets.TryGetValue(packet.orderId, out foundPacket))
+                //检查我们是否已经收到了这个包的确认
+                // Check to see if we already received a confirmation for this packet
+                if (!PendingPackets.TryGetValue(packet.orderId, out foundPacket))
 					return;
 
-				player.RoundTripLatency = (int)(player.Networker.Time.Timestep - foundPacket.LastSentTimestep);
+                // 往返延迟
+                player.RoundTripLatency = (int)(player.Networker.Time.Timestep - foundPacket.LastSentTimestep);
 
 				// Remove the packet from pending so that it isn't sent again
 				PendingPackets.Remove(packet.orderId);

@@ -100,10 +100,11 @@ namespace BeardedManStudios.Forge.Networking
 
 		protected List<FrameStream> bufferedMessages = new List<FrameStream>();
 
-		/// <summary>
-		/// Used to determine if this server is currently accepting connections
-		/// </summary>
-		public bool AcceptingConnections { get; private set; }
+        /// <summary>
+        /// 用于确定此服务器当前是否正在接受连接
+        /// Used to determine if this server is currently accepting connections
+        /// </summary>
+        public bool AcceptingConnections { get; private set; }
 
 		public List<string> BannedAddresses { get; set; }
 
@@ -151,8 +152,9 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				try
 				{
-					// Get the raw bytes from the frame and send them
-					byte[] data = frame.GetData();
+                    //从帧中获取原始字节并发送
+                    // Get the raw bytes from the frame and send them
+                    byte[] data = frame.GetData();
 
 					RawWrite(client, data);
 					return true;
@@ -390,27 +392,33 @@ namespace BeardedManStudios.Forge.Networking
 			asyncListener.BeginAcceptTcpClient(ListenForConnections, asyncListener);
 
 			if (rawClients.Count == MaxConnections)
-			{
-				// Tell the client why they are being disconnected
-				Send(client, Error.CreateErrorMessage(Time.Timestep, "Max Players Reached On Server", false, MessageGroupIds.MAX_CONNECTIONS, true));
+            {
+                //告诉客户端为什么断开连接
+                // Tell the client why they are being disconnected
+                Send(client, Error.CreateErrorMessage(Time.Timestep, "服务器上达到的最大玩家数 Max Players Reached On Server", false, MessageGroupIds.MAX_CONNECTIONS, true));
 
-				// Send the close connection frame to the client
-				Send(client, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
+                //将关闭连接帧发送到客户端
+                // Send the close connection frame to the client
+                Send(client, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
 
-				// Do disconnect logic for client
-				ClientRejected(client, false);
+                //执行客户端断开逻辑
+                // Do disconnect logic for client
+                ClientRejected(client, false);
 				return;
 			}
 			else if (!AcceptingConnections)
 			{
-				// Tell the client why they are being disconnected
-				Send(client, Error.CreateErrorMessage(Time.Timestep, "The server is busy and not accepting connections", false, MessageGroupIds.MAX_CONNECTIONS, true));
+                //告诉客户端为什么断开连接
+                // Tell the client why they are being disconnected
+                Send(client, Error.CreateErrorMessage(Time.Timestep, "服务器正忙，不接受连接 The server is busy and not accepting connections", false, MessageGroupIds.MAX_CONNECTIONS, true));
 
-				// Send the close connection frame to the client
-				Send(client, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
-
-				// Do disconnect logic for client
-				ClientRejected(client, false);
+                //将关闭连接帧发送到客户端
+                // Send the close connection frame to the client
+                Send(client, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
+                
+                //执行客户端断开逻辑
+                // Do disconnect logic for client
+                ClientRejected(client, false);
 				return;
 			}
 
@@ -618,11 +626,15 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Disconnects a client from this listener
-		/// </summary>
-		/// <param name="client">The target client to be disconnected</param>
-		public void Disconnect(NetworkingPlayer player, bool forced)
+        /// <summary>
+        /// Disconnects a client from this listener
+        /// </summary>
+        /// <param name="client">The target client to be disconnected</param>
+        /// <summary>
+        ///从这个监听器断开一个客户端
+        /// </ summary>
+        /// <param name =“client”>要断开连接的目标客户端</ param>
+        public void Disconnect(NetworkingPlayer player, bool forced)
 		{
 			commonServerLogic.Disconnect(player, forced, DisconnectingPlayers, ForcedDisconnectingPlayers);
 		}
@@ -684,8 +696,9 @@ namespace BeardedManStudios.Forge.Networking
 		private void ClientRejected(TcpClient client, bool forced)
 #endif
 		{
-			// Clean up the client objects
-			client.Close();
+            //清理客户端对象
+            // Clean up the client objects
+            client.Close();
 		}
 
 		private void SendBuffer(NetworkingPlayer player)
@@ -709,17 +722,28 @@ namespace BeardedManStudios.Forge.Networking
 			SendToPlayer(GeneratePong(time), playerRequesting);
 		}
 
-		public void StopAcceptingConnections()
+
+        /// <summary>
+        /// 设置服务器 不再接受玩家连接
+        /// </summary>
+        public void StopAcceptingConnections()
 		{
 			AcceptingConnections = false;
 		}
 
-		public void StartAcceptingConnections()
+
+        /// <summary>
+        /// 设置服务器 开始接受玩家连接
+        /// </summary>
+        public void StartAcceptingConnections()
 		{
 			AcceptingConnections = true;
 		}
 
-		public void BanPlayer(ulong networkId, int minutes)
+        /// <summary>
+        /// 禁止玩家
+        /// </summary>
+        public void BanPlayer(ulong networkId, int minutes)
 		{
 			NetworkingPlayer player = Players.FirstOrDefault(p => p.NetworkId == networkId);
 

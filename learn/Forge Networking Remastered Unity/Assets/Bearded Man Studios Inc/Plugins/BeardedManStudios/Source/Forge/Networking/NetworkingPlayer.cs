@@ -297,11 +297,15 @@ namespace BeardedManStudios.Forge.Networking
 			LastPing = Networker.Time.Timestep;
 		}
 
-		/// <summary>
-		/// Called by the server to check and see if this player has timed out
-		/// </summary>
-		/// <returns>True if the player has timed out</returns>
-		public bool TimedOut()
+        /// <summary>
+        /// Called by the server to check and see if this player has timed out
+        /// </summary>
+        /// <returns>True if the player has timed out</returns>
+        /// <summary>
+        ///由服务器调用来检查这个玩家是否超时
+        /// </ summary>
+        /// <returns>如果玩家超时</ returns>则为真
+        public bool TimedOut()
 		{
 			return LastPing + TimeoutMilliseconds <= Networker.Time.Timestep;
 		}
@@ -340,8 +344,9 @@ namespace BeardedManStudios.Forge.Networking
 				reliableComposers.Add(composer);
 			}
 
-			// Start the reliable send thread on this composer
-			NextComposerInQueue();
+            //在这个作曲家上启动可靠的发送线程
+            // Start the reliable send thread on this composer
+            NextComposerInQueue();
 		}
 
 		/// <summary>
@@ -359,8 +364,9 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				composerReady = true;
 
-				// Run this on a separate thread so that it doesn't interfere with the reading thread
-				Task.Queue(() =>
+                //在一个单独的线程上运行它，这样它就不会干扰读线程
+                // Run this on a separate thread so that it doesn't interfere with the reading thread
+                Task.Queue(() =>
 				{
 					int waitTime = 10, composerCount = 0;
 					while (Networker.IsBound && !Disconnected)
@@ -471,6 +477,14 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 将接收的可靠消息包 放进来
+        /// 如果消息包不是可靠类型的，就不处理
+        /// 如果消息包的可靠编号 等于 最后执行到的编号,就执行
+        /// 如果消息包的可靠编号 大于 最后执行到的编号, 就放到挂起待执行列表
+        /// 否则不处理
+        /// </summary>
+        /// <param name="frame"></param>
 		public void WaitReliable(FrameStream frame)
 		{
 			if (!frame.IsReliable)
@@ -482,6 +496,7 @@ namespace BeardedManStudios.Forge.Networking
 				currentReliableId++;
 
 				FrameStream next = null;
+                // 执行剩余的挂起包
 				while (true)
 				{
 					if (!reliablePending.TryGetValue(currentReliableId, out next))
@@ -495,6 +510,7 @@ namespace BeardedManStudios.Forge.Networking
 				reliablePending.Add(frame.UniqueReliableId, frame);
 		}
 
+        // 生成一个可靠帧数据的唯一ID
 		public ulong GetNextReliableId()
 		{
 			return UniqueReliableMessageIdCounter++;

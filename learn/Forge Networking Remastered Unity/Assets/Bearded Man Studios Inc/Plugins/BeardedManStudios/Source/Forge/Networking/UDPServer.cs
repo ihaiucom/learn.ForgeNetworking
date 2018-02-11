@@ -35,6 +35,7 @@ namespace BeardedManStudios.Forge.Networking
         // 玩家字典
 		public Dictionary<string, UDPNetworkingPlayer> udpPlayers = new Dictionary<string, UDPNetworkingPlayer>();
 
+        // 当前处理的客户端, 读取改客户端数据
 		private UDPNetworkingPlayer currentReadingPlayer = null;
 
 		public UDPServer(int maxConnections) : base(maxConnections)
@@ -48,6 +49,9 @@ namespace BeardedManStudios.Forge.Networking
 
 		protected List<FrameStream> bufferedMessages = new List<FrameStream>();
 
+        /// <summary>
+        /// 被禁玩家IP的列表
+        /// </summary>
 		public List<string> BannedAddresses { get; set; }
 
         /// <summary>
@@ -105,29 +109,44 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Sends binary message to the specified receiver(s)
-		/// </summary>
-		/// <param name="receivers">The client to receive the message</param>
-		/// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
-		/// <param name="reliable">True if message must be delivered</param>
-		/// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
-		public virtual void Send(NetworkingPlayer player, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, bool reliable = false, params object[] objectsToSend)
+        /// <summary>
+        /// Sends binary message to the specified receiver(s)
+        /// </summary>
+        /// <param name="receivers">The client to receive the message</param>
+        /// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
+        /// <param name="reliable">True if message must be delivered</param>
+        /// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
+        /// <summary>
+        ///发送二进制消息到指定的接收者
+        /// </ summary>
+        /// <param name =“receivers”>接收消息的客户端</ param>
+        /// <param name =“messageGroupId”>按摩的Binary.GroupId，使用MessageGroupIds.START_OF_GENERIC_IDS + desired_id </ param>
+        /// <param name =“reliable”>如果消息必须被传递，则为真</ param>
+        /// <param name =“objectsToSend”>要发送的变量数组，使用Binary.StreamData.GetBasicType <typeOfObject>（）</ param>
+        public virtual void Send(NetworkingPlayer player, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, bool reliable = false, params object[] objectsToSend)
 		{
 			BMSByte data = ObjectMapper.BMSByte(objectsToSend);
 			Binary sendFrame = new Binary(Time.Timestep, false, data, Receivers.Target, messageGroupId, false);
 			Send(player, sendFrame, reliable);
 		}
 
-		/// <summary>
-		/// Sends binary message to all clients ignoring the specific one
-		/// </summary>
-		/// <param name="receivers">The clients / server to receive the message</param>
-		/// <param name="playerToIgnore"></param>
-		/// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
-		/// <param name="reliable">True if message must be delivered</param>
-		/// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
-		public virtual void Send(Receivers receivers = Receivers.Target, NetworkingPlayer playerToIgnore = null, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, bool reliable = false, params object[] objectsToSend)
+        /// <summary>
+        /// Sends binary message to all clients ignoring the specific one
+        /// </summary>
+        /// <param name="receivers">The clients / server to receive the message</param>
+        /// <param name="playerToIgnore"></param>
+        /// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
+        /// <param name="reliable">True if message must be delivered</param>
+        /// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
+        /// <summary>
+        ///向所有客户发送二进制消息，忽略特定的消息
+        /// </ summary>
+        /// <param name =“receivers”>接收消息的客户机/服务器</ param>
+        /// <param name =“playerToIgnore”> </ param>
+        /// <param name =“messageGroupId”>按摩的Binary.GroupId，使用MessageGroupIds.START_OF_GENERIC_IDS + desired_id </ param>
+        /// <param name =“reliable”>如果消息必须被传递，则为真</ param>
+        /// <param name =“objectsToSend”>要发送的变量数组，使用Binary.StreamData.GetBasicType <typeOfObject>（）</ param>
+        public virtual void Send(Receivers receivers = Receivers.Target, NetworkingPlayer playerToIgnore = null, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, bool reliable = false, params object[] objectsToSend)
 		{
 			BMSByte data = ObjectMapper.BMSByte(objectsToSend);
 			Binary sendFrame = new Binary(Time.Timestep, false, data, receivers, messageGroupId, false);
@@ -137,7 +156,7 @@ namespace BeardedManStudios.Forge.Networking
 		public void Connect(string host = "0.0.0.0", ushort port = DEFAULT_PORT, string natHost = "", ushort natPort = NatHolePunch.DEFAULT_NAT_SERVER_PORT)
 		{
 			if (Disposed)
-				throw new ObjectDisposedException("UDPServer", "This object has been disposed and can not be used to connect, please use a new UDPServer");
+				throw new ObjectDisposedException("UDPServer", "此对象已被处置且不能用于连接，请使用新的UDPServer。This object has been disposed and can not be used to connect, please use a new UDPServer");
 
 			try
 			{
@@ -146,14 +165,17 @@ namespace BeardedManStudios.Forge.Networking
 				Me = new NetworkingPlayer(ServerPlayerCounter++, host, true, ResolveHost(host, port), this);
 				Me.InstanceGuid = InstanceGuid.ToString();
 
-				// Do any generic initialization in result of the successful bind
-				OnBindSuccessful();
+                //在成功绑定的结果中执行任何通用初始化
+                // Do any generic initialization in result of the successful bind
+                OnBindSuccessful();
 
-				// Create the thread that will be listening for new data from connected clients and start its execution
-				Task.Queue(ReadClients);
+                //创建将监听来自连接客户端的新数据并开始执行的线程
+                // Create the thread that will be listening for new data from connected clients and start its execution
+                Task.Queue(ReadClients);
 
-				// Create the thread that will check for player timeouts
-				Task.Queue(() =>
+                // 创建将检查播放器超时的线程
+                // Create the thread that will check for player timeouts
+                Task.Queue(() =>
 				{
 					commonServerLogic.CheckClientTimeout((player) =>
 					{
@@ -163,10 +185,13 @@ namespace BeardedManStudios.Forge.Networking
 					});
 				});
 
-				//Let myself know I connected successfully
-				OnPlayerConnected(Me);
-				// Set myself as a connected client
-				Me.Connected = true;
+                //让我知道我连接成功
+                //Let myself know I connected successfully
+                OnPlayerConnected(Me);
+
+                //将自己设置为连接的客户端
+                // Set myself as a connected client
+                Me.Connected = true;
 
 				//Set the port
 				SetPort((ushort)((IPEndPoint)Client.Client.LocalEndPoint).Port);
@@ -187,21 +212,27 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Disconnects this server and all of it's clients
-		/// </summary>
-		/// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
-		public override void Disconnect(bool forced)
+        /// <summary>
+        /// Disconnects this server and all of it's clients
+        /// </summary>
+        /// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
+        /// <summary>
+        ///断开这个服务器及其所有的客户端
+        /// </ summary>
+        /// <param name =“forced”>用来判断这个断开连接是故意的<c> false </ c>还是由异常引起<c> true </ c> </ param>
+        public override void Disconnect(bool forced)
 		{
 			nat.Disconnect();
 
-			// Since we are disconnecting we need to stop the read thread
-			readThreadCancel = true;
+            //因为我们正在断开连接，所以我们需要停止读取线程
+            // Since we are disconnecting we need to stop the read thread
+            readThreadCancel = true;
 
 			lock (Players)
 			{
-				// Go through all of the players and disconnect them
-				foreach (NetworkingPlayer player in Players)
+                //通过所有玩家并断开连接
+                // Go through all of the players and disconnect them
+                foreach (NetworkingPlayer player in Players)
 				{
 					if (player != Me)
 						Disconnect(player, forced);
@@ -218,14 +249,16 @@ namespace BeardedManStudios.Forge.Networking
 					Thread.Sleep(100);
 				}
 
-				// Send signals to the methods registered to the disconnect events
-				if (!forced)
+                //发送信号到注册到断开事件的方法
+                // Send signals to the methods registered to the disconnect events
+                if (!forced)
 					OnDisconnected();
 				else
 					OnForcedDisconnect();
 
-				// Stop listening for new connections
-				Client.Close();
+                //停止监听新的连接
+                // Stop listening for new connections
+                Client.Close();
 			}
 		}
 
@@ -254,12 +287,17 @@ namespace BeardedManStudios.Forge.Networking
         /// </summary>
         public void CommitDisconnects() { CleanupDisconnections(); }
 
-		/// <summary>
-		/// Fully remove the player from the network
-		/// </summary>
-		/// <param name="player">The target player</param>
-		/// <param name="forced">If the player is being forcibly removed from an exception</param>
-		private void RemovePlayer(NetworkingPlayer player, bool forced)
+        /// <summary>
+        /// Fully remove the player from the network
+        /// </summary>
+        /// <param name="player">The target player</param>
+        /// <param name="forced">If the player is being forcibly removed from an exception</param>
+        /// <summary>
+        ///完全从网络中删除player
+        /// </ summary>
+        /// <param name =“player”>目标玩家</ param>
+        /// <param name =“forced”>如果玩家被强行从异常中移除</ param>
+        private void RemovePlayer(NetworkingPlayer player, bool forced)
 		{
 			lock (Players)
 			{
@@ -269,8 +307,9 @@ namespace BeardedManStudios.Forge.Networking
 				player.IsDisconnecting = true;
 			}
 
-			// Tell the player that they are getting disconnected
-			Send(player, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false), !forced);
+            //告诉玩家他们正在断开连接
+            // Tell the player that they are getting disconnected
+            Send(player, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false), !forced);
 
 			if (!forced)
 			{
@@ -347,13 +386,16 @@ namespace BeardedManStudios.Forge.Networking
 					continue;
 				}
 
-				// Check to make sure a message was received
-				if (packet == null || packet.Size <= 0)
+                //检查以确保收到消息
+                // Check to make sure a message was received
+                if (packet == null || packet.Size <= 0)
 					continue;
 
+                //如果玩家列表里不包含该包的发送者
 				if (!udpPlayers.ContainsKey(incomingEndpoint))
 				{
-					SetupClient(packet, incomingEndpoint, groupEP);
+                    // 创建该发送者的结构体保存 UDPNetworkingPlayer
+                    SetupClient(packet, incomingEndpoint, groupEP);
 					continue;
 				}
 				else
@@ -362,40 +404,58 @@ namespace BeardedManStudios.Forge.Networking
 
 					if (!currentReadingPlayer.Accepted && !currentReadingPlayer.PendingAccepted)
 					{
-						// It is possible that the response validation was dropped so
-						// check if the client is resending for a response
-						byte[] response = Websockets.ValidateConnectionHeader(packet.CompressBytes());
+                        //响应验证可能会被丢弃
+                        //检查客户端是否正在重新发送响应
+                        // It is possible that the response validation was dropped so
+                        // check if the client is resending for a response
+                        byte[] response = Websockets.ValidateConnectionHeader(packet.CompressBytes());
 
-						// The client has sent the connection request again
-						if (response != null)
+                        //客户端再次发送连接请求
+                        // The client has sent the connection request again
+                        if (response != null)
 						{
 							Client.Send(response, response.Length, groupEP);
 							continue;
 						}
 						else
 						{
+                            // 将该玩家设置为等待接受确认
 							currentReadingPlayer.PendingAccepted = true;
+                            // 读取该玩家发来的数据包
 							ReadPacket(packet);
 						}
 					}
 					else
 					{
-						// Due to the Forge Networking protocol, the only time that packet 1
-						// will be 71 and the second packet be 69 is a forced disconnect reconnect
-						if (packet[0] == 71 && packet[1] == 69)
+                        //由于Forge网络协议，数据包唯一的时间1
+                        //将是71，第二个数据包是69是强制断开连接
+                        // Due to the Forge Networking protocol, the only time that packet 1
+                        // will be 71 and the second packet be 69 is a forced disconnect reconnect
+                        if (packet[0] == 71 && packet[1] == 69)
 						{
 							udpPlayers.Remove(currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
 							FinalizeRemovePlayer(currentReadingPlayer, true);
 							continue;
 						}
 
+                        // 设置玩家最好ping时间
 						currentReadingPlayer.Ping();
-						ReadPacket(packet);
+                        // 读取该玩家发来的数据包
+                        ReadPacket(packet);
 					}
 				}
 			}
 		}
 
+        /// <summary>
+        /// 处理是否接受这个玩家的连接 
+        /// 如果接受将会给一个反馈 并且 创建UDPNetworkingPlayer存到对应的列表里
+        /// 如果是不再接受连接，反馈原因
+        /// 否则啥也不做
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <param name="incomingEndpoint"></param>
+        /// <param name="groupEP"></param>
 		private void SetupClient(BMSByte packet, string incomingEndpoint, IPEndPoint groupEP)
 		{
             //检查本地列表请求
@@ -415,42 +475,50 @@ namespace BeardedManStudios.Forge.Networking
 
 			if (Players.Count == MaxConnections)
 			{
-				// Tell the client why they are being disconnected
-				Send(Error.CreateErrorMessage(Time.Timestep, "Max Players Reached On Server", false, MessageGroupIds.MAX_CONNECTIONS, true));
+                //告诉客户端为什么断开连接
+                // Tell the client why they are being disconnected
+                Send(Error.CreateErrorMessage(Time.Timestep, "服务器上达到的最大玩家数 Max Players Reached On Server", false, MessageGroupIds.MAX_CONNECTIONS, true));
 
-				// Send the close connection frame to the client
-				Send(new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false));
+                //将关闭连接帧发送到客户端
+                // Send the close connection frame to the client
+                Send(new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false));
 
 				return;
 			}
 			else if (!AcceptingConnections)
 			{
-				// Tell the client why they are being disconnected
-				Send(Error.CreateErrorMessage(Time.Timestep, "The server is busy and not accepting connections", false, MessageGroupIds.MAX_CONNECTIONS, true));
+                //告诉客户端为什么断开连接
+                // Tell the client why they are being disconnected
+                Send(Error.CreateErrorMessage(Time.Timestep, "服务器正忙，不接受连接 The server is busy and not accepting connections", false, MessageGroupIds.MAX_CONNECTIONS, true));
 
-				// Send the close connection frame to the client
-				Send(new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false));
+                //将关闭连接帧发送到客户端
+                // Send the close connection frame to the client
+                Send(new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, false));
 
 				return;
 			}
 
-			// Validate that the connection headers are properly formatted
-			byte[] response = Websockets.ValidateConnectionHeader(packet.CompressBytes());
+            //验证连接头是否格式正确
+            // Validate that the connection headers are properly formatted
+            byte[] response = Websockets.ValidateConnectionHeader(packet.CompressBytes());
 
-			// The response will be null if the header sent is invalid, if so then disconnect client as they are sending invalid headers
-			if (response == null)
+            //如果发送的头是无效的，那么响应将是空的，如果是这样，那么断开客户端，因为它们发送无效头
+            // The response will be null if the header sent is invalid, if so then disconnect client as they are sending invalid headers
+            if (response == null)
 				return;
 
 			UDPNetworkingPlayer player = new UDPNetworkingPlayer(ServerPlayerCounter++, incomingEndpoint, false, groupEP, this);
 
-			// If all is in order then send the validated response to the client
-			Client.Send(response, response.Length, groupEP);
+            //如果一切顺利，则将验证的响应发送给客户端
+            // If all is in order then send the validated response to the client
+            Client.Send(response, response.Length, groupEP);
 
 			OnPlayerConnected(player);
 			udpPlayers.Add(incomingEndpoint, player);
 
-			// The player has successfully connected
-			player.Connected = true;
+            //player已成功连接
+            // The player has successfully connected
+            player.Connected = true;
 		}
 
         /// <summary>
@@ -478,12 +546,13 @@ namespace BeardedManStudios.Forge.Networking
                     // Called once the player has confirmed that it has been accepted
                     if (formattedPacket.groupId == MessageGroupIds.NETWORK_ID_REQUEST && !currentReadingPlayer.Accepted)
 					{
-						System.Diagnostics.Debug.WriteLine(string.Format("[{0}] REQUESTED ID RECEIVED", DateTime.Now.Millisecond));
+						System.Diagnostics.Debug.WriteLine(string.Format("[{0}] 请求的ID已收到 REQUESTED ID RECEIVED", DateTime.Now.Millisecond));
                         //玩家已被接受
                         // The player has been accepted
                         OnPlayerAccepted(currentReadingPlayer);
 					}
 
+                    // 确认消息被对方收到
 					OnMessageConfirmed(currentReadingPlayer, formattedPacket);
 					return;
 				}
@@ -502,37 +571,55 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
+        /// <summary>
+        /// 接收完 一个消息的完整包
+        /// </summary>
+        /// <param name="data">完整包的数据</param>
+        /// <param name="groupId">组ID</param>
+        /// <param name="receivers">接收消息玩家方案</param>
+        /// <param name="isReliable">是否可靠的</param>
 		private void PacketSequenceComplete(BMSByte data, int groupId, byte receivers, bool isReliable)
 		{
-			// Pull the frame from the sent message
-			FrameStream frame = Factory.DecodeMessage(data.CompressBytes(), false, groupId, currentReadingPlayer, receivers);
+            //从发送的消息中拉出帧
+            // Pull the frame from the sent message
+            FrameStream frame = Factory.DecodeMessage(data.CompressBytes(), false, groupId, currentReadingPlayer, receivers);
 
 			if (isReliable)
 			{
 				frame.ExtractReliableId();
 
-				// TODO:  If the current reliable index for this player is not at
-				// the specified index, then it needs to wait for the correct ordering
-				currentReadingPlayer.WaitReliable(frame);
+                // TODO：如果这个玩家当前的可靠指数不是
+                //指定的索引，那么它需要等待正确的排序
+                // TODO:  If the current reliable index for this player is not at
+                // the specified index, then it needs to wait for the correct ordering
+                currentReadingPlayer.WaitReliable(frame);
 			}
 			else
 				FireRead(frame, currentReadingPlayer);
 		}
 
+        /// <summary>
+        /// 执行消息数据包
+        /// </summary>
+        /// <param name="frame"></param>
+        /// <param name="currentPlayer">发送消息的玩家</param>
 		public override void FireRead(FrameStream frame, NetworkingPlayer currentPlayer)
 		{
-			// Check for default messages
-			if (frame is Text)
+            //检查默认消息
+            // Check for default messages
+            if (frame is Text)
 			{
-				// This packet is sent if the player did not receive it's network id
-				if (frame.GroupId == MessageGroupIds.NETWORK_ID_REQUEST)
+                //如果播放器没有收到网络标识，则发送此数据包
+                // This packet is sent if the player did not receive it's network id
+                if (frame.GroupId == MessageGroupIds.NETWORK_ID_REQUEST)
 				{
 					currentPlayer.InstanceGuid = frame.ToString();
 
 					OnPlayerGuidAssigned(currentPlayer);
 
-					// If so, just resend the player id
-					writeBuffer.Clear();
+                    //如果是这样，只需重新发送 玩家ID
+                    // If so, just resend the player id
+                    writeBuffer.Clear();
 					writeBuffer.Append(BitConverter.GetBytes(currentPlayer.NetworkId));
 					Send(currentPlayer, new Binary(Time.Timestep, false, writeBuffer, Receivers.Target, MessageGroupIds.NETWORK_ID_REQUEST, false), true);
 
@@ -541,34 +628,46 @@ namespace BeardedManStudios.Forge.Networking
 				}
 			}
 
+            // 踢该玩家
 			if (frame is ConnectionClose)
 			{
 				//Send(currentReadingPlayer, new ConnectionClose(Time.Timestep, false, Receivers.Server, MessageGroupIds.DISCONNECT, false), false);
-
+                
 				Disconnect(currentReadingPlayer, true);
 				CleanupDisconnections();
 				return;
 			}
 
-			// Send an event off that a packet has been read
-			OnMessageReceived(currentReadingPlayer, frame);
+            //发送一个事件关闭已经被读取的数据包
+            // Send an event off that a packet has been read
+            OnMessageReceived(currentReadingPlayer, frame);
 		}
 
-		/// <summary>
-		/// A callback from the NatHolePunch object saying that a client is trying to connect
-		/// </summary>
-		/// <param name="host">The host address of the client trying to connect</param>
-		/// <param name="port">The port number to communicate with the client on</param>
-		private void NatClientConnectAttempt(string host, ushort port)
+        /// <summary>
+        /// A callback from the NatHolePunch object saying that a client is trying to connect
+        /// </summary>
+        /// <param name="host">The host address of the client trying to connect</param>
+        /// <param name="port">The port number to communicate with the client on</param>
+        /// <summary>
+        ///从NatHolePunch对象回调，说客户端正在尝试连接
+        /// </ summary>
+        /// <param name =“host”>尝试连接的客户端的主机地址</ param>
+        /// <param name =“port”>与</ param>上的客户端进行通信的端口号
+        private void NatClientConnectAttempt(string host, ushort port)
 		{
 			var x = ResolveHost(host, port);
 			Logging.BMSLog.LogFormat("ATTEMPTING CONNECT ON {0} AND PORT IS {1}", host, port);
 			Logging.BMSLog.LogFormat("RESOLVED IS {0} AND {1}", x.Address.ToString(), x.Port);
 
-			// Punch a hole in the nat for this client
-			Client.Send(new byte[1] { 0 }, 1, ResolveHost(host, port));
+            //在这个客户端的nat中打一个洞
+            // Punch a hole in the nat for this client
+            Client.Send(new byte[1] { 0 }, 1, ResolveHost(host, port));
 		}
 
+        /// <summary>
+        /// 发送缓存消息给这个玩家
+        /// </summary>
+        /// <param name="player"></param>
 		private void SendBuffer(NetworkingPlayer player)
 		{
 			foreach (FrameStream frame in bufferedMessages)
@@ -582,7 +681,7 @@ namespace BeardedManStudios.Forge.Networking
 		}
 
         /// <summary>
-        /// 回到客户端
+        /// 反馈ping, 将发送者发送时的时间一起发给对方
         /// Pong back to the client
         /// </summary>
         /// <param name="playerRequesting"></param>
@@ -591,11 +690,17 @@ namespace BeardedManStudios.Forge.Networking
 			Send(playerRequesting, GeneratePong(time));
 		}
 
+        /// <summary>
+        /// 设置服务器 不再接受玩家连接
+        /// </summary>
 		public void StopAcceptingConnections()
 		{
 			AcceptingConnections = false;
 		}
 
+        /// <summary>
+        /// 设置服务器 开始接受玩家连接
+        /// </summary>
 		public void StartAcceptingConnections()
 		{
 			AcceptingConnections = true;

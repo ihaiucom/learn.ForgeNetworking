@@ -23,14 +23,30 @@ namespace BeardedManStudios.Forge.Networking
 {
     public interface IServer
     {
+        /// 被禁玩家IP的列表
         List<string> BannedAddresses { get; set; }
+        /// <summary>
+        /// 踢掉玩家
+        /// </summary>
+        /// <param name="player">玩家</param>
+        /// <param name="forced">是否强制</param>
         void Disconnect(NetworkingPlayer player, bool forced);
-        // 踢玩家
+        // 将玩家添加到黑名单
         void BanPlayer(ulong networkId, int minutes);
         // 提交断线的玩家
         void CommitDisconnects();
+        /// 用于确定此服务器当前是否正在接受连接
         bool AcceptingConnections { get; }
+
+
+        /// <summary>
+        /// 设置服务器 不再接受玩家连接
+        /// </summary>
         void StopAcceptingConnections();
+
+        /// <summary>
+        /// 设置服务器 开始接受玩家连接
+        /// </summary>
         void StartAcceptingConnections();
     }
 }

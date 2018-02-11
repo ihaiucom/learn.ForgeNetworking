@@ -72,7 +72,7 @@ namespace BeardedManStudios.Forge.MVCWebServer.Controllers
             return Render();
         }
 
-        [HelpInfo("Kicks a specified player from the server", new string[] { "The numerical id of the client", "The string message to be sent to the client" }, "kick 1 \"Teleporting everywhere\"")]
+        [HelpInfo("踢玩家 Kicks a specified player from the server", new string[] { "The numerical id of the client", "The string message to be sent to the client" }, "kick 1 \"Teleporting everywhere\"")]
         public string Kick(params string[] args)
         {
             ulong playerId = 0;
@@ -110,7 +110,7 @@ namespace BeardedManStudios.Forge.MVCWebServer.Controllers
             return Render();
         }
 
-        [HelpInfo("This will ban a currently active player from the server", new string[] { "The id for the player", "The amount of time in minutes" }, "ban 1 15")]
+        [HelpInfo("禁止玩家 This will ban a currently active player from the server", new string[] { "The id for the player", "The amount of time in minutes" }, "ban 1 15")]
         public string Ban(params string[] args)
         {
             if (args.Length < 2)

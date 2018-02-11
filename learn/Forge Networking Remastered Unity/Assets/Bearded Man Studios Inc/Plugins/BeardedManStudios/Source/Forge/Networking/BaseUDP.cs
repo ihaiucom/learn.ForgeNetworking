@@ -25,6 +25,7 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public abstract class BaseUDP : NetWorker
 	{
+        // 接收完消息的 完整数据包
 		public delegate void PacketComplete(BMSByte data, int groupId, byte receivers, bool isReliable);
 		public delegate void MessageConfirmedEvent(NetworkingPlayer player, UDPPacket packet);
 

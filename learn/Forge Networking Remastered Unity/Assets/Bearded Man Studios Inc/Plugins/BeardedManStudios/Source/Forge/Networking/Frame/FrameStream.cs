@@ -31,10 +31,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// </summary>
 		public abstract byte ControlByte { get; }
 
-		/// <summary>
-		/// The current raw data for this
-		/// </summary>
-		public BMSByte StreamData { get; protected set; }
+        /// <summary>
+        /// 目前的原始数据
+        /// The current raw data for this
+        /// </summary>
+        public BMSByte StreamData { get; protected set; }
 
 		/// <summary>
 		/// The mask that is used to mask this frame
@@ -46,34 +47,44 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// </summary>
 		private int payloadStart = 0;
 
-		/// <summary>
-		/// This is the time step for this frame in milliseconds
-		/// </summary>
-		public ulong TimeStep { get; protected set; }
+        /// <summary>
+        /// 这是毫秒内这个帧的时间步长
+        /// This is the time step for this frame in milliseconds
+        /// </summary>
+        public ulong TimeStep { get; protected set; }
 
-		/// <summary>
-		/// The Unique id for this frame
-		/// </summary>
-		public ulong UniqueId { get; protected set; }
+        /// <summary>
+        /// 此帧的唯一ID
+        /// The Unique id for this frame
+        /// </summary>
+        public ulong UniqueId { get; protected set; }
 
+        /// <summary>
+        /// 是否是可靠的
+        /// </summary>
 		public bool IsReliable { get; private set; }
 
+        // 可靠数据 克隆
 		private BMSByte reliableCloneData = new BMSByte();
 
-		/// <summary>
-		/// The unique reliable id for this frame
-		/// </summary>
-		public ulong UniqueReliableId { get; protected set; }
+        /// <summary>
+        /// 这个帧数据的唯一可靠的ID
+        /// 用来以正确的发送顺序执行消息
+        /// The unique reliable id for this frame
+        /// </summary>
+        public ulong UniqueReliableId { get; protected set; }
 
-		/// <summary>
-		/// This is a user controlled byte that allows binary frames to be routed by the user
-		/// </summary>
-		public byte RouterId { get; protected set; }
+        /// <summary>
+        /// 这是一个用户控制的字节，允许二进制帧由用户路由
+        /// This is a user controlled byte that allows binary frames to be routed by the user
+        /// </summary>
+        public byte RouterId { get; protected set; }
 
-		/// <summary>
-		/// An id to point to where in the code that this message is coming from (unique)
-		/// </summary>
-		public int GroupId { get; private set; }
+        /// <summary>
+        /// 一个id指向代码中这个消息来自哪里（唯一的）
+        /// An id to point to where in the code that this message is coming from (unique)
+        /// </summary>
+        public int GroupId { get; private set; }
 
 		/// <summary>
 		/// The type of receivers for this frame
@@ -145,12 +156,13 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			CreateFrame(useMask, timestep, payload.byteArr, receivers, groupId, routerId, isStream);
 		}
 
-		/// <summary>
-		/// Take an existing byte[] frame and map it to this data type
-		/// </summary>
-		/// <param name="frame"></param>
-		/// <param name="payloadStart"></param>
-		public FrameStream(byte[] frame, int payloadStart, int groupId, NetworkingPlayer sender, byte receivers = 255)
+        /// <summary>
+        /// 获取一个现有的byte []帧并将其映射到这个数据类型
+        /// Take an existing byte[] frame and map it to this data type
+        /// </summary>
+        /// <param name="frame"></param>
+        /// <param name="payloadStart"></param>
+        public FrameStream(byte[] frame, int payloadStart, int groupId, NetworkingPlayer sender, byte receivers = 255)
 		{
 			GroupId = groupId;
 			Sender = sender;
@@ -158,18 +170,27 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			ReadFrame(frame, payloadStart, receivers);
 		}
 
-		/// <summary>
-		/// Take an existing byte[] frame and map it to this data type
-		/// </summary>
-		/// <param name="frame">The existing frame data</param>
-		/// <param name="payloadStart">The index that the payload starts at in the frame byte[]</param>
-		protected virtual void ReadFrame(byte[] frame, int payloadStart, byte receivers)
+        /// <summary>
+        /// Take an existing byte[] frame and map it to this data type
+        /// </summary>
+        /// <param name="frame">The existing frame data</param>
+        /// <param name="payloadStart">The index that the payload starts at in the frame byte[]</param>
+        /// <summary>
+        ///获取一个现有的byte []帧并将其映射到这个数据类型
+        /// </ summary>
+        /// <param name =“frame”>现有的帧数据</ param>
+        /// <param name =“payloadStart”>有效载荷在帧中开始的索引byte [] </ param>
+        protected virtual void ReadFrame(byte[] frame, int payloadStart, byte receivers)
 		{
-			// The end of the frame payload is just before the unique id
-			int end = frame.Length - (sizeof(ulong) * 2);
+            //帧有效载荷的末尾就在唯一ID之前
+            // data, TimeStep, UniqueId
+            // data,Receivers, TimeStep, UniqueId ; receivers==255
+            // The end of the frame payload is just before the unique id
+            int end = frame.Length - (sizeof(ulong) * 2);
 
-			// If the receivers is invalid, pull it from the data
-			if (receivers == 255)
+            //如果接收器无效，请将其从数据中拉出
+            // If the receivers is invalid, pull it from the data
+            if (receivers == 255)
 			{
 				Receivers = (Receivers)frame[end - 1];
 				//end--;
@@ -177,15 +198,18 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			else
 				Receivers = (Receivers)receivers;
 
-			// If an empty frame was sent, do not copy it to data as data is already empty
-			if (frame.Length - payloadStart > end)
+            //如果发送了空帧，请不要将其复制到数据，因为数据已经是空的
+            // If an empty frame was sent, do not copy it to data as data is already empty
+            if (frame.Length - payloadStart > end)
 				StreamData.BlockCopy(frame, payloadStart, end - payloadStart);
 
-			// Pull the time step for this frame
-			TimeStep = BitConverter.ToUInt64(frame, end);
+            // 拉这个框架的时间步骤
+            // Pull the time step for this frame
+            TimeStep = BitConverter.ToUInt64(frame, end);
 
-			// Pull the unique id for this frame
-			UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong));
+            // 拉这个框架的唯一ID
+            // Pull the unique id for this frame
+            UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong));
 		}
 
         /// <summary>
@@ -213,8 +237,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
             // Generate the frame identity
             byte[] frame = new byte[10];
 
-			// The first byte of the data is always the control byte, which dictates the message type
-			frame[0] = ControlByte;
+            //数据的第一个字节总是控制字节，它决定了消息的类型
+            // The first byte of the data is always the control byte, which dictates the message type
+            frame[0] = ControlByte;
 
 			int length = payload.Length;
 
@@ -306,17 +331,27 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			}
 		}
 
+        /// <summary>
+        /// 设置为可靠的
+        /// 从玩家那里生成一个唯一编号
+        /// 设置为可靠的
+        /// </summary>
+        /// <param name="player"></param>
 		private void MakeReliable(NetworkingPlayer player)
 		{
 			UniqueReliableId = player.GetNextReliableId();
 			IsReliable = true;
 		}
 
-		/// <summary>
-		/// Gets the raw data for this frame
-		/// </summary>
-		/// <returns>The raw byte data prepared by this frame</returns>
-		public byte[] GetData(bool makeReliable = false, NetworkingPlayer player = null)
+        /// <summary>
+        /// Gets the raw data for this frame
+        /// </summary>
+        /// <returns>The raw byte data prepared by this frame</returns>
+        /// <summary>
+        ///获取这个帧的原始数据
+        /// </ summary>
+        /// <returns>由此框架准备的原始字节数据</ returns>
+        public byte[] GetData(bool makeReliable = false, NetworkingPlayer player = null)
 		{
 			if (makeReliable)
 			{
@@ -346,10 +381,14 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			return target;
 		}
 
+        /// <summary>
+        /// 提取可靠的ID
+        /// </summary>
 		public void ExtractReliableId()
 		{
-			// We've already made this frame reliable
-			if (IsReliable)
+            //我们已经使这个frame可靠
+            // We've already made this frame reliable
+            if (IsReliable)
 				return;
 
 			int currentIndex = StreamData.StartIndex();

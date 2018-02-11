@@ -67,22 +67,31 @@ namespace BeardedManStudios.Forge.Networking
 			return false;
 		}
 
-		/// <summary>
-		/// Check to see if a header is the correct websocket header, if so
-		/// then generate a response to send back, otherwise return null
-		/// </summary>
-		/// <param name="headers">The sent headers that need to verified</param>
-		/// <returns>The response to be sent back, or null if failed validation</returns>
-		public static byte[] ValidateConnectionHeader(byte[] headers)
+        /// <summary>
+        /// Check to see if a header is the correct websocket header, if so
+        /// then generate a response to send back, otherwise return null
+        /// </summary>
+        /// <param name="headers">The sent headers that need to verified</param>
+        /// <returns>The response to be sent back, or null if failed validation</returns>
+        /// <summary>
+        ///检查头部是否是正确的websocket头部，如果是的话
+        ///然后生成一个响应来发回，否则返回null
+        /// </ summary>
+        /// <param name =“headers”>需要验证的发送的头文件</ param>
+        /// <returns>要发回的响应，如果验证失败，则返回null </ returns>
+        public static byte[] ValidateConnectionHeader(byte[] headers)
 		{
-			// The validation headers are always a string
-			string data = Encoding.UTF8.GetString(headers);
+            //验证头文件总是一个字符串
+            // The validation headers are always a string
+            string data = Encoding.UTF8.GetString(headers);
 
-			// Make sure that it starts as a GET request
-			if (new Regex("^GET").IsMatch(data))
+            //确保它以GET请求开始
+            // Make sure that it starts as a GET request
+            if (new Regex("^GET").IsMatch(data))
 			{
-				// Generate a response by hasing the provided random string key
-				byte[] response = Encoding.UTF8.GetBytes("HTTP/1.1 101 Switching Protocols" + Environment.NewLine
+                //通过提供随机字符串键生成响应
+                // Generate a response by hasing the provided random string key
+                byte[] response = Encoding.UTF8.GetBytes("HTTP/1.1 101 Switching Protocols" + Environment.NewLine
 					+ "Connection: Upgrade" + Environment.NewLine
 					+ "Upgrade: websocket" + Environment.NewLine
 					+ "Sec-WebSocket-Accept: " + Convert.ToBase64String((new SHA1CryptoServiceProvider()).ComputeHash(Encoding.UTF8.GetBytes(
@@ -92,8 +101,9 @@ namespace BeardedManStudios.Forge.Networking
 				return response;
 			}
 
-			// Was not a GET request so failed
-			return null;
+            //不是一个GET请求失败
+            // Was not a GET request so failed
+            return null;
 		}
 
 		/// <summary>

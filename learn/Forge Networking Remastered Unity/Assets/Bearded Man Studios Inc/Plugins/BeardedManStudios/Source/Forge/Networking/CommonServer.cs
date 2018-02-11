@@ -7,6 +7,7 @@ namespace BeardedManStudios.Forge.Networking
 {
 	public class CommonServerLogic
 	{
+        // UDPServer / TCPServer
 		private NetWorker server;
 
 		public CommonServerLogic(NetWorker server)

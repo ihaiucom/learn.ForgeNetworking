@@ -782,6 +782,11 @@ namespace BeardedManStudios.Forge.Networking
 			return createObject;
 		}
 
+        /// <summary>
+        /// 当该玩家被服务器接受时， 服务器发送目前所有的网络对象给他
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="networkObjects"></param>
 		public static void PlayerAccepted(NetworkingPlayer player, NetworkObject[] networkObjects)
 		{
 			foreach (NetworkObject obj in networkObjects)
@@ -838,6 +843,10 @@ namespace BeardedManStudios.Forge.Networking
 			});
 		}
 
+        /// <summary>
+        /// 服务器收到玩家 创建该网络对象完成
+        /// </summary>
+        /// <param name="player"></param>
 		public void CreateConfirmed(NetworkingPlayer player)
 		{
 			SendBuffer(player);
@@ -1099,10 +1108,13 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				string methodName = inverseRpcLookup[methodId];
 
-				// Validate the RPC call using the method name and the supplied arguments from the client
-				// then replicate to the correct receivers
-				// Do not read or replicate if the server denies replication
-				if (ServerAllowRpc(methodId, receivers, rpcArgs))
+                // Validate the RPC call using the method name and the supplied arguments from the client
+                // then replicate to the correct receivers
+                // Do not read or replicate if the server denies replication
+                //使用方法名称和客户端提供的参数来验证RPC调用
+                //然后复制到正确的接收器
+                //如果服务器拒绝复制，则不要读取或复制
+                if (ServerAllowRpc(methodId, receivers, rpcArgs))
 					SendRpc(null, methodId, overwriteExisting, receivers, sender, args);
 
 				return;
