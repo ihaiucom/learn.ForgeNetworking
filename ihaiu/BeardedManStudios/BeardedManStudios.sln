@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarServer", "..\WarServer\W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarServer.Tests", "..\WarServer\WarServer.Tests\WarServer.Tests.csproj", "{86D1DCBA-2F7E-4538-A5F5-E4143C6F67DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IhaiuTcp", "..\IhaiuTcp\IhaiuTcp.csproj", "{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Client|Any CPU = Debug Client|Any CPU
@@ -106,6 +108,12 @@ Global
 		{86D1DCBA-2F7E-4538-A5F5-E4143C6F67DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86D1DCBA-2F7E-4538-A5F5-E4143C6F67DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86D1DCBA-2F7E-4538-A5F5-E4143C6F67DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Debug Client|Any CPU.ActiveCfg = Debug|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Debug Client|Any CPU.Build.0 = Debug|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
