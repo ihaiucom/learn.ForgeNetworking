@@ -1,5 +1,6 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
+using Games.PB;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -63,6 +64,10 @@ namespace ihaiu
         public HBaseTCP() : base() { }
         public HBaseTCP(int maxConnections) : base(maxConnections) { }
 
+        public virtual void SendToPlayer(TcpClient client, ProtoMsg frame)
+        {
+        }
+
         /// <summary>
         /// 读取当前的客户端流，并从中取出下一组数据
         /// </summary>
@@ -95,7 +100,7 @@ namespace ihaiu
 
             // 包尾 包尾结构: 1个字节表示包尾类型, 随后8个字符表示类型参数
             stream.Read(bytes, 6 + length, 9);
-            byte fromType = bytes[1];
+            byte fromType = bytes[0];
             long fromId = BitConverter.ToInt64(bytes, 1);
 
             msg.protoId     = propId;
@@ -107,27 +112,25 @@ namespace ihaiu
         }
 
 
-        public void OnMessage(ProtoMsg msg, NetworkingPlayer player)
+        public void OnPingMessage(OUTER_BM2B_Ping_Req msg, NetworkingPlayer player)
         {
-            if (msg.protoId == ProtoId.PING || msg.protoId == ProtoId.PONG)
-            {
-                // 发送ping时的 发送者时间
-                long receivedTimestep = 0;
-                DateTime received = new DateTime(receivedTimestep);
+            // 发送ping时的 发送者时间
+            DateTime received = new DateTime((long)msg.receivedTimestep);
 
-                // 现在接收到反馈ping的时间 - 自己发送ping是的时间
-                TimeSpan ms = DateTime.UtcNow - received;
+            // 反馈ping, 将发送ping时的 发送者时间 一起发给他
+            Pong(player, received);
+        }
 
-                if (msg.protoId == ProtoId.PING)
-                    // 反馈ping, 将发送ping时的 发送者时间 一起发给他
-                    Pong(player, received);
-                else
-                    // 接收都ping的反馈
-                    OnPingRecieved(ms.TotalMilliseconds, player);
 
-                return;
-            }
+        public void OnPongMessage(OUTER_BM2B_Pong_Resp msg, NetworkingPlayer player)
+        {
+            DateTime received = new DateTime((long)msg.receivedTimestep);
 
+            // 现在接收到反馈ping的时间 - 自己发送ping是的时间
+            TimeSpan ms = DateTime.UtcNow - received;
+
+            // 接收都ping的反馈
+            OnPingRecieved(ms.TotalMilliseconds, player);
         }
 
 

@@ -94,7 +94,7 @@ namespace ihaiu
         /// </ summary>
         /// <param name =“client”>将接收帧的目标客户端</ param>
         /// <param name =“frame”>要发送到指定客户端的帧</ param>
-        public virtual void Send(FrameStream frame)
+        public virtual void Send(ProtoMsg frame)
         {
             //确保我们没有写入同一个客户端的竞争条件
             // Make sure that we don't have any race conditions with writing to the same client
@@ -107,18 +107,12 @@ namespace ihaiu
             }
         }
 
-        /// <summary>
-        /// Sends binary message to the specific receiver(s)
-        /// </summary>
-        /// <param name="receivers">The clients / server to receive the message</param>
-        /// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
-        /// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
-        public virtual void Send(Receivers receivers, int messageGroupId, params object[] objectsToSend)
+
+        public override void SendToPlayer(TcpClient client, ProtoMsg frame)
         {
-            BMSByte data = ObjectMapper.BMSByte(objectsToSend);
-            Binary sendFrame = new Binary(Time.Timestep, true, data, receivers, messageGroupId, true);
-            Send(sendFrame);
+            Send(frame);
         }
+
 
         /// <summary>
         /// This will begin the connection for TCP, this is a thread blocking operation
@@ -242,7 +236,6 @@ namespace ihaiu
                 return ReadState.Disconnect;
             }
 
-            OnMessage(protoMsg, server);
             proto.OnMessage(protoMsg, server);
 
             return ReadState.Void;

@@ -209,6 +209,10 @@ namespace ihaiu
                 }
             }
         }
+        public override void SendToPlayer(TcpClient client, ProtoMsg frame)
+        {
+            Send(client, frame);
+        }
 
 
         /// <summary>
@@ -483,7 +487,6 @@ namespace ihaiu
                                         continue;
                                     }
 
-                                    OnMessage(protoMsg, Players[i]);
                                     proto.OnMessage(protoMsg, Players[i]);
                                 }
                             }

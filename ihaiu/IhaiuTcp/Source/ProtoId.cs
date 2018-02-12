@@ -12,18 +12,33 @@ namespace ihaiu
 {
     public class ProtoId
     {
-        // 错误
-        public const int Error = 1;
-        // 断开连接
-        public const int ConnectionClose = 2;
-        // 发送接受连接
-        public const int Accepted = 3;
-
         // ping
-        public const int PING = 4;
+        public const int PING = 3001;
 
         // 反馈ping
-        public const int PONG = 5;
+        public const int PONG = 3002;
+
+
+        // 错误
+        public const int Error = 3003;
+        // 断开连接
+        public const int ConnectionClose = 3004;
+        // 发送接受连接
+        public const int Accepted = 3005;
+        // GM
+        public const int GM = 3006;
+
+
+        // 创建房间
+        public const int CreateRoom = 3021;
+
+        // 删除房间
+        public const int RemoveRoom = 3022;
+
+        // 通知 房间战斗结果
+        public const int RoomOver = 3023;
+
+
 
     }
 }
