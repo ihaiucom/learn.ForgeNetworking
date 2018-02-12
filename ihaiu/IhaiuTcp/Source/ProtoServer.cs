@@ -32,6 +32,13 @@ namespace ihaiu
         }
 
 
+        public void SendPing(NetworkingPlayer playerRequesting, DateTime time)
+        {
+            OUTER_BM2B_Ping_Req msg = new OUTER_BM2B_Ping_Req();
+            msg.receivedTimestep = (ulong)DateTime.UtcNow.Ticks;
+            SendMessage<OUTER_BM2B_Ping_Req>(msg, playerRequesting.TcpClientHandle);
+        }
+        
 
 
         public void SendPong(NetworkingPlayer playerRequesting, DateTime time)

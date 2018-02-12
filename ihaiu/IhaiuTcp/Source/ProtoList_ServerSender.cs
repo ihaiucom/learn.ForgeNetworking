@@ -50,7 +50,7 @@ namespace ihaiu
             AddItem(new ProtoItem<OUTER_BM2B_CreateRoom_Resp>() { opcode = 3021, protoStructType = typeof(OUTER_BM2B_CreateRoom_Resp), protoStructName = "OUTER_BM2B_CreateRoom_Resp", protoFilename = "battle_server", opcodeMapping = new int[] { }, note = "响应 创建房间" });
 
             // 响应 删除房间
-            AddItem(new ProtoItem<OUTER_BM2B_RoomOver_Ntf>() { opcode = 3022, protoStructType = typeof(OUTER_BM2B_RoomOver_Ntf), protoStructName = "OUTER_BM2B_RoomOver_Ntf", protoFilename = "battle_server", opcodeMapping = new int[] { }, note = "响应 删除房间" });
+            AddItem(new ProtoItem<OUTER_BM2B_RemoveRoom_Req>() { opcode = 3022, protoStructType = typeof(OUTER_BM2B_RemoveRoom_Req), protoStructName = "OUTER_BM2B_RemoveRoom_Req", protoFilename = "battle_server", opcodeMapping = new int[] { }, note = "响应 删除房间" });
 
             // 通知 房间战斗结果
             AddItem(new ProtoItem<OUTER_BM2B_RoomOver_Ntf>() { opcode = 3023, protoStructType = typeof(OUTER_BM2B_RoomOver_Ntf), protoStructName = "OUTER_BM2B_RoomOver_Ntf", protoFilename = "battle_server", opcodeMapping = new int[] { }, note = "通知 房间战斗结果" });

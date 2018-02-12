@@ -13,10 +13,10 @@ namespace ihaiu
 {
     public partial class ProtoClient : ProtoBase
     {
-        public HTcpClient client;
+        public HTCPClientBase client;
 
 
-        public ProtoClient(HTcpClient client):base(client)
+        public ProtoClient(HTCPClientBase client):base(client)
         {
             this.client = client;
 

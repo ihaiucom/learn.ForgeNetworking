@@ -3,6 +3,7 @@ using BeardedManStudios.Forge.Networking.Frame;
 using Games.PB;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 /** 
 * ==============================================================================
@@ -60,6 +61,7 @@ namespace ihaiu
 
     public abstract class HBaseTCP : NetWorker
     {
+        protected ProtoBase proto;
 
         public HBaseTCP() : base() { }
         public HBaseTCP(int maxConnections) : base(maxConnections) { }
@@ -109,6 +111,19 @@ namespace ihaiu
             msg.fromId      = fromId;
 
             return msg;
+        }
+
+
+        public ProtoMsg GenerateProtoPing()
+        {
+            OUTER_BM2B_Ping_Req msg = new OUTER_BM2B_Ping_Req();
+            msg.receivedTimestep = (ulong)DateTime.UtcNow.Ticks;
+            return ProtoToData<OUTER_BM2B_Ping_Req>(msg);
+        }
+
+        public ProtoMsg ProtoToData<T>(T protoMsg)
+        {
+            return proto.ProtoToData<T>(protoMsg);
         }
 
 

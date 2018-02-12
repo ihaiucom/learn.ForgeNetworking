@@ -125,6 +125,21 @@ namespace ihaiu
 
             Loger.LogTag("Proto", "-> " + item);
 
+            ProtoMsg msg = ProtoToData<T>(protoMsg);
+
+            baseTcp.SendToPlayer(client, msg);
+        }
+
+        public ProtoMsg ProtoToData<T>(T protoMsg)
+        {
+            Type type = typeof(T);
+            IProtoItem item = protoListSender.GetItemByType(type);
+            if (item == null)
+            {
+                Loger.LogTag("Proto", "ProtoToData " + protoMsg + "没找到对应的协议");
+                return default(ProtoMsg);
+            }
+
 
             MemoryStream stream = new MemoryStream();
             ProtoBuf.Serializer.Serialize<T>(stream, protoMsg);
@@ -136,7 +151,7 @@ namespace ihaiu
 
             stream.Dispose();
 
-            baseTcp.SendToPlayer(client, msg);
+            return msg;
         }
 
 

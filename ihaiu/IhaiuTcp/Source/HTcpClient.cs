@@ -15,6 +15,7 @@ namespace ihaiu
 {
     public class HTcpClient : HTCPClientBase
     {
+
         protected override void Initialize(string host, ushort port)
         {
             base.Initialize(host, port);

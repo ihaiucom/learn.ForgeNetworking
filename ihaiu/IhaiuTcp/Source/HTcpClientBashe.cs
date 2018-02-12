@@ -26,7 +26,13 @@ namespace ihaiu
 {
     public abstract class HTCPClientBase : HBaseTCP, IClient
     {
-        public ProtoClient proto;
+
+        public ProtoClient protoClient;
+        public HTCPClientBase():base()
+        {
+            protoClient = new ProtoClient(this);
+            proto = protoClient;
+        }
 
         /// <summary>
         /// 连接到服务器的原始客户端的引用
@@ -258,7 +264,7 @@ namespace ihaiu
                     if (forced)
                         client.Close();
                     else
-                        proto.SendConnectionClose();
+                        protoClient.SendConnectionClose();
 
                     // Send signals to the methods registered to the disconnec events
                     if (!forced)
@@ -277,8 +283,7 @@ namespace ihaiu
         /// </summary>
         public override void Ping()
         {
-            //Send(GeneratePing());
-            proto.SendPing();
+            protoClient.SendPing();
         }
 
         /// <summary>
@@ -288,8 +293,7 @@ namespace ihaiu
         /// <param name="time">The time that the ping was received for</param>
         protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
         {
-            //Send(GeneratePong(time));
-            proto.SendPong(time);
+            protoClient.SendPong(time);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace ihaiu
     /// </summary>
     public class HTcpServer : HBaseTCP, IServer
     {
-        private ProtoServer             proto;
+        public ProtoServer protoServer;
         private CommonServerLogic       commonServerLogic;
 
         #region Delegates
@@ -116,7 +116,8 @@ namespace ihaiu
             AcceptingConnections = true;
             BannedAddresses = new List<string>();
             commonServerLogic = new CommonServerLogic(this);
-            proto = new ProtoServer(this);
+            protoServer = new ProtoServer(this);
+            proto = protoServer;
         }
 
 #if WINDOWS_UWP
@@ -390,7 +391,7 @@ namespace ihaiu
             player.InstanceGuid = "guid" + player.NetworkId;
             OnPlayerGuidAssigned(player);
 
-            proto.SendAccepted(player.TcpClientHandle);
+            protoServer.SendAccepted(player.TcpClientHandle);
             //所有系统都去了，玩家已经被接受了
             OnPlayerAccepted(player);
         }
@@ -482,12 +483,12 @@ namespace ihaiu
                                     if (protoMsg.protoId == ProtoId.ConnectionClose)
                                     {
                                         //确认连接关闭
-                                        proto.SendConnectionClose(Players[i].TcpClientHandle);
+                                        protoServer.SendConnectionClose(Players[i].TcpClientHandle);
                                         Disconnect(Players[i], false);
                                         continue;
                                     }
 
-                                    proto.OnMessage(protoMsg, Players[i]);
+                                    protoServer.OnMessage(protoMsg, Players[i]);
                                 }
                             }
                             catch
@@ -572,7 +573,7 @@ namespace ihaiu
 
             //告诉玩家他断线
             // Tell the player that he is getting disconnected
-            proto.SendConnectionClose(player.TcpClientHandle);
+            protoServer.SendConnectionClose(player.TcpClientHandle);
 
             if (!forced)
             {
@@ -633,7 +634,7 @@ namespace ihaiu
         /// <param name="playerRequesting"></param>
         protected override void Pong(NetworkingPlayer playerRequesting, DateTime time)
         {
-            proto.SendPong(playerRequesting, time);
+            protoServer.SendPong(playerRequesting, time);
         }
 
 

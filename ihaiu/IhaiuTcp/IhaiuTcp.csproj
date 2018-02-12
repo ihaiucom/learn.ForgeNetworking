@@ -30,6 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IhaiuLog">
+      <HintPath>..\lib\IhaiuLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\lib\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,9 +56,16 @@
     <Compile Include="Source\HTcpServer.cs" />
     <Compile Include="Source\ProtoBase.cs" />
     <Compile Include="Source\ProtoClient.cs" />
-    <Compile Include="Source\ProtoError.cs" />
+    <Compile Include="Source\ProtoErrorId.cs" />
     <Compile Include="Source\ProtoId.cs" />
+    <Compile Include="Source\ProtoItem.cs" />
+    <Compile Include="Source\ProtoList.cs" />
+    <Compile Include="Source\ProtoList_ClientListener.cs" />
+    <Compile Include="Source\ProtoList_ClientSender.cs" />
+    <Compile Include="Source\ProtoList_ServerListener.cs" />
+    <Compile Include="Source\ProtoList_ServerSender.cs" />
     <Compile Include="Source\ProtoMsg.cs" />
+    <Compile Include="Source\ProtoPB.cs" />
     <Compile Include="Source\ProtoServer.cs" />
   </ItemGroup>
   <ItemGroup>
