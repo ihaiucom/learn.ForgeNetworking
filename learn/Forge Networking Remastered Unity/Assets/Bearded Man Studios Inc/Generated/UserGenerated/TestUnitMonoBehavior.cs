@@ -4,12 +4,14 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[]")]
-	[GeneratedRPCVariableNames("{\"types\":[]")]
-	public abstract partial class ZfTestPlayerCubeBehavior : NetworkBehavior
+	[GeneratedRPC("{\"types\":[[\"Vector3\"][\"Vector3\", \"float\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"dir\"][\"target\", \"speed\"]]")]
+	public abstract partial class TestUnitMonoBehavior : NetworkBehavior
 	{
+		public const byte RPC_MOVE = 0 + 5;
+		public const byte RPC_MOVE_TO = 1 + 5;
 		
-		public ZfTestPlayerCubeNetworkObject networkObject = null;
+		public TestUnitMonoNetworkObject networkObject = null;
 
 		public override void Initialize(NetworkObject obj)
 		{
@@ -17,10 +19,12 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (networkObject != null && networkObject.AttachedBehavior != null)
 				return;
 			
-			networkObject = (ZfTestPlayerCubeNetworkObject)obj;
+			networkObject = (TestUnitMonoNetworkObject)obj;
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
+			networkObject.RegisterRpc("Move", Move, typeof(Vector3));
+			networkObject.RegisterRpc("MoveTo", MoveTo, typeof(Vector3), typeof(float));
 
 			networkObject.onDestroy += DestroyGameObject;
 
@@ -76,7 +80,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override void Initialize(NetWorker networker, byte[] metadata = null)
 		{
-			Initialize(new ZfTestPlayerCubeNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
+			Initialize(new TestUnitMonoNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
 		}
 
 		private void DestroyGameObject(NetWorker sender)
@@ -87,7 +91,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override NetworkObject CreateNetworkObject(NetWorker networker, int createCode, byte[] metadata = null)
 		{
-			return new ZfTestPlayerCubeNetworkObject(networker, this, createCode, metadata);
+			return new TestUnitMonoNetworkObject(networker, this, createCode, metadata);
 		}
 
 		protected override void InitializedTransform()
@@ -95,6 +99,17 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.SnapInterpolations();
 		}
 
+		/// <summary>
+		/// Arguments:
+		/// Vector3 dir
+		/// </summary>
+		public abstract void Move(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// Vector3 target
+		/// float speed
+		/// </summary>
+		public abstract void MoveTo(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

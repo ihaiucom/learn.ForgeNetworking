@@ -145,12 +145,17 @@ namespace BeardedManStudios
 			return this;
 		}
 
-		/// <summary>
-		/// Resets the internal byte array and assignes the internal byte array of the passed in BMSByte to this ones internal byte array
-		/// </summary>
-		/// <param name="otherBytes">The other BMSByte that will have its internal byte array cloned to this one</param>
-		/// <returns></returns>
-		public BMSByte Clone(BMSByte otherBytes)
+        /// <summary>
+        /// Resets the internal byte array and assignes the internal byte array of the passed in BMSByte to this ones internal byte array
+        /// </summary>
+        /// <param name="otherBytes">The other BMSByte that will have its internal byte array cloned to this one</param>
+        /// <returns></returns>
+        /// <summary>
+        ///重置内部字节数组，并将传入的BMSByte的内部字节数组赋值给这个内部字节数组
+        /// </ summary>
+        /// <param name =“otherBytes”>另一个BMSByte将其内部字节数组克隆到这个</ param>
+        /// <returns> </ returns>
+        public BMSByte Clone(BMSByte otherBytes)
 		{
 			PointToStart();
 
@@ -207,11 +212,15 @@ namespace BeardedManStudios
 		}
 
 
-		/// <summary>
-		/// Adds the bytes to the end of the byte array and resizes when needed
-		/// </summary>
-		/// <param name="input">The BMSByte where the bytes will be pulled and appended to the end of this internal byte array</param>
-		public void Append(BMSByte input)
+        /// <summary>
+        /// Adds the bytes to the end of the byte array and resizes when needed
+        /// </summary>
+        /// <param name="input">The BMSByte where the bytes will be pulled and appended to the end of this internal byte array</param>
+        /// <summary>
+        ///将字节添加到字节数组的末尾，并在需要时调整大小
+        /// </ summary>
+        /// <param name =“input”> BMSByte，其中字节将被拉到并附加到这个内部字节数组的结尾</ param>
+        public void Append(BMSByte input)
 		{
 			if (input == null)
 				return;

@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedInterpol("{\"inter\":[0.15,0.15]")]
-	public partial class ZfTestPlayerCubeNetworkObject : NetworkObject
+	[GeneratedInterpol("{\"inter\":[0.15,0.15,0]")]
+	public partial class TestUnitMonoNetworkObject : NetworkObject
 	{
-		public const int IDENTITY = 8;
+		public const int IDENTITY = 10;
 
 		private byte[] _dirtyFields = new byte[1];
 
@@ -75,6 +75,36 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (rotationChanged != null) rotationChanged(_rotation, timestep);
 			if (fieldAltered != null) fieldAltered("rotation", _rotation, timestep);
 		}
+		private float _speed;
+		public event FieldEvent<float> speedChanged;
+		public InterpolateFloat speedInterpolation = new InterpolateFloat() { LerpT = 0f, Enabled = false };
+		public float speed
+		{
+			get { return _speed; }
+			set
+			{
+				// Don't do anything if the value is the same
+				if (_speed == value)
+					return;
+
+				// Mark the field as dirty for the network to transmit
+				_dirtyFields[0] |= 0x4;
+				_speed = value;
+				hasDirtyFields = true;
+			}
+		}
+
+		public void SetspeedDirty()
+		{
+			_dirtyFields[0] |= 0x4;
+			hasDirtyFields = true;
+		}
+
+		private void RunChange_speed(ulong timestep)
+		{
+			if (speedChanged != null) speedChanged(_speed, timestep);
+			if (fieldAltered != null) fieldAltered("speed", _speed, timestep);
+		}
 
 		protected override void OwnershipChanged()
 		{
@@ -86,6 +116,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		{
 			positionInterpolation.current = positionInterpolation.target;
 			rotationInterpolation.current = rotationInterpolation.target;
+			speedInterpolation.current = speedInterpolation.target;
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
@@ -94,6 +125,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		{
 			UnityObjectMapper.Instance.MapBytes(data, _position);
 			UnityObjectMapper.Instance.MapBytes(data, _rotation);
+			UnityObjectMapper.Instance.MapBytes(data, _speed);
 
 			return data;
 		}
@@ -108,6 +140,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			rotationInterpolation.current = _rotation;
 			rotationInterpolation.target = _rotation;
 			RunChange_rotation(timestep);
+			_speed = UnityObjectMapper.Instance.Map<float>(payload);
+			speedInterpolation.current = _speed;
+			speedInterpolation.target = _speed;
+			RunChange_speed(timestep);
 		}
 
 		protected override BMSByte SerializeDirtyFields()
@@ -119,6 +155,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _position);
 			if ((0x2 & _dirtyFields[0]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _rotation);
+			if ((0x4 & _dirtyFields[0]) != 0)
+				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _speed);
 
 			// Reset all the dirty fields
 			for (int i = 0; i < _dirtyFields.Length; i++)
@@ -161,6 +199,19 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					RunChange_rotation(timestep);
 				}
 			}
+			if ((0x4 & readDirtyFlags[0]) != 0)
+			{
+				if (speedInterpolation.Enabled)
+				{
+					speedInterpolation.target = UnityObjectMapper.Instance.Map<float>(data);
+					speedInterpolation.Timestep = timestep;
+				}
+				else
+				{
+					_speed = UnityObjectMapper.Instance.Map<float>(data);
+					RunChange_speed(timestep);
+				}
+			}
 		}
 
 		public override void InterpolateUpdate()
@@ -178,6 +229,11 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				_rotation = (Quaternion)rotationInterpolation.Interpolate();
 				//RunChange_rotation(rotationInterpolation.Timestep);
 			}
+			if (speedInterpolation.Enabled && !speedInterpolation.current.UnityNear(speedInterpolation.target, 0.0015f))
+			{
+				_speed = (float)speedInterpolation.Interpolate();
+				//RunChange_speed(speedInterpolation.Timestep);
+			}
 		}
 
 		private void Initialize()
@@ -187,9 +243,9 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		}
 
-		public ZfTestPlayerCubeNetworkObject() : base() { Initialize(); }
-		public ZfTestPlayerCubeNetworkObject(NetWorker networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null) : base(networker, networkBehavior, createCode, metadata) { Initialize(); }
-		public ZfTestPlayerCubeNetworkObject(NetWorker networker, uint serverId, FrameStream frame) : base(networker, serverId, frame) { Initialize(); }
+		public TestUnitMonoNetworkObject() : base() { Initialize(); }
+		public TestUnitMonoNetworkObject(NetWorker networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null) : base(networker, networkBehavior, createCode, metadata) { Initialize(); }
+		public TestUnitMonoNetworkObject(NetWorker networker, uint serverId, FrameStream frame) : base(networker, serverId, frame) { Initialize(); }
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

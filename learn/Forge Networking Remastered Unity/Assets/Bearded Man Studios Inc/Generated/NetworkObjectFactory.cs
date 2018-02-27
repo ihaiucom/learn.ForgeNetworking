@@ -17,8 +17,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				}
 			}
 			
-			bool availableCallback = false; //可用回调
-            NetworkObject obj = null;
+			bool availableCallback = false;
+			NetworkObject obj = null;
 			MainThreadManager.Run(() =>
 			{
 				switch (identity)
@@ -43,21 +43,25 @@ namespace BeardedManStudios.Forge.Networking.Generated
 						availableCallback = true;
 						obj = new TestNetworkObject(networker, id, frame);
 						break;
-					case ZfTestAANetworkObject.IDENTITY:
+					case TestUnitNetworkObject.IDENTITY:
 						availableCallback = true;
-						obj = new ZfTestAANetworkObject(networker, id, frame);
+						obj = new TestUnitNetworkObject(networker, id, frame);
 						break;
 					case ZfTestCubeNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new ZfTestCubeNetworkObject(networker, id, frame);
 						break;
+					case ZfTestPlayerCubeNetworkObject.IDENTITY:
+						availableCallback = true;
+						obj = new ZfTestPlayerCubeNetworkObject(networker, id, frame);
+						break;
 					case ZfTestRpcMoveCubeNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new ZfTestRpcMoveCubeNetworkObject(networker, id, frame);
 						break;
-					case ZfTestPlayerCubeNetworkObject.IDENTITY:
+					case TestUnitMonoNetworkObject.IDENTITY:
 						availableCallback = true;
-						obj = new ZfTestPlayerCubeNetworkObject(networker, id, frame);
+						obj = new TestUnitMonoNetworkObject(networker, id, frame);
 						break;
 				}
 
