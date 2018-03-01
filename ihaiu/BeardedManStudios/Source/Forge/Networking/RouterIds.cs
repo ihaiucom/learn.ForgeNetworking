@@ -18,5 +18,16 @@
         public const int CREATED_OBJECT_ROUTER_ID = 4;
         // 路由ID -- 接受多路由器ID, 在服务器接受客户端时，将服务器现有的所有网络对象 发给该玩家，让他创建
         public const int ACCEPT_MULTI_ROUTER_ID = 5;
-	}
+
+        // 大厅路由ID -- 创建房间
+        public const int LOBBY_CREATE_ROOM = 6;
+        // 大厅路由ID -- 加入房间
+        public const int LOBBY_JOIN_ROOM = 7;
+        // 大厅路由ID -- 离开房间
+        public const int LOBBY_LEFT_ROOM = 8;
+        // 大厅路由ID -- 加入观看房间
+        public const int LOBBY_JOIN_WATCH_ROOM = 9;
+        // 大厅路由ID -- 离开观看房间
+        public const int LOBBY_LEFT_WATCH_ROOM = 10;
+    }
 }

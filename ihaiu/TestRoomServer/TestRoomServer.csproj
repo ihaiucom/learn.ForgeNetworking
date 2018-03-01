@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BEFCD412-96E9-42F1-8841-AA2F500DBDA1}</ProjectGuid>
+    <ProjectGuid>{A360C3F4-97C7-42F2-BA5E-FB608556D090}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>BasicStandAloneServer</RootNamespace>
-    <AssemblyName>BasicStandAloneServer</AssemblyName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TestRoomServer</RootNamespace>
+    <AssemblyName>TestRoomServer</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,8 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicCubeNetworkObject.cs" />
-    <Compile Include="NetworkObjectFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -52,10 +51,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Room\Room.csproj">
+      <Project>{5C7CB144-B73D-4F5E-9196-86A7097F055D}</Project>
+      <Name>Room</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
-      <Project>{1dc34cdd-667a-40be-9447-45866bf4607d}</Project>
+      <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

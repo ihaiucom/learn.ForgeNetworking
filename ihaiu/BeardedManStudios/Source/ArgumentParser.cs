@@ -37,7 +37,7 @@ namespace BeardedManStudios
 			for (int i = 0; i < args.Length; i++)
 			{
 				if (args[i].StartsWith("--"))
-					parsedArgs.Add(args[i], args[i]);
+					parsedArgs.Add(args[i].Replace("--", ""), args[++i]);
 				else if (args[i].StartsWith("-"))
 					parsedArgs.Add(args[i++], args[i]);
 				else

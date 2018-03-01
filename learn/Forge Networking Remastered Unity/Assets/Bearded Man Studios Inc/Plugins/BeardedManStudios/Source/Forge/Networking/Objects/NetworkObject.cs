@@ -433,7 +433,7 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="networker">The networker that this object is going to be attached to</param>
         /// <param name="forceId">If 0 then the first open id will be used from the networker</param>
         /// <summary>
-        ///这将创建此对象的一个实例并将其附加到指定的网络连接器
+        /// (主动创建, 先创建行为在创建对象) 这将创建此对象的一个实例并将其附加到指定的网络连接器
         /// </ summary>
         /// <param name =“networker”>这个对象将被附加到的网络工具</ param>
         /// <param name =“forceId”>如果是0，则第一个打开的id将会从网络中使用</ param>

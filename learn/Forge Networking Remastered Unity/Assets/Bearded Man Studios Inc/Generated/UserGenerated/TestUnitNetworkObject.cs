@@ -238,6 +238,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		private void Initialize()
 		{
+            Loger.LogFormat("TestUnitNetworkObject Initialize,  NetworkId={0}", NetworkId);
 			if (readDirtyFlags == null)
 				readDirtyFlags = new byte[1];
 

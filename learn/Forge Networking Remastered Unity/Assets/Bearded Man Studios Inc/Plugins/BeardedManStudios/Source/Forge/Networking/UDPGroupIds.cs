@@ -53,6 +53,8 @@ namespace BeardedManStudios.Forge.Networking
 		public const int PING = 12;
         // 反馈ping
 		public const int PONG = 13;
+
+        // 语言
 		public const int VOIP = 14;
         /// 服务器数据缓存, 向服务请求服务器缓存的数据时用
 		public const int CACHE = 15;

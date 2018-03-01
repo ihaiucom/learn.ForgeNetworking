@@ -31,7 +31,7 @@ using System.Net.Sockets;
 
 namespace BeardedManStudios.Forge.Networking
 {
-	public class NetworkingPlayer
+	public partial class NetworkingPlayer
 	{
         // 默认玩家超时断线时间 30秒
 		private const uint PLAYER_TIMEOUT_DISCONNECT = 30000;

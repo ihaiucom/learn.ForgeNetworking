@@ -227,12 +227,17 @@ namespace BeardedManStudios.Forge.Networking
 			return new BMSByte().Clone(Map<byte[]>(stream));
 		}
 
-		/// <summary>
-		/// Get a byte[] out of a BMSByte
-		/// </summary>
-		/// <param name="args">Arguments passed through to get mapped</param>
-		/// <returns>A byte[] of the mapped arguments</returns>
-		public BMSByte MapBytes(BMSByte bytes, params object[] args)
+        /// <summary>
+        /// Get a byte[] out of a BMSByte
+        /// </summary>
+        /// <param name="args">Arguments passed through to get mapped</param>
+        /// <returns>A byte[] of the mapped arguments</returns>
+        /// <summary>
+        ///从BMSByte中获取一个字节[]
+        /// </ summary>
+        /// <param name =“args”>传递给映射的参数</ param>
+        /// <returns>映射参数的一个byte [] </ returns>
+        public BMSByte MapBytes(BMSByte bytes, params object[] args)
 		{
 			byte[][] bytesToMap = new byte[args.Length][];
 			for (int i = 0; i < args.Length; i++)

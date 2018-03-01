@@ -1,20 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BEFCD412-96E9-42F1-8841-AA2F500DBDA1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>BasicStandAloneServer</RootNamespace>
-    <AssemblyName>BasicStandAloneServer</AssemblyName>
+    <ProjectGuid>{5C7CB144-B73D-4F5E-9196-86A7097F055D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Room</RootNamespace>
+    <AssemblyName>Room</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IhaiuLog">
+      <HintPath>..\..\..\learn.BehaviacDesigner\learn\Lib\IhaiuLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,19 +44,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicCubeNetworkObject.cs" />
-    <Compile Include="NetworkObjectFactory.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\Lobby\LobbyBase.cs" />
+    <Compile Include="Sources\Lobby\Lobby.cs" />
+    <Compile Include="Sources\Lobby\LobbyClient.cs" />
+    <Compile Include="Sources\Lobby\LobbyServer.cs" />
+    <Compile Include="Sources\Room\NetRoom.cs" />
+    <Compile Include="Sources\Room\NetRoomBase.cs" />
+    <Compile Include="Sources\Room\NetRoomClient.cs" />
+    <Compile Include="Sources\Room\NetRoomInfo.cs" />
+    <Compile Include="Sources\Room\NetRoomPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Folder Include="Sources\Stage\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
-      <Project>{1dc34cdd-667a-40be-9447-45866bf4607d}</Project>
+      <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

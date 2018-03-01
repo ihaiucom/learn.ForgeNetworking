@@ -1038,6 +1038,7 @@ namespace BeardedManStudios.Forge.Networking
 			Networker.CompleteInitialization(this);
 		}
 
+        // 释放创建的缓存
 		public void ReleaseCreateBuffer()
 		{
 			RegistrationComplete();
