@@ -4,18 +4,15 @@ using System.Collections.Generic;
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      2/28/2018 7:25:07 PM
+*  @CreateTime      3/2/2018 9:57:16 AM
 *  @Description:    
 * ==============================================================================
 */
 namespace Games
 {
-    public abstract class NetRoomBase
+    public interface INetworkBehavior
     {
-        public int uid;
-        public int stageId;
-
-        public LobbyBase lobby { get; protected set; }
-        public RoomScene scene { get; protected set; }
+        void Initialize(NetworkObject obj);
+        void Initialize(RoomScene networker, byte[] metadata = null);
     }
 }

@@ -44,7 +44,7 @@ namespace BeardedManStudios.Forge.Networking.Unity
 				return;
 
 			NetworkObject target;
-			if (networker.NetworkObjects.TryGetValue(createTarget.NetworkId + idOffset, out target))
+			if (networker.NetworkObjectDict.TryGetValue(createTarget.NetworkId + idOffset, out target))
 				NetworkBind(target);
 		}
 

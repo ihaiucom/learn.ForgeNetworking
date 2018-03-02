@@ -48,7 +48,7 @@ namespace Games
 
         private void Read(NetworkingPlayer player, Binary frame, NetWorker sender)
         {
-            if (frame.GroupId != MessageGroupIds.VOIP)
+            if (frame.GroupId != MessageGroupIds.Lobby)
                 return;
 
         }

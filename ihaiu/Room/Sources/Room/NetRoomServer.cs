@@ -93,6 +93,12 @@ namespace Games
         }
 
 
+        private void OnPlayerJoined(NetworkingPlayer networkingPlayer)
+        {
+            scene.OnPlayerAccepted(networkingPlayer);
+        }
+
+
         // 接收二进制数据
         public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
         {

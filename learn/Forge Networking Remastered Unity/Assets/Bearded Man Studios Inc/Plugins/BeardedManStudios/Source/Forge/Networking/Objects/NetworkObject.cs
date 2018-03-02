@@ -510,7 +510,8 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="serverId">The id (if any) given to this object by the server</param>
         /// <param name="frame">The initialization data for this object that is assigned from the server</param>
         /// <summary>
-        ///从网络创建一个网络对象的实例
+        /// 从网络创建一个网络对象的实例
+        /// （服务器， 接收到客户端要创建网络对象）
         /// </ summary>
         /// <param name =“networker”>管理此网络对象的NetWorker </ param>
         /// <param name =“serverId”>服务器给这个对象的id（如果有的话）</ param>
@@ -541,9 +542,11 @@ namespace BeardedManStudios.Forge.Networking
 				if (frame.StreamData.GetBasicType<bool>())
 					Metadata = ObjectMapper.Instance.Map<byte[]>(frame.StreamData);
 
-                // 让所有客户知道正在创建一个新的对象
+                // 让所有客户知道正在创建一个新的对象, 跳过发起创建的客户端
                 // Let all the clients know that a new object is being created
                 CreateObjectOnServer(frame.Sender);
+
+                // 通知发起的客户端
 				Binary createObject = CreateObjectOnServer(frame.Sender, hash);
 
                 //将消息发送回发送客户端，以便完成网络对象的设置
@@ -744,6 +747,9 @@ namespace BeardedManStudios.Forge.Networking
 		{
 			UpdateInterval = DEFAULT_UPDATE_INTERVAL;
 
+            // targetHash == 0 时， 服务器会生成NetworkId，并注册到网络对象列表， 而且还会通知所有客户端创建网络对象
+            // targetHash !=0 时， 服务器只是生成信息，将NetworkId反馈给该发起的客户端
+
             //如果有一个目标散列，这个对象已经被初始化
             // If there is a target hash, this object has already been initialized
             if (targetHash == 0)
@@ -767,10 +773,14 @@ namespace BeardedManStudios.Forge.Networking
 			if (Metadata != null)
 				ObjectMapper.Instance.MapBytes(data, Metadata);
 
+
 			Binary createObject = new Binary(CreateTimestep, false, data, Receivers.All, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, Networker is BaseTCP, RouterIds.NETWORK_OBJECT_ROUTER_ID);
 
 			if (targetHash != 0)
 				return createObject;
+
+            // 通知其他客户端创建网络对象
+            // (服务器主动创建的，skipPlayer = null )
 
             //如果有一个目标散列，我们只是生成创建对象框架
             // If there is a target hash, we are just generating the create object frame
@@ -933,6 +943,7 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="frame">The initialization data for this network object</param>
         /// <summary>
         ///客户端侦听异步创建对象的方法回调
+        ///发起创建的客户端，收到服务器反馈的网络ID
         /// </ summary>
         /// <param name =“identity”>用于描述网络对象的类型/子类型的标识</ param>
         /// <param name =“hash”>已经发送的哈希ID与这个哈希id </ param>匹配

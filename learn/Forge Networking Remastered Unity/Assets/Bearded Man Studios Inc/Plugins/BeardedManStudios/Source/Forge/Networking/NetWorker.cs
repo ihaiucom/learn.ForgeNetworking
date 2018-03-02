@@ -451,7 +451,7 @@ namespace BeardedManStudios.Forge.Networking
         /// 由它的id索引的所有网络对象的字典
         /// A dictionary of all of the network objects indexed by it's id
         /// </summary>
-        public Dictionary<uint, NetworkObject> NetworkObjects { get; private set; }
+        public Dictionary<uint, NetworkObject> NetworkObjectDict { get; private set; }
 
         /// <summary>
         /// 所有网络对象的列表
@@ -546,7 +546,7 @@ namespace BeardedManStudios.Forge.Networking
 			Players = new List<NetworkingPlayer>();
 			DisconnectingPlayers = new List<NetworkingPlayer>();
 			ForcedDisconnectingPlayers = new List<NetworkingPlayer>();
-			NetworkObjects = new Dictionary<uint, NetworkObject>();
+			NetworkObjectDict = new Dictionary<uint, NetworkObject>();
 			NetworkObjectList = new List<NetworkObject>();
 
 			ServerPlayerCounter = 0;
@@ -567,9 +567,9 @@ namespace BeardedManStudios.Forge.Networking
 				while (IsBound)
 				{
 					ulong step = Time.Timestep;
-					lock (NetworkObjects)
+					lock (NetworkObjectDict)
 					{
-						foreach (NetworkObject obj in NetworkObjects.Values)
+						foreach (NetworkObject obj in NetworkObjectDict.Values)
 						{
 							// Only do the heartbeat (update) on network objects that
 							// are owned by the current networker
@@ -589,12 +589,12 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name="networkObject">网络对象</param>
 		public void CompleteInitialization(NetworkObject networkObject)
 		{
-			lock (NetworkObjects)
+			lock (NetworkObjectDict)
 			{
-				if (NetworkObjects.ContainsKey(networkObject.NetworkId))
+				if (NetworkObjectDict.ContainsKey(networkObject.NetworkId))
 					return;
 
-				NetworkObjects.Add(networkObject.NetworkId, networkObject);
+				NetworkObjectDict.Add(networkObject.NetworkId, networkObject);
 				NetworkObjectList.Add(networkObject);
 			}
 		}
@@ -715,12 +715,12 @@ namespace BeardedManStudios.Forge.Networking
 		{
 			uint id = currentNetworkObjectId;
 
-			lock (NetworkObjects)
+			lock (NetworkObjectDict)
 			{
 				// If we are forcing this object
 				if (forceId != 0)
 				{
-					if (NetworkObjects.ContainsKey(forceId))
+					if (NetworkObjectDict.ContainsKey(forceId))
 						return false;
 
 					id = forceId;
@@ -735,7 +735,7 @@ namespace BeardedManStudios.Forge.Networking
 				{
 					do
 					{
-						if (NetworkObjects.ContainsKey(++currentNetworkObjectId))
+						if (NetworkObjectDict.ContainsKey(++currentNetworkObjectId))
 							continue;
 
 						if (!networkObject.RegisterOnce(currentNetworkObjectId))
@@ -761,9 +761,9 @@ namespace BeardedManStudios.Forge.Networking
 			// When this object is destroyed it needs to remove itself from the list
 			networkObject.onDestroy += (NetWorker sender) =>
 			{
-				lock (NetworkObjects)
+				lock (NetworkObjectDict)
 				{
-					NetworkObjects.Remove(networkObject.NetworkId);
+					NetworkObjectDict.Remove(networkObject.NetworkId);
 					NetworkObjectList.Remove(networkObject);
 				}
 			};
@@ -919,9 +919,9 @@ namespace BeardedManStudios.Forge.Networking
 			player.PendingAccepted = false;
 
 			NetworkObject[] currentObjects;
-			lock (NetworkObjects)
+			lock (NetworkObjectDict)
 			{
-				currentObjects = NetworkObjects.Values.ToArray();
+				currentObjects = NetworkObjectDict.Values.ToArray();
 			}
             // 服务器发送目前所有的网络对象给他
             NetworkObject.PlayerAccepted(player, currentObjects);
@@ -1009,9 +1009,9 @@ namespace BeardedManStudios.Forge.Networking
 					uint id = frame.StreamData.GetBasicType<uint>();
 					NetworkObject targetObject = null;
 
-					lock (NetworkObjects)
+					lock (NetworkObjectDict)
 					{
-						NetworkObjects.TryGetValue(id, out targetObject);
+						NetworkObjectDict.TryGetValue(id, out targetObject);
 					}
 
 					if (targetObject == null)
