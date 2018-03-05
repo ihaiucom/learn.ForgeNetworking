@@ -49,15 +49,22 @@
     <Compile Include="Sources\Lobby\Lobby.cs" />
     <Compile Include="Sources\Lobby\LobbyClient.cs" />
     <Compile Include="Sources\Lobby\LobbyServer.cs" />
-    <Compile Include="Sources\Room\NetRoom.cs" />
+    <Compile Include="Sources\Objects\INetObjectFactory.cs" />
+    <Compile Include="Sources\Objects\INetworkBehavior.cs" />
+    <Compile Include="Sources\Objects\NetObject.cs" />
+    <Compile Include="Sources\Room\NetRoleInfo.cs" />
     <Compile Include="Sources\Room\NetRoomBase.cs" />
     <Compile Include="Sources\Room\NetRoomClient.cs" />
     <Compile Include="Sources\Room\NetRoomInfo.cs" />
     <Compile Include="Sources\Room\NetRoomPlayer.cs" />
+    <Compile Include="Sources\Room\NetRoomServer.cs" />
+    <Compile Include="Sources\Room\RoomEnums.cs" />
+    <Compile Include="Sources\Stage\RoomScene.cs" />
+    <Compile Include="Sources\Stage\RoomStage.cs" />
+    <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
+    <Compile Include="Sources\Stage\RoomStageNormal.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sources\Stage\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
       <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>

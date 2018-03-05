@@ -253,6 +253,7 @@ namespace BeardedManStudios.Forge.Networking
                 // Copy the trailer to the end of the packet
                 Buffer.BlockCopy(trailer, 0, packet, packet.Length - trailer.Length, trailer.Length);
 
+                
                 //创建新的数据包并将其添加到挂起的数据包中，以便将其发送出去
                 // Create and add the new packet to pending packets so that it can be sent out
                 PendingPackets.Add(orderId, new UDPPacket(Reliable, endPacket, Frame.GroupId, orderId, Frame.UniqueId, packet, false, Frame.Receivers));

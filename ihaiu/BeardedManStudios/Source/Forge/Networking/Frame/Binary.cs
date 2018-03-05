@@ -33,9 +33,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		public override byte ControlByte { get { return CONTROL_BYTE; } }
 
 		public Binary() : base() { }
-		public Binary(ulong timestep, bool useMask, Receivers receivers, int groupId, bool isStream, byte routerId = 0) : base(timestep, useMask, receivers, groupId, isStream, routerId) { }
-		public Binary(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId) { }
-		public Binary(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId) { }
+		public Binary(ulong timestep, bool useMask, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, receivers, groupId, isStream, routerId, roomId) { }
+		public Binary(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId, roomId) { }
+		public Binary(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId, roomId) { }
 		public Binary(byte[] frame, int payloadStart, int groupId, NetworkingPlayer sender, byte receivers) : base(frame, payloadStart, groupId, sender, receivers) { }
 
         /// <summary>

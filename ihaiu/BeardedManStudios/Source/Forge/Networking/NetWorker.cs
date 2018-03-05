@@ -1003,54 +1003,60 @@ namespace BeardedManStudios.Forge.Networking
             // 二进制消息
 			if (frame is Binary)
 			{
-				byte routerId = ((Binary)frame).RouterId;
-				if (routerId == RouterIds.RPC_ROUTER_ID || routerId == RouterIds.BINARY_DATA_ROUTER_ID || routerId == RouterIds.CREATED_OBJECT_ROUTER_ID)
-				{
-					uint id = frame.StreamData.GetBasicType<uint>();
-					NetworkObject targetObject = null;
+                if(frame.RoomId == 0)
+                {
+                    byte routerId = ((Binary)frame).RouterId;
+                    if (routerId == RouterIds.RPC_ROUTER_ID || routerId == RouterIds.BINARY_DATA_ROUTER_ID || routerId == RouterIds.CREATED_OBJECT_ROUTER_ID)
+                    {
+                        uint id = frame.StreamData.GetBasicType<uint>();
+                        NetworkObject targetObject = null;
 
-					lock (NetworkObjects)
-					{
-						NetworkObjects.TryGetValue(id, out targetObject);
-					}
+                        lock (NetworkObjects)
+                        {
+                            NetworkObjects.TryGetValue(id, out targetObject);
+                        }
 
-					if (targetObject == null)
-					{
-                        // 收到该网络对象的消息包
-                        // 但是该玩家机器上还没有创建网络对象
-                        // 就将该消息缓存器来，等待网络对象创建完再掉用
-						lock (missingObjectBuffer)
-						{
-							if (!missingObjectBuffer.ContainsKey(id))
-								missingObjectBuffer.Add(id, new List<Action<NetworkObject>>());
+                        if (targetObject == null)
+                        {
+                            // 收到该网络对象的消息包
+                            // 但是该玩家机器上还没有创建网络对象
+                            // 就将该消息缓存器来，等待网络对象创建完再掉用
+                            lock (missingObjectBuffer)
+                            {
+                                if (!missingObjectBuffer.ContainsKey(id))
+                                    missingObjectBuffer.Add(id, new List<Action<NetworkObject>>());
 
-							missingObjectBuffer[id].Add((networkObject) =>
-							{
-								ExecuteRouterAction(routerId, networkObject, (Binary)frame, player);
-							});
-						}
+                                missingObjectBuffer[id].Add((networkObject) =>
+                                {
+                                    ExecuteRouterAction(routerId, networkObject, (Binary)frame, player);
+                                });
+                            }
 
-                        // TODO:  If the server is missing an object, it should have a timed buffer
-                        // that way useless messages are not setting around in memory
-                        // TODO：如果服务器缺少一个对象，它应该有一个定时缓冲区
-                        //这种无用的消息不会在内存中设置
+                            // TODO:  If the server is missing an object, it should have a timed buffer
+                            // that way useless messages are not setting around in memory
+                            // TODO：如果服务器缺少一个对象，它应该有一个定时缓冲区
+                            //这种无用的消息不会在内存中设置
 
-                        return;
-					}
+                            return;
+                        }
 
-					ExecuteRouterAction(routerId, targetObject, (Binary)frame, player);
-				}
-                // 创建网络对象
-				else if (routerId == RouterIds.NETWORK_OBJECT_ROUTER_ID)
-				{
-					NetworkObject.CreateNetworkObject(this, player, (Binary)frame);
-				}
-                // 在服务器接受客户端时，将服务器现有的所有网络对象 发给该玩家，让他创建
-                else if (routerId == RouterIds.ACCEPT_MULTI_ROUTER_ID)
-					NetworkObject.CreateMultiNetworkObject(this, player, (Binary)frame);
-				else if (binaryMessageReceived != null)
-					binaryMessageReceived(player, (Binary)frame, this);
-			}
+                        ExecuteRouterAction(routerId, targetObject, (Binary)frame, player);
+                    }
+                    // 创建网络对象
+                    else if (routerId == RouterIds.NETWORK_OBJECT_ROUTER_ID)
+                    {
+                        NetworkObject.CreateNetworkObject(this, player, (Binary)frame);
+                    }
+                    // 在服务器接受客户端时，将服务器现有的所有网络对象 发给该玩家，让他创建
+                    else if (routerId == RouterIds.ACCEPT_MULTI_ROUTER_ID)
+                        NetworkObject.CreateMultiNetworkObject(this, player, (Binary)frame);
+                    else if (binaryMessageReceived != null)
+                        binaryMessageReceived(player, (Binary)frame, this);
+                }
+                else if (binaryMessageReceived != null)
+                    binaryMessageReceived(player, (Binary)frame, this);
+
+            }
             // 文本消息
 			else if (frame is Text && textMessageReceived != null)
 				textMessageReceived(player, (Text)frame, this);

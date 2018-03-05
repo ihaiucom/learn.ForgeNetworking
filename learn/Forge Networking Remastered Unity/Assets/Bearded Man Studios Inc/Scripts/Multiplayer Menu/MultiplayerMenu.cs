@@ -91,7 +91,11 @@ public class MultiplayerMenu : MonoBehaviour
 		else
 		{
 			client = new UDPClient();
-			if (natServerHost.Trim().Length == 0)
+
+            ((UDPClient)client).serverAccepted += (NetWorker sender) => { Debug.Log("ServerAccepted"); };
+
+
+            if (natServerHost.Trim().Length == 0)
 				((UDPClient)client).Connect(ipAddress.text, (ushort)port);
 			else
 				((UDPClient)client).Connect(ipAddress.text, (ushort)port, natServerHost, natServerPort);
