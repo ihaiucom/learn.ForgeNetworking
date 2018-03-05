@@ -49,6 +49,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		private int payloadStart = 0;
 
         /// <summary>
+        /// 房间ID
+        /// </summary>
+        public ulong RoomId { get; protected set; }
+
+        /// <summary>
         /// 这是毫秒内这个帧的时间步长
         /// This is the time step for this frame in milliseconds
         /// </summary>
@@ -59,12 +64,6 @@ namespace BeardedManStudios.Forge.Networking.Frame
         /// The Unique id for this frame
         /// </summary>
         public ulong UniqueId { get; protected set; }
-
-
-        /// <summary>
-        /// 房间ID
-        /// </summary>
-        public ulong RoomId { get; protected set; }
 
         /// <summary>
         /// 是否是可靠的
@@ -240,8 +239,8 @@ namespace BeardedManStudios.Forge.Networking.Frame
 
 			StreamData = new BMSByte();
 
-			TimeStep = timestep;
             RoomId = roomId;
+            TimeStep = timestep;
             GroupId = groupId;
 			RouterId = routerId;
 			Receivers = receivers;
