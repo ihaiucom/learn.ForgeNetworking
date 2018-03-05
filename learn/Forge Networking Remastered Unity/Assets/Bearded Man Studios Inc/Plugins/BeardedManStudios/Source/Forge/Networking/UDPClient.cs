@@ -64,7 +64,7 @@ namespace BeardedManStudios.Forge.Networking
 
 		public override void Send(FrameStream frame, bool reliable = false)
 		{
-            UDPPacketComposer composer = new UDPPacketComposer();
+			UDPPacketComposer composer = new UDPPacketComposer();
 
             //如果这个信息是可靠的，那么一定要保持对作曲家的引用
             //这样就没有任何失控的线程

@@ -191,8 +191,8 @@ namespace BeardedManStudios.Forge.Networking.Frame
         protected virtual void ReadFrame(byte[] frame, int payloadStart, byte receivers)
 		{
             //帧有效载荷的末尾就在唯一ID之前
-            // data, TimeStep, UniqueId, RoomId
-            // data,Receivers, TimeStep, UniqueId ; receivers==255
+            // data,, RoomId TimeStep, UniqueId 
+            // data,Receivers, RoomId, TimeStep, UniqueId ; receivers==255
             // The end of the frame payload is just before the unique id
             int end = frame.Length - (sizeof(ulong) * 3);
 
@@ -211,16 +211,17 @@ namespace BeardedManStudios.Forge.Networking.Frame
             if (frame.Length - payloadStart > end)
 				StreamData.BlockCopy(frame, payloadStart, end - payloadStart);
 
+
+            // 房间ID
+            RoomId = BitConverter.ToUInt64(frame, end);
+
             // 拉这个框架的时间步骤
             // Pull the time step for this frame
-            TimeStep = BitConverter.ToUInt64(frame, end);
+            TimeStep = BitConverter.ToUInt64(frame, end + sizeof(ulong));
 
             // 拉这个框架的唯一ID
             // Pull the unique id for this frame
-            UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong));
-
-            // 房间ID
-            RoomId = BitConverter.ToUInt64(frame, end + sizeof(ulong) * 2);
+            UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong) * 2);
         }
 
         /// <summary>
@@ -330,14 +331,14 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			if (isStream)
 				StreamData.Append(new byte[] { (byte)Receivers });
 
-			// Add the time step to the end of the frame
-			StreamData.BlockCopy<ulong>(TimeStep, sizeof(ulong));
+            // 房间ID
+            StreamData.BlockCopy<ulong>(RoomId, sizeof(ulong));
+
+            // Add the time step to the end of the frame
+            StreamData.BlockCopy<ulong>(TimeStep, sizeof(ulong));
 
 			// Add the unique message id for this frame just before the timestep frame
 			StreamData.BlockCopy<ulong>(UniqueId, sizeof(ulong));
-
-            // 房间ID
-            StreamData.BlockCopy<ulong>(RoomId, sizeof(ulong));
 
             if (mask.Length > 0)
 			{
@@ -373,7 +374,7 @@ namespace BeardedManStudios.Forge.Networking.Frame
 				MakeReliable(player);
 				reliableCloneData.Clone(StreamData);
 
-				reliableCloneData.InsertRange(StreamData.Size - (sizeof(ulong) * 2), BitConverter.GetBytes(UniqueReliableId));
+				reliableCloneData.InsertRange(StreamData.Size - (sizeof(ulong) * 3), BitConverter.GetBytes(UniqueReliableId));
 				return reliableCloneData.CompressBytes();
 			}
 

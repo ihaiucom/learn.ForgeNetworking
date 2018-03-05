@@ -26,10 +26,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
     /// </summary>
 	public abstract class FrameStream : ICloneable
 	{
-		/// <summary>
-		/// Get the control byte for this frame
-		/// </summary>
-		public abstract byte ControlByte { get; }
+        /// <summary>
+        /// 获取这个帧的控制字节
+        /// Get the control byte for this frame
+        /// </summary>
+        public abstract byte ControlByte { get; }
 
         /// <summary>
         /// 目前的原始数据
@@ -102,10 +103,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// </summary>
 		public NetworkingPlayer Sender { get; private set; }
 
-		/// <summary>
-		/// This is the unique message id for this message
-		/// </summary>
-		public static ulong UniqueMessageIdCounter { get; private set; }
+        /// <summary>
+        /// 这是此消息的唯一消息ID
+        /// This is the unique message id for this message
+        /// </summary>
+        public static ulong UniqueMessageIdCounter { get; private set; }
 
 		/// <summary>
 		/// A method to assign the sender (only should be done on server)
@@ -125,9 +127,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// <param name="useMask">If set to <c>true</c> a mask will be used to encode the payload.</param>
 		/// <param name="routerId">A byte that can be used to route data within a user program</param>
 		public FrameStream(ulong timestep, bool useMask, Receivers receivers, int groupId, bool isStream
-			, byte routerId = 0)
+			, byte routerId = 0, ulong roomId = 0)
 		{
-			CreateFrame(useMask, timestep, new byte[0], receivers, groupId, routerId, isStream);
+			CreateFrame(useMask, timestep, new byte[0], receivers, groupId, routerId, isStream, roomId);
 		}
 
 		/// <summary>
@@ -137,13 +139,13 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// <param name="useMask">If set to <c>true</c> a mask will be used to encode the payload.</param>
 		/// <param name="payload">The new frame initial data data</param>
 		/// <param name="routerId">A byte that can be used to route data within a user program</param>
-		public FrameStream(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0)
+		public FrameStream(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0)
 		{
 			if (payload == null)
 				// TODO:  Throw frame exception
 				throw new BaseNetworkException("The payload for the frame is not allowed to be null, otherwise use other constructor");
 
-			CreateFrame(useMask, timestep, payload, receivers, groupId, routerId, isStream);
+			CreateFrame(useMask, timestep, payload, receivers, groupId, routerId, isStream, roomId);
 		}
 
 		/// <summary>
@@ -153,13 +155,13 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// <param name="useMask">If set to <c>true</c> a mask will be used to encode the payload.</param>
 		/// <param name="payload">The new frame initial data data</param>
 		/// <param name="routerId">A byte that can be used to route data within a user program</param>
-		public FrameStream(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0)
+		public FrameStream(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0)
 		{
 			if (payload == null)
 				// TODO:  Throw frame exception
 				throw new BaseNetworkException("The payload for the frame is not allowed to be null, otherwise use other constructor");
 
-			CreateFrame(useMask, timestep, payload.byteArr, receivers, groupId, routerId, isStream);
+			CreateFrame(useMask, timestep, payload.byteArr, receivers, groupId, routerId, isStream, roomId);
 		}
 
         /// <summary>
@@ -189,8 +191,8 @@ namespace BeardedManStudios.Forge.Networking.Frame
         protected virtual void ReadFrame(byte[] frame, int payloadStart, byte receivers)
 		{
             //帧有效载荷的末尾就在唯一ID之前
-            // data, TimeStep, UniqueId, RoomId
-            // data,Receivers, TimeStep, UniqueId ; receivers==255
+            // data,, RoomId TimeStep, UniqueId 
+            // data,Receivers, RoomId, TimeStep, UniqueId ; receivers==255
             // The end of the frame payload is just before the unique id
             int end = frame.Length - (sizeof(ulong) * 3);
 
@@ -220,15 +222,13 @@ namespace BeardedManStudios.Forge.Networking.Frame
             // 拉这个框架的唯一ID
             // Pull the unique id for this frame
             UniqueId = BitConverter.ToUInt64(frame, end + sizeof(ulong) * 2);
-
-            Loger.LogFormat("RoomId=" + RoomId);
         }
 
         /// <summary>
         /// 使用传入的有效载荷创建帧数据
         /// Creates the frame data using the passed in payload
         /// </summary>
-        private void CreateFrame(bool useMask, ulong timestep, byte[] payload, Receivers receivers, int groupId, byte routerId, bool isStream)
+        private void CreateFrame(bool useMask, ulong timestep, byte[] payload, Receivers receivers, int groupId, byte routerId, bool isStream, ulong roomId)
 		{
             //如果我们要使用一个蒙版然后生成一个随机蒙版
             // If we are to use a mask then generate a random mask
@@ -238,12 +238,11 @@ namespace BeardedManStudios.Forge.Networking.Frame
 				new Random().NextBytes(mask);
 			}
 
-            RoomId = 85;
-
-            StreamData = new BMSByte();
+			StreamData = new BMSByte();
 
 			TimeStep = timestep;
-			GroupId = groupId;
+            RoomId = roomId;
+            GroupId = groupId;
 			RouterId = routerId;
 			Receivers = receivers;
 			UniqueId = UniqueMessageIdCounter++;
@@ -331,8 +330,6 @@ namespace BeardedManStudios.Forge.Networking.Frame
 
 			if (isStream)
 				StreamData.Append(new byte[] { (byte)Receivers });
-
-
 
             // 房间ID
             StreamData.BlockCopy<ulong>(RoomId, sizeof(ulong));

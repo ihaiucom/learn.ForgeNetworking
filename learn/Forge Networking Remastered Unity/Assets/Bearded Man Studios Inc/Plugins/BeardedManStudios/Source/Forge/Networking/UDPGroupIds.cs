@@ -35,17 +35,21 @@ namespace BeardedManStudios.Forge.Networking
 		}
 
 		public const int TCP_FIND_GROUP_ID = 0;
-        // 向服务器请求接受
-		public const int NETWORK_ID_REQUEST = 1;
+        // 向服务器请求接受 NetworkingPlayer.NetworkId
+        public const int NETWORK_ID_REQUEST = 1;
 		public const int NETWORK_OBJECT_RPC = 2;
         // 创建网络对象请求
 		public const int CREATE_NETWORK_OBJECT_REQUEST = 3;
+        // 穿透
 		public const int NAT_SERVER_CONNECT = 4;
 		public const int NAT_SERVER_REGISTER = 5;
 		public const int NAT_ROUTE_REQUEST = 6;
         // 最大连接数, 服务不接受连接时 反馈给客户端的错误
 		public const int MAX_CONNECTIONS = 7;
+        // 断开连接
 		public const int DISCONNECT = 8;
+
+        // Master服务器
 		public const int MASTER_SERVER_REGISTER = 9;
 		public const int MASTER_SERVER_UPDATE = 10;
 		public const int MASTER_SERVER_GET = 11;
@@ -53,8 +57,6 @@ namespace BeardedManStudios.Forge.Networking
 		public const int PING = 12;
         // 反馈ping
 		public const int PONG = 13;
-
-        // 语言
 		public const int VOIP = 14;
         /// 服务器数据缓存, 向服务请求服务器缓存的数据时用
 		public const int CACHE = 15;
@@ -64,6 +66,13 @@ namespace BeardedManStudios.Forge.Networking
         /// 加载完场景， 开始检测场景中的NetworkBehavior和NetworkObject，对他们初始化
         /// </summary>
 		public const int VIEW_CHANGE = 17;
+
+        
+
+        // 大厅
+        public const int Lobby = 20;
+        // 房间
+        public const int ROOM = 21;
 
         // 启动通用的IDS
         public const int START_OF_GENERIC_IDS = 10000;

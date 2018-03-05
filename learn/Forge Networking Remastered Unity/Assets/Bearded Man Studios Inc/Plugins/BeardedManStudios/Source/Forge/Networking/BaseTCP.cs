@@ -45,22 +45,28 @@ namespace BeardedManStudios.Forge.Networking
             // Setup the buffer to have the length of the available bytes for now
             byte[] bytes = new byte[available];
 
-            //确定当前长度是否是第二个字节或更多的值
+            //读取前2个字节，第一个字节是控制帧id，
+            //第二个是初始数据长度检查
             // Read the first 2 bytes, the first byte being the control fram id,
             // and the second being the initial data length check
             stream.Read(bytes, 0, 2);
 
+            //确定当前长度是否是第二个字节或更多的值
             // Determine if the current length is the value of the second byte or more
             int dataLength = bytes[1] & 127;
             int payloadOffset = 2;
+
+            // TODO：BRENTT !!! 为什么这使它工作？！
             //TODO: BRENTT!!! WHY DOES THIS MAKE IT WORK?!
             bool maskedMessage = false;
             /// END WHY
 
+            //如果按位返回126，则有4个字节要读取，否则127是10个字节
             // If the bitwise & returns 126 there are 4 bytes to be read, otherwise 127 is 10 bytes
             if (dataLength == 126)
             {
                 payloadOffset = 4;
+                // TODO：BRENTT !!! 为什么这使它工作？！
                 //TODO: BRENTT!!! WHY DOES THIS MAKE IT WORK?!
                 maskedMessage = true;
                 /// END WHY
@@ -68,16 +74,21 @@ namespace BeardedManStudios.Forge.Networking
             else if (dataLength == 127)
                 payloadOffset = 10;
 
+            //将数据长度初始化为数据长度
             // Initialize the length to the data length
             int length = dataLength;
 
+            //如果bitwize＆第二个字节产生了其他126或127的东西
+            //从指定的字节范围读取长度
             // If the bitwize & on the second byte produced something other that 126 or 127 then
             // read the length from the specifid byte range
             if (payloadOffset != 2)
             {
+                //获取要用于确定有效负载长度的下一组字节
                 // Get the next set of bytes that are to be used to determine the payload length
                 stream.Read(bytes, 2, payloadOffset - 2);
 
+                //需要扭转末端秩序
                 // Need to reverse the endien order
                 if (payloadOffset == 4)
                 {

@@ -42,37 +42,46 @@ namespace BeardedManStudios.Forge.Networking
         public TcpClient client { get; private set; }
 #endif
 
-		/// <summary>
-		/// The hash that is / was validated by the server
-		/// </summary>
-		private string headerHash = string.Empty;
+        /// <summary>
+        /// 被服务器验证的散列
+        /// The hash that is / was validated by the server
+        /// </summary>
+        private string headerHash = string.Empty;
 
-		/// <summary>
-		/// Used to determine if the client has requested to be accepted by the server
-		/// </summary>
-		private bool headerExchanged = false;
+        /// <summary>
+        /// 用于确定客户端是否请求被服务器接受
+        /// Used to determine if the client has requested to be accepted by the server
+        /// </summary>
+        private bool headerExchanged = false;
 
-		/// <summary>
-		/// Whether we are disconnected or not
-		/// </summary>
-		private bool disconnectedSelf = false;
+        /// <summary>
+        /// 我们是否断开连接
+        /// Whether we are disconnected or not
+        /// </summary>
+        private bool disconnectedSelf = false;
 
-		/// <summary>
-		/// The identity of the server as a player
-		/// </summary>
-		protected NetworkingPlayer server = null;
+        /// <summary>
+        /// 作为玩家的服务器的身份
+        /// The identity of the server as a player
+        /// </summary>
+        protected NetworkingPlayer server = null;
 		public NetworkingPlayer Server { get { return server; } }
 
 		public event BaseNetworkEvent connectAttemptFailed;
 
-		/// <summary>
-		/// Used to determine what happened during the read method and what actions
-		/// that should be taken if it was called from an infinite loop thread
-		/// </summary>
-		protected enum ReadState
+        /// <summary>
+        /// 用于确定在读取方法期间发生了什么以及执行了哪些操作
+        /// 如果从无限循环线程调用它，则应该采取这种措施
+        /// Used to determine what happened during the read method and what actions
+        /// that should be taken if it was called from an infinite loop thread
+        /// </summary>
+        protected enum ReadState
 		{
-			Void,
+            // 再次调Read()读取方法
+            Void,
+            // 停止运行，断开连接
 			Disconnect,
+            // 循环里 睡眠10ms
 			Continue
 		}
 
@@ -89,18 +98,25 @@ namespace BeardedManStudios.Forge.Networking
 #endif
 		}
 
-		/// <summary>
-		/// The direct byte send method to the specified client
-		/// </summary>
-		/// <param name="client">The target client that will receive the frame</param>
-		/// <param name="frame">The frame that is to be sent to the specified client</param>
-		public virtual void Send(FrameStream frame)
+        /// <summary>
+        /// The direct byte send method to the specified client
+        /// </summary>
+        /// <param name="client">The target client that will receive the frame</param>
+        /// <param name="frame">The frame that is to be sent to the specified client</param>
+        /// <summary>
+        ///直接字节发送方法到指定的客户端
+        /// </ summary>
+        /// <param name =“client”>将接收帧的目标客户端</ param>
+        /// <param name =“frame”>要发送到指定客户端的帧</ param>
+        public virtual void Send(FrameStream frame)
 		{
-			// Make sure that we don't have any race conditions with writing to the same client
-			lock (client)
+            //确保我们没有写入同一个客户端的竞争条件
+            // Make sure that we don't have any race conditions with writing to the same client
+            lock (client)
 			{
-				// Get the raw bytes from the frame and send them
-				byte[] data = frame.GetData();
+                //从帧中获取原始字节并发送
+                // Get the raw bytes from the frame and send them
+                byte[] data = frame.GetData();
 				RawWrite(data);
 			}
 		}
@@ -154,8 +170,9 @@ namespace BeardedManStudios.Forge.Networking
 				}
 #endif
 
-				// This was a successful bind so fire the events for it
-				OnBindSuccessful();
+                //这是一个成功的约束，所以为它启动事件
+                // This was a successful bind so fire the events for it
+                OnBindSuccessful();
 
 				Initialize(host, port);
 			}
@@ -180,76 +197,94 @@ namespace BeardedManStudios.Forge.Networking
         /// <param name =“port”>在远程主机上连接的端口</ param>
         protected virtual void Initialize(string host, ushort port)
 		{
-			// By default pending creates should be true and flushed when ready
-			PendCreates = true;
+            //默认情况下待处理的创建应该是真实的，并在准备就绪时刷新
+            // By default pending creates should be true and flushed when ready
+            PendCreates = true;
 
-			// Get a client stream for reading and writing. 
-			// Stream stream = client.GetStream();
+            // Get a client stream for reading and writing. 
+            // Stream stream = client.GetStream();
 
-			// Get a random hash key that needs to be used for validating that the server was connected to
-			headerHash = Websockets.HeaderHashKey();
+            //获取需要用于验证服务器连接的随机哈希键
+            // Get a random hash key that needs to be used for validating that the server was connected to
+            headerHash = Websockets.HeaderHashKey();
 
-			// This is a typical Websockets accept header to be validated
-			byte[] connectHeader = Websockets.ConnectionHeader(headerHash, port);
+            //这是一个典型的Websockets接受头被验证
+            // This is a typical Websockets accept header to be validated
+            byte[] connectHeader = Websockets.ConnectionHeader(headerHash, port);
 
-			// Send the accept headers to the server to validate
-			RawWrite(connectHeader);
+            //将接受标头发送到服务器进行验证
+            // Send the accept headers to the server to validate
+            RawWrite(connectHeader);
 
-			// Setup the identity of the server as a player
-			server = new NetworkingPlayer(0, host, true, client, this);
+            //将服务器的身份设置为玩家
+            // Setup the identity of the server as a player
+            server = new NetworkingPlayer(0, host, true, client, this);
 
-			//Let myself know I connected successfully
-			OnPlayerConnected(server);
-			// Set myself as a connected client
-			server.Connected = true;
+            //让我知道我连接成功
+            //Let myself know I connected successfully
+            OnPlayerConnected(server);
+            //将自己设置为连接的客户端
+            // Set myself as a connected client
+            server.Connected = true;
 		}
 
 		protected void InitializeMasterClient(string host, ushort port)
 		{
-			// Get a client stream for reading and writing. 
-			// Stream stream = client.GetStream();
+            // Get a client stream for reading and writing. 
+            // Stream stream = client.GetStream();
 
-			// Get a random hash key that needs to be used for validating that the server was connected to
-			headerHash = Websockets.HeaderHashKey();
+            //获取需要用于验证服务器连接的随机哈希键
+            // Get a random hash key that needs to be used for validating that the server was connected to
+            headerHash = Websockets.HeaderHashKey();
 
-			// This is a typical Websockets accept header to be validated
-			byte[] connectHeader = Websockets.ConnectionHeader(headerHash, port);
+            //这是一个典型的Websockets接受头被验证
+            // This is a typical Websockets accept header to be validated
+            byte[] connectHeader = Websockets.ConnectionHeader(headerHash, port);
 
-			// Send the accept headers to the server to validate
-			RawWrite(connectHeader);
+            //将接受标头发送到服务器进行验证
+            // Send the accept headers to the server to validate
+            RawWrite(connectHeader);
 
-			// Setup the identity of the server as a player
-			server = new NetworkingPlayer(0, host, true, client, this);
+            //将服务器的身份设置为玩家
+            // Setup the identity of the server as a player
+            server = new NetworkingPlayer(0, host, true, client, this);
 
-			//Let myself know I connected successfully
-			OnPlayerConnected(server);
-			// Set myself as a connected client
-			server.Connected = true;
+            //让我知道我连接成功
+            //Let myself know I connected successfully
+            OnPlayerConnected(server);
+            //将自己设置为连接的客户端
+            // Set myself as a connected client
+            server.Connected = true;
 		}
 
-		/// <summary>
-		/// Infinite loop listening for new data from all connected clients on a separate thread.
-		/// This loop breaks when readThreadCancel is set to true
-		/// </summary>
-		protected ReadState Read()
+        /// <summary>
+        /// 无限循环在单独的线程上监听来自所有连接客户端的新数据。
+        /// readThreadCancel设置为true时，此循环会中断
+        /// 
+        /// Infinite loop listening for new data from all connected clients on a separate thread.
+        /// This loop breaks when readThreadCancel is set to true
+        /// </summary>
+        protected ReadState Read()
 		{
 			if (disconnectedSelf)
 				return ReadState.Disconnect;
 
 			NetworkStream stream = client.GetStream();
 
-			if (stream == null) //Some reason the stream is null!
-				return ReadState.Continue;
+			if (stream == null) //Some reason the stream is null! //某些原因流为空！
+                return ReadState.Continue;
 
-			// If the stream no longer can read then disconnect
-			if (!stream.CanRead)
+            //如果流不再可读，则断开连接
+            // If the stream no longer can read then disconnect
+            if (!stream.CanRead)
 			{
 				Disconnect(true);
 				return ReadState.Disconnect;
 			}
 
-			// If there isn't any data available, then free up the CPU by sleeping the thread
-			if (!stream.DataAvailable)
+            //如果没有可用的数据，则通过休眠线程释放CPU
+            // If there isn't any data available, then free up the CPU by sleeping the thread
+            if (!stream.DataAvailable)
 				return ReadState.Continue;
 
 			int available = client.Available;
@@ -257,20 +292,24 @@ namespace BeardedManStudios.Forge.Networking
 			if (available == 0)
 				return ReadState.Continue;
 
-			// Determine if this client has been accepted by the server yet
-			if (!headerExchanged)
+            //确定这个客户端是否已被服务器接受
+            // Determine if this client has been accepted by the server yet
+            if (!headerExchanged)
 			{
-				// Read all available bytes in the stream as this client hasn't connected yet
-				byte[] bytes = new byte[available];
+                //读取流中所有可用的字节，因为这个客户端还没有连接
+                // Read all available bytes in the stream as this client hasn't connected yet
+                byte[] bytes = new byte[available];
 				stream.Read(bytes, 0, bytes.Length);
 
-				// The first packet response from the server is going to be a string
-				if (Websockets.ValidateResponseHeader(headerHash, bytes))
+                //来自服务器的第一个数据包响应将是一个字符串
+                // The first packet response from the server is going to be a string
+                if (Websockets.ValidateResponseHeader(headerHash, bytes))
 				{
 					headerExchanged = true;
 
-					// Ping the server to finalize the player's connection
-					Send(Text.CreateFromString(Time.Timestep, InstanceGuid.ToString(), true, Receivers.Server, MessageGroupIds.NETWORK_ID_REQUEST, true));
+                    //通过Ping服务器来确定玩家的连接
+                    // Ping the server to finalize the player's connection
+                    Send(Text.CreateFromString(Time.Timestep, InstanceGuid.ToString(), true, Receivers.Server, MessageGroupIds.NETWORK_ID_REQUEST, true));
 				}
 				else
 				{
@@ -283,9 +322,11 @@ namespace BeardedManStudios.Forge.Networking
 			{
 				byte[] messageBytes = GetNextBytes(stream, available, false);
 
-				// Get the frame that was sent by the server, the server
-				// does not send masked data, only the client so send false for mask
-				FrameStream frame = Factory.DecodeMessage(messageBytes, false, MessageGroupIds.TCP_FIND_GROUP_ID, Server);
+                //获取由服务器，服务器发送的帧
+                //不发送被屏蔽的数据，只有客户端发送false为掩码
+                // Get the frame that was sent by the server, the server
+                // does not send masked data, only the client so send false for mask
+                FrameStream frame = Factory.DecodeMessage(messageBytes, false, MessageGroupIds.TCP_FIND_GROUP_ID, Server);
 
 				FireRead(frame, Server);
 			}
@@ -295,9 +336,11 @@ namespace BeardedManStudios.Forge.Networking
 
 		public override void FireRead(FrameStream frame, NetworkingPlayer currentPlayer)
 		{
-			// A message has been successfully read from the network so relay that
-			// to all methods registered to the event
-			OnMessageReceived(currentPlayer, frame);
+            //已成功从网络读取消息，以便中继
+            //注册到事件的所有方法
+            // A message has been successfully read from the network so relay that
+            // to all methods registered to the event
+            OnMessageReceived(currentPlayer, frame);
 		}
 
 		/// <summary>

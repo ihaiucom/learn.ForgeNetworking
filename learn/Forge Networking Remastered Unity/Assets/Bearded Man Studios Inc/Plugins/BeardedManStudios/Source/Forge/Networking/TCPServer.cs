@@ -34,68 +34,78 @@ using System.Net.Sockets;
 
 namespace BeardedManStudios.Forge.Networking
 {
-	/// <summary>
-	/// This is the main TCP server object responsible for listening for incomming connections
-	/// and reading any data sent from clients who are currently connected
-	/// </summary>
-	public class TCPServer : BaseTCP, IServer
+    /// <summary>
+    /// This is the main TCP server object responsible for listening for incomming connections
+    /// and reading any data sent from clients who are currently connected
+    /// 这是负责监听传入连接的主要TCP服务器对象
+    /// 并读取当前连接的客户端发送的任何数据
+    /// </summary>
+    public class TCPServer : BaseTCP, IServer
 	{
 		private CommonServerLogic commonServerLogic;
 
-		#region Delegates
-		/// <summary>
-		/// A delegate for handling any raw TcpClient events
-		/// </summary>
+        #region Delegates
+        /// <summary>
+        /// 处理任何原始TcpClient事件的委托
+        /// A delegate for handling any raw TcpClient events
+        /// </summary>
 #if WINDOWS_UWP
 		public delegate void RawTcpClientEvent(StreamSocket client);
 #else
-		public delegate void RawTcpClientEvent(TcpClient client);
+        public delegate void RawTcpClientEvent(TcpClient client);
 #endif
-		#endregion
+        #endregion
 
-		#region Events
-		/// <summary>
-		/// Occurs when a raw TcpClient has successfully connected
-		/// </summary>
-		public event RawTcpClientEvent rawClientConnected;
+        #region Events
+        /// <summary>
+        /// 当一个原始的TcpClient成功连接时发生
+        /// Occurs when a raw TcpClient has successfully connected
+        /// </summary>
+        public event RawTcpClientEvent rawClientConnected;
 
-		/// <summary>
-		/// Occurs when raw TcpClient has successfully connected
-		/// </summary>
-		public event RawTcpClientEvent rawClientDisconnected;
+        /// <summary>
+        /// 在原始TcpClient断开连接时发生
+        /// Occurs when raw TcpClient has successfully connected
+        /// </summary>
+        public event RawTcpClientEvent rawClientDisconnected;
 
-		/// <summary>
-		/// Occurs when raw TcpClient has been forcibly closed
-		/// </summary>
-		public event RawTcpClientEvent rawClientForceClosed;
-		#endregion
+        /// <summary>
+        /// 当原始的TcpClient被强制关闭时发生
+        /// Occurs when raw TcpClient has been forcibly closed
+        /// </summary>
+        public event RawTcpClientEvent rawClientForceClosed;
+        #endregion
 
-		/// <summary>
-		/// The main listener for client connections
-		/// </summary>
+        /// <summary>
+        /// 客户端连接的主要监听器
+        /// The main listener for client connections
+        /// </summary>
 #if WINDOWS_UWP
 		private StreamSocketListener listener = null;
 #else
-		private TcpListener listener = null;
+        private TcpListener listener = null;
 #endif
 
-		/// <summary>
-		/// The ip address that is being bound to
-		/// </summary>
-		private IPAddress ipAddress = null;
+        /// <summary>
+        /// 绑定到的IP地址
+        /// The ip address that is being bound to
+        /// </summary>
+        private IPAddress ipAddress = null;
 
-		/// <summary>
-		/// The main thread that will continuiously listen for new client connections
-		/// </summary>
-		//private Thread connectionThread = null;
+        /// <summary>
+        /// 将持续监听新的客户端连接的主线程
+        /// The main thread that will continuiously listen for new client connections
+        /// </summary>
+        //private Thread connectionThread = null;
 
-		/// <summary>
-		/// The raw list of all of the clients that are connected
-		/// </summary>
+        /// <summary>
+        /// 连接的所有客户端的原始列表
+        /// The raw list of all of the clients that are connected
+        /// </summary>
 #if WINDOWS_UWP
 		private List<StreamSocket> rawClients = new List<StreamSocket>();
 #else
-		private List<TcpClient> rawClients = new List<TcpClient>();
+        private List<TcpClient> rawClients = new List<TcpClient>();
 #endif
 
 		protected List<FrameStream> bufferedMessages = new List<FrameStream>();
@@ -133,22 +143,28 @@ namespace BeardedManStudios.Forge.Networking
 #endif
 		}
 
-		/// <summary>
-		/// The direct byte send method to the specified client
-		/// </summary>
-		/// <param name="client">The target client that will receive the frame</param>
-		/// <param name="frame">The frame that is to be sent to the specified client</param>
+        /// <summary>
+        /// The direct byte send method to the specified client
+        /// </summary>
+        /// <param name="client">The target client that will receive the frame</param>
+        /// <param name="frame">The frame that is to be sent to the specified client</param>
+        /// <summary>
+        ///直接字节发送方法到指定的客户端
+        /// </ summary>
+        /// <param name =“client”>将接收帧的目标客户端</ param>
+        /// <param name =“frame”>要发送到指定客户端的帧</ param>
 #if WINDOWS_UWP
 		public bool Send(StreamSocket client, FrameStream frame)
 #else
-		public bool Send(TcpClient client, FrameStream frame)
+        public bool Send(TcpClient client, FrameStream frame)
 #endif
 		{
 			if (client == null)
 				return false;
 
-			// Make sure that we don't have any race conditions with writing to the same client
-			lock (client)
+            //确保我们没有写入同一个客户端的竞争条件
+            // Make sure that we don't have any race conditions with writing to the same client
+            lock (client)
 			{
 				try
 				{
@@ -161,21 +177,29 @@ namespace BeardedManStudios.Forge.Networking
 				}
 				catch
 				{
-					// The client is no longer connected or is unresponsive
-				}
-			}
+                    //客户端不再连接或无响应
+                    // The client is no longer connected or is unresponsive
+                }
+            }
 
 			return false;
 		}
 
-		/// <summary>
-		/// Sends binary message to the specific tcp client(s)
-		/// </summary>
-		/// <param name="client">The client to receive the message</param>
-		/// <param name="receivers">Receiver's type</param>
-		/// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
-		/// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
-		public bool Send(TcpClient client, Receivers receivers = Receivers.Target, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, params object[] objectsToSend)
+        /// <summary>
+        /// Sends binary message to the specific tcp client(s)
+        /// </summary>
+        /// <param name="client">The client to receive the message</param>
+        /// <param name="receivers">Receiver's type</param>
+        /// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
+        /// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
+        /// <summary>
+        ///发送二进制消息到特定的tcp客户端
+        /// </ summary>
+        /// <param name =“client”>接收消息的客户端</ param>
+        /// <param name =“receivers”>接收者类型</ param>
+        /// <param name =“messageGroupId”>按摩的Binary.GroupId，使用MessageGroupIds.START_OF_GENERIC_IDS + desired_id </ param>
+        /// <param name =“objectsToSend”>要发送的变量数组，使用Binary.StreamData.GetBasicType <typeOfObject>（）</ param>
+        public bool Send(TcpClient client, Receivers receivers = Receivers.Target, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, params object[] objectsToSend)
 		{
 			BMSByte data = ObjectMapper.BMSByte(objectsToSend);
 			Binary sendFrame = new Binary(Time.Timestep, false, data, Receivers.Target, messageGroupId, false);
@@ -186,12 +210,17 @@ namespace BeardedManStudios.Forge.Networking
 #endif
 		}
 
-		/// <summary>
-		/// Send a frame to a specific player
-		/// </summary>
-		/// <param name="frame">The frame to send to that specific player</param>
-		/// <param name="targetPlayer">The specific player to receive the frame</param>
-		public void SendToPlayer(FrameStream frame, NetworkingPlayer targetPlayer)
+        /// <summary>
+        /// Send a frame to a specific player
+        /// </summary>
+        /// <param name="frame">The frame to send to that specific player</param>
+        /// <param name="targetPlayer">The specific player to receive the frame</param>
+        /// <summary>
+        ///将帧发送给特定的播放器
+        /// </ summary>
+        /// <param name =“frame”>发送给特定播放器的帧</ param>
+        /// <param name =“targetPlayer”>接收帧的特定播放器</ param>
+        public void SendToPlayer(FrameStream frame, NetworkingPlayer targetPlayer)
 		{
 			if (frame.Receivers == Receivers.AllBuffered || frame.Receivers == Receivers.OthersBuffered)
 				bufferedMessages.Add(frame);
@@ -206,17 +235,21 @@ namespace BeardedManStudios.Forge.Networking
 
 					if (player == frame.Sender)
 					{
-						// Don't send a message to the sending player if it was meant for others
-						if (frame.Receivers == Receivers.Others || frame.Receivers == Receivers.OthersBuffered || frame.Receivers == Receivers.OthersProximity)
+                        //如果发送给其他人，则不要发送消息给发送方
+                        // Don't send a message to the sending player if it was meant for others
+                        if (frame.Receivers == Receivers.Others || frame.Receivers == Receivers.OthersBuffered || frame.Receivers == Receivers.OthersProximity)
 							return;
 					}
 
-					// Check to see if the request is based on proximity
-					if (frame.Receivers == Receivers.AllProximity || frame.Receivers == Receivers.OthersProximity)
+                    //检查请求是否基于接近度
+                    // Check to see if the request is based on proximity
+                    if (frame.Receivers == Receivers.AllProximity || frame.Receivers == Receivers.OthersProximity)
 					{
-						// If the target player is not in the same proximity zone as the sender
-						// then it should not be sent to that player
-						if (player.ProximityLocation.Distance(frame.Sender.ProximityLocation) > ProximityDistance)
+                        //如果目标玩家与发件人不在同一个邻近区域内
+                        //那么它不应该发送给该玩家
+                        // If the target player is not in the same proximity zone as the sender
+                        // then it should not be sent to that player
+                        if (player.ProximityLocation.Distance(frame.Sender.ProximityLocation) > ProximityDistance)
 						{
 							return;
 						}
@@ -234,25 +267,36 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Sends binary message to the specific client
-		/// </summary>
-		/// <param name="receivers">The clients / server to receive the message</param>
-		/// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
-		/// <param name="targetPlayer">The client to receive the message</param>
-		/// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
-		public void SendToPlayer(NetworkingPlayer targetPlayer, Receivers receivers = Receivers.Target, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, params object[] objectsToSend)
+        /// <summary>
+        /// Sends binary message to the specific client
+        /// </summary>
+        /// <param name="receivers">The clients / server to receive the message</param>
+        /// <param name="messageGroupId">The Binary.GroupId of the massage, use MessageGroupIds.START_OF_GENERIC_IDS + desired_id</param>
+        /// <param name="targetPlayer">The client to receive the message</param>
+        /// <param name="objectsToSend">Array of vars to be sent, read them with Binary.StreamData.GetBasicType<typeOfObject>()</param>
+        /// <summary>
+        ///发送二进制消息到特定的客户端
+        /// </ summary>
+        /// <param name =“receivers”>接收消息的客户端/服务器</ param>
+        /// <param name =“messageGroupId”>按摩的Binary.GroupId，使用MessageGroupIds.START_OF_GENERIC_IDS + desired_id </ param>
+        /// <param name =“targetPlayer”>客户端接收消息</ param>
+        /// <param name =“objectsToSend”>要发送的变量数组，使用Binary.StreamData.GetBasicType <typeOfObject>（）</ param>
+        public void SendToPlayer(NetworkingPlayer targetPlayer, Receivers receivers = Receivers.Target, int messageGroupId = MessageGroupIds.START_OF_GENERIC_IDS, params object[] objectsToSend)
 		{
 			BMSByte data = ObjectMapper.BMSByte(objectsToSend);
 			Binary sendFrame = new Binary(Time.Timestep, false, data, receivers, messageGroupId, false);
 			SendToPlayer(sendFrame, targetPlayer);
 		}
 
-		/// <summary>
-		/// Goes through all of the currently connected players and send them the frame
-		/// </summary>
-		/// <param name="frame">The frame to send to all of the connected players</param>
-		public void SendAll(FrameStream frame, NetworkingPlayer skipPlayer = null)
+        /// <summary>
+        /// Goes through all of the currently connected players and send them the frame
+        /// </summary>
+        /// <param name="frame">The frame to send to all of the connected players</param>
+        /// <summary>
+        ///通过所有当前连接的玩家，并将其发送给他们
+        /// </ summary>
+        /// <param name =“frame”>发送给所有连接的播放器的帧</ param>
+        public void SendAll(FrameStream frame, NetworkingPlayer skipPlayer = null)
 		{
 			if (frame.Receivers == Receivers.AllBuffered || frame.Receivers == Receivers.OthersBuffered)
 				bufferedMessages.Add(frame);
@@ -290,15 +334,17 @@ namespace BeardedManStudios.Forge.Networking
 			SendAll(sendFrame, playerToIgnore);
 		}
 
-		/// <summary>
-		/// Call the base disconnect pending method to remove all pending disconnecting clients
-		/// </summary>
-		private void CleanupDisconnections() { DisconnectPending(RemovePlayer); }
+        /// <summary>
+        /// 调用基本断开挂起的方法来删除所有挂起的断开连接的客户端
+        /// Call the base disconnect pending method to remove all pending disconnecting clients
+        /// </summary>
+        private void CleanupDisconnections() { DisconnectPending(RemovePlayer); }
 
-		/// <summary>
-		/// Commits the disconnects
-		/// </summary>
-		public void CommitDisconnects() { CleanupDisconnections(); }
+        /// <summary>
+        /// 提交断开连接
+        /// Commits the disconnects
+        /// </summary>
+        public void CommitDisconnects() { CleanupDisconnections(); }
 
 		/// <summary>
 		/// This will begin the connection for TCP, this is a thread blocking operation until the connection
@@ -336,14 +382,17 @@ namespace BeardedManStudios.Forge.Networking
 				listener.Start();
 				listener.BeginAcceptTcpClient(ListenForConnections, listener);
 
-				// Do any generic initialization in result of the successful bind
-				OnBindSuccessful();
+                //在成功绑定的结果中执行任何通用初始化
+                // Do any generic initialization in result of the successful bind
+                OnBindSuccessful();
 
-				// Create the thread that will be listening for new data from connected clients and start its execution
-				Task.Queue(ReadClients);
+                //创建将监听来自连接客户端的新数据并开始执行的线程
+                // Create the thread that will be listening for new data from connected clients and start its execution
+                Task.Queue(ReadClients);
 
-				// Create the thread that will check for player timeouts
-				Task.Queue(() =>
+                // 创建将检查播放器超时的线程
+                // Create the thread that will check for player timeouts
+                Task.Queue(() =>
 				{
 					commonServerLogic.CheckClientTimeout((player) =>
 					{
@@ -353,13 +402,16 @@ namespace BeardedManStudios.Forge.Networking
 					});
 				});
 
-				//Let myself know I connected successfully
-				OnPlayerConnected(Me);
-				// Set myself as a connected client
-				Me.Connected = true;
+                //让我知道我连接成功
+                //Let myself know I connected successfully
+                OnPlayerConnected(Me);
+                //将自己设置为连接的客户端
+                // Set myself as a connected client
+                Me.Connected = true;
 
-				//Set the port
-				SetPort((ushort)((IPEndPoint)listener.LocalEndpoint).Port);
+                //设置端口
+                //Set the port
+                SetPort((ushort)((IPEndPoint)listener.LocalEndpoint).Port);
 			}
 			catch (Exception e)
 			{
@@ -371,11 +423,13 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Infinite loop listening for client connections on a separate thread.
-		/// This loop breaks if there is an exception thrown on the blocking accept call
-		/// </summary>
-		private void ListenForConnections(IAsyncResult obj)
+        /// <summary>
+        /// 无限循环监听单独线程上的客户端连接。
+        /// 如果在阻塞接受调用上抛出异常，则此循环会中断
+        /// Infinite loop listening for client connections on a separate thread.
+        /// This loop breaks if there is an exception thrown on the blocking accept call
+        /// </summary>
+        private void ListenForConnections(IAsyncResult obj)
 		{
 			TcpListener asyncListener = (TcpListener)obj.AsyncState;
 			TcpClient client = null;
@@ -422,45 +476,57 @@ namespace BeardedManStudios.Forge.Networking
 				return;
 			}
 
-			// Clients will be looped through on other threads so be sure to lock it before adding
-			lock (Players)
+            //客户端将在其他线程上循环，因此在添加之前一定要锁定它
+            // Clients will be looped through on other threads so be sure to lock it before adding
+            lock (Players)
 			{
 				rawClients.Add(client);
 
-				// Create the identity wrapper for this player
-				NetworkingPlayer player = new NetworkingPlayer(ServerPlayerCounter++, client.Client.RemoteEndPoint.ToString(), false, client, this);
+                //为这个玩家创建身份包装
+                // Create the identity wrapper for this player
+                NetworkingPlayer player = new NetworkingPlayer(ServerPlayerCounter++, client.Client.RemoteEndPoint.ToString(), false, client, this);
 
-				// Generically add the player and fire off the events attached to player joining
-				OnPlayerConnected(player);
+                //一般添加玩家，并关闭玩家加入的事件
+                // Generically add the player and fire off the events attached to player joining
+                OnPlayerConnected(player);
 			}
 
-			// Let all of the event listeners know that the client has successfully connected
-			if (rawClientConnected != null)
+            //让所有事件侦听器知道客户端已经成功连接
+            // Let all of the event listeners know that the client has successfully connected
+            if (rawClientConnected != null)
 				rawClientConnected(client);
 		}
-		/// <summary>
-		/// Infinite loop listening for new data from all connected clients on a separate thread.
-		/// This loop breaks when readThreadCancel is set to true
-		/// </summary>
-		private void ReadClients()
+        /// <summary>
+        /// 无限循环在单独的线程上监听来自所有连接客户端的新数据。
+        /// readThreadCancel设置为true时，此循环会中断
+        /// 
+        /// Infinite loop listening for new data from all connected clients on a separate thread.
+        /// This loop breaks when readThreadCancel is set to true
+        /// </summary>
+        private void ReadClients()
 		{
-			// Intentional infinite loop
-			while (IsBound && !NetWorker.EndingSession)
+            //故意无限循环
+            // Intentional infinite loop
+            while (IsBound && !NetWorker.EndingSession)
 			{
 				try
 				{
-					// If the read has been flagged to be canceled then break from this loop
-					if (readThreadCancel)
+                    //如果读取已被标记为取消，则从此循环中断开
+                    // If the read has been flagged to be canceled then break from this loop
+                    if (readThreadCancel)
 						return;
 
-					// This will loop through all of the players, so make sure to set the lock to
-					// prevent any changes from other threads
-					lock (Players)
+                    //这将遍历所有玩家，因此请确保将锁设置为
+                    //防止来自其他线程的任何更改
+                    // This will loop through all of the players, so make sure to set the lock to
+                    // prevent any changes from other threads
+                    lock (Players)
 					{
 						for (int i = 0; i < Players.Count; i++)
-						{
-							// If the read has been flagged to be canceled then break from this loop
-							if (readThreadCancel)
+                        {
+                            //如果读取已被标记为取消，则从此循环中断开
+                            // If the read has been flagged to be canceled then break from this loop
+                            if (readThreadCancel)
 								return;
 
 							NetworkStream playerStream = null;
@@ -472,67 +538,81 @@ namespace BeardedManStudios.Forge.Networking
 							{
 								lock (Players[i].MutexLock)
 								{
-									// Try to get the client stream if it is still available
-									playerStream = Players[i].TcpClientHandle.GetStream();
+                                    //尝试获取客户端流，如果它仍然可用
+                                    // Try to get the client stream if it is still available
+                                    playerStream = Players[i].TcpClientHandle.GetStream();
 								}
 							}
 							catch
 							{
-								// Failed to get the stream for the client so forcefully disconnect it
-								//Console.WriteLine("Exception: Failed to get stream for client (Forcefully disconnecting)");
-								Disconnect(Players[i], true);
+                                //无法获取客户端的流，因此强制断开连接
+                                //Console.WriteLine("Exception异常：无法为客户端获取流（强制断开连接）“）;
+
+                                // Failed to get the stream for the client so forcefully disconnect it
+                                //Console.WriteLine("Exception: Failed to get stream for client (Forcefully disconnecting)");
+                                Disconnect(Players[i], true);
 								continue;
 							}
 
-							// If the player is no longer connected, then make sure to disconnect it properly
-							if (!Players[i].TcpClientHandle.Connected)
+                            //如果播放器不再连接，请确保正确断开连接
+                            // If the player is no longer connected, then make sure to disconnect it properly
+                            if (!Players[i].TcpClientHandle.Connected)
 							{
 								Disconnect(Players[i], false);
 								continue;
 							}
 
-							// Only continue to read for this client if there is any data available for it
-							if (!playerStream.DataAvailable)
+                            //如果有任何数据可用，则只有继续阅读此客户端
+                            // Only continue to read for this client if there is any data available for it
+                            if (!playerStream.DataAvailable)
 								continue;
 
 							int available = Players[i].TcpClientHandle.Available;
 
-							// Determine if the player is fully connected
-							if (!Players[i].Accepted)
+                            //确定玩家是否完全连接
+                            // Determine if the player is fully connected
+                            if (!Players[i].Accepted)
 							{
-								// Determine if the player has been accepted by the server
-								if (!Players[i].Connected)
+                                //确定玩家是否已被服务器接受
+                                // Determine if the player has been accepted by the server
+                                if (!Players[i].Connected)
 								{
 									lock (Players[i].MutexLock)
 									{
-										// Read everything from the stream as the client hasn't been accepted yet
-										byte[] bytes = new byte[available];
+                                        //由于客户端尚未被接受，所以从流中读取所有内容
+                                        // Read everything from the stream as the client hasn't been accepted yet
+                                        byte[] bytes = new byte[available];
 										playerStream.Read(bytes, 0, bytes.Length);
 
-										// Validate that the connection headers are properly formatted
-										byte[] response = Websockets.ValidateConnectionHeader(bytes);
+                                        //验证连接头是否格式正确
+                                        // Validate that the connection headers are properly formatted
+                                        byte[] response = Websockets.ValidateConnectionHeader(bytes);
 
-										// The response will be null if the header sent is invalid, if so then disconnect client as they are sending invalid headers
-										if (response == null)
+                                        //如果发送的头是无效的，那么响应将是空的，如果是这样，那么断开客户端，因为它们发送无效头
+                                        // The response will be null if the header sent is invalid, if so then disconnect client as they are sending invalid headers
+                                        if (response == null)
 										{
 											OnPlayerRejected(Players[i]);
 											Disconnect(Players[i], false);
 											continue;
 										}
 
-										// If all is in order then send the validated response to the client
-										playerStream.Write(response, 0, response.Length);
+                                        //如果一切顺利，则将验证的响应发送给客户端
+                                        // If all is in order then send the validated response to the client
+                                        playerStream.Write(response, 0, response.Length);
 
-										// The player has successfully connected
-										Players[i].Connected = true;
+                                        //播放器已成功连接
+                                        // The player has successfully connected
+                                        Players[i].Connected = true;
 									}
 								}
 								else
 								{
 									lock (Players[i].MutexLock)
 									{
-										// Consume the message even though it is not being used so that it is removed from the buffer
-										Text frame = (Text)Factory.DecodeMessage(GetNextBytes(playerStream, available, true), true, MessageGroupIds.TCP_FIND_GROUP_ID, Players[i]);
+                                        //即使消息没有被使用，也会消耗该消息，以便将消息从缓冲区中删除
+                                        // Consume the message even though it is not being used so that it is removed from the buffer
+                                        Text frame = (Text)Factory.DecodeMessage(GetNextBytes(playerStream, available, true), true, MessageGroupIds.TCP_FIND_GROUP_ID, Players[i]);
 										Players[i].InstanceGuid = frame.ToString();
 
 										OnPlayerGuidAssigned(Players[i]);
@@ -545,8 +625,9 @@ namespace BeardedManStudios.Forge.Networking
 
 											SendBuffer(Players[i]);
 
-											// All systems go, the player has been accepted
-											OnPlayerAccepted(Players[i]);
+                                            //所有系统都去了，玩家已经被接受了
+                                            // All systems go, the player has been accepted
+                                            OnPlayerAccepted(Players[i]);
 										}
 									}
 								}
@@ -559,16 +640,21 @@ namespace BeardedManStudios.Forge.Networking
 									{
 										Players[i].Ping();
 
-										// Get the frame that was sent by the client, the client
-										// does send masked data
-										//TODO: THIS IS CAUSING ISSUES!!! WHY!?!?!!?
-										FrameStream frame = Factory.DecodeMessage(GetNextBytes(playerStream, available, true), true, MessageGroupIds.TCP_FIND_GROUP_ID, Players[i]);
+                                        // Get the frame that was sent by the client, the client
+                                        // does send masked data
+                                        //TODO: THIS IS CAUSING ISSUES!!! WHY!?!?!!?
+                                        //获取客户端发送的帧
+                                        //发送屏蔽的数据
+                                        // TODO：这是造成的问题！ 为什么！？！？！！？
+                                        FrameStream frame = Factory.DecodeMessage(GetNextBytes(playerStream, available, true), true, MessageGroupIds.TCP_FIND_GROUP_ID, Players[i]);
 
-										// The client has told the server that it is disconnecting
-										if (frame is ConnectionClose)
+                                        //客户端已经告诉服务器它正在断开连接
+                                        // The client has told the server that it is disconnecting
+                                        if (frame is ConnectionClose)
 										{
-											// Confirm the connection close
-											Send(Players[i].TcpClientHandle, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
+                                            //确认连接关闭
+                                            // Confirm the connection close
+                                            Send(Players[i].TcpClientHandle, new ConnectionClose(Time.Timestep, false, Receivers.Target, MessageGroupIds.DISCONNECT, true));
 
 											Disconnect(Players[i], false);
 											continue;
@@ -579,19 +665,23 @@ namespace BeardedManStudios.Forge.Networking
 								}
 								catch
 								{
-									// The player is sending invalid data so disconnect them
-									Disconnect(Players[i], true);
+                                    //播放器发送无效数据，请断开连接
+                                    // The player is sending invalid data so disconnect them
+                                    Disconnect(Players[i], true);
 								}
 							}
 						}
 					}
 
-					// Go through all of the pending disconnections and clean them
-					// up and finalize the disconnection
-					CleanupDisconnections();
+                    //检查所有挂起的断开连接并清理它们
+                    //完成并确定断开连接
+                    // Go through all of the pending disconnections and clean them
+                    // up and finalize the disconnection
+                    CleanupDisconnections();
 
-					// Sleep so that we free up the CPU a bit from this thread
-					Thread.Sleep(10);
+                    //睡眠，这样我们就可以从这个线程释放一些CPU
+                    // Sleep so that we free up the CPU a bit from this thread
+                    Thread.Sleep(10);
 				}
 				catch (Exception ex)
 				{
@@ -600,11 +690,15 @@ namespace BeardedManStudios.Forge.Networking
 			}
 		}
 
-		/// <summary>
-		/// Disconnects this server and all of it's clients
-		/// </summary>
-		/// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
-		public override void Disconnect(bool forced)
+        /// <summary>
+        /// Disconnects this server and all of it's clients
+        /// </summary>
+        /// <param name="forced">Used to tell if this disconnect was intentional <c>false</c> or caused by an exception <c>true</c></param>
+        /// <summary>
+        ///断开这个服务器及其所有的客户端
+        /// </ summary>
+        /// <param name =“forced”>用来判断这个断开连接是故意的<c> false </ c>还是由异常引起<c> true </ c> </ param>
+        public override void Disconnect(bool forced)
 		{
 			// Since we are disconnecting we need to stop the read thread
 			readThreadCancel = true;
@@ -676,15 +770,17 @@ namespace BeardedManStudios.Forge.Networking
 
 			if (!forced)
 			{
-				// Let all of the event listeners know that the client has successfully disconnected
-				if (rawClientDisconnected != null)
+                //让所有事件侦听器知道客户端已经成功断开连接
+                // Let all of the event listeners know that the client has successfully disconnected
+                if (rawClientDisconnected != null)
 					rawClientDisconnected(player.TcpClientHandle);
 				DisconnectingPlayers.Remove(player);
 			}
 			else
 			{
-				// Let all of the event listeners know that this was a forced disconnect
-				if (forced && rawClientForceClosed != null)
+                //让所有的事件监听器知道这是一个强制断开连接
+                // Let all of the event listeners know that this was a forced disconnect
+                if (forced && rawClientForceClosed != null)
 					rawClientForceClosed(player.TcpClientHandle);
 				ForcedDisconnectingPlayers.Remove(player);
 			}
@@ -757,9 +853,11 @@ namespace BeardedManStudios.Forge.Networking
 
 		public override void FireRead(FrameStream frame, NetworkingPlayer currentPlayer)
 		{
-			// A message has been successfully read from the network so relay that
-			// to all methods registered to the event
-			OnMessageReceived(currentPlayer, frame);
+            //已成功从网络读取消息，以便中继
+            //注册到事件的所有方法
+            // A message has been successfully read from the network so relay that
+            // to all methods registered to the event
+            OnMessageReceived(currentPlayer, frame);
 		}
 	}
 }

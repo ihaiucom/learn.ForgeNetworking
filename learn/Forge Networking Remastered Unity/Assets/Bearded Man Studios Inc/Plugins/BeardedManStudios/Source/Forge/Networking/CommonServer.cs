@@ -47,6 +47,25 @@ namespace BeardedManStudios.Forge.Networking
 			return true;
 		}
 
+
+        public bool PlayerIsReceiver(NetworkingPlayer player, NetworkingPlayer sender, Receivers receivers, NetworkingPlayer skipPlayer = null)
+        {
+            // 不要将消息发送给尚未被服务器接受的播放器
+            // Don't send messages to a player who has not been accepted by the server yet
+            if ((!player.Accepted && !player.PendingAccepted) || player == skipPlayer)
+                return false;
+
+            if (player == sender)
+            {
+                //如果发送给其他人，则不要发送消息给发送方
+                // Don't send a message to the sending player if it was meant for others
+                if (receivers == Receivers.Others || receivers == Receivers.OthersBuffered || receivers == Receivers.OthersProximity)
+                    return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// 检查所有的客户端，看他们是否超时
         /// Checks all of the clients to see if any of them are timed out
