@@ -75,6 +75,17 @@ namespace Games
         private void OnBinaryMessageReceived (NetworkingPlayer player, Binary frame, NetWorker sender)
         {
             Loger.LogFormat("LobbyServer OnBinaryMessageReceived {0}", player.NetworkId);
+
+            if(frame.RoomId != 0)
+            {
+
+                if (roomDict.ContainsKey((int)frame.RoomId))
+                {
+                    roomDict[(int)frame.RoomId].OnBinaryMessageReceived(player, frame, sender);
+                }
+                return;
+            }
+
             if (frame.GroupId == MessageGroupIds.Lobby)
             {
                 byte routerId = frame.RouterId;
