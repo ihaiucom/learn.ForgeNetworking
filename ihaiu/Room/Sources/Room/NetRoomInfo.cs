@@ -8,11 +8,11 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     public class NetRoomInfo
     {
-        public int roomUid;
+        public ulong roomUid;
         public int stageId;
     }
 }

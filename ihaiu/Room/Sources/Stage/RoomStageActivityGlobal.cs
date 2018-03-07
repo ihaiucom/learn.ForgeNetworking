@@ -8,7 +8,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     /// <summary>
     /// 关卡 -- 活动 -- 金币

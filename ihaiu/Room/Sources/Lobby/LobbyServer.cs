@@ -12,7 +12,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     public class LobbyServer : LobbyBase
     {
@@ -79,9 +79,9 @@ namespace Games
             if(frame.RoomId != 0)
             {
 
-                if (roomDict.ContainsKey((int)frame.RoomId))
+                if (roomDict.ContainsKey(frame.RoomId))
                 {
-                    roomDict[(int)frame.RoomId].OnBinaryMessageReceived(player, frame, sender);
+                    roomDict[frame.RoomId].OnBinaryMessageReceived(player, frame, sender);
                 }
                 return;
             }
@@ -116,7 +116,7 @@ namespace Games
             }
             else if(frame.GroupId == MessageGroupIds.ROOM)
             {
-                int roomUid = frame.StreamData.GetBasicType<int>();
+                ulong roomUid = frame.StreamData.GetBasicType<ulong>();
                 if(roomDict.ContainsKey(roomUid))
                 {
                     roomDict[roomUid].OnBinaryMessageReceived(player, frame, sender);
@@ -128,7 +128,7 @@ namespace Games
 
 
         // 房间字典
-        public Dictionary<int, NetRoomServer> roomDict = new Dictionary<int, NetRoomServer>();
+        public Dictionary<ulong, NetRoomServer> roomDict = new Dictionary<ulong, NetRoomServer>();
 
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Games
         private void CreateRoom(NetworkingPlayer player, Binary frame)
         {
             NetRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = frame.StreamData.GetBasicType<int>();
+            roomInfo.roomUid = frame.StreamData.GetBasicType<ulong>();
             roomInfo.stageId = frame.StreamData.GetBasicType<int>();
             CreateRoom(roomInfo, player);
         }
@@ -166,9 +166,9 @@ namespace Games
 
             // 创建房间成功
             NetRoomServer room = new NetRoomServer(this, roomInfo);
-            roomDict.Add(room.uid, room);
+            roomDict.Add(room.roomId, room);
 
-            OnCreateRoomSuccessed(room.uid);
+            OnCreateRoomSuccessed(room.roomId);
 
 
             if (player != null)
@@ -188,9 +188,9 @@ namespace Games
         private void JoinRoom(NetworkingPlayer player, Binary frame)
         {
             // 房间UID
-            int roomUid = frame.StreamData.GetBasicType<int>();
+            ulong roomUid = frame.StreamData.GetBasicType<ulong>();
             // 角色UID
-            int roleUid = frame.StreamData.GetBasicType<int>();
+            ulong roleUid = frame.StreamData.GetBasicType<ulong>();
 
             NetJoinRoomResult ret;
 
@@ -203,9 +203,7 @@ namespace Games
             else
             {
                 ret = room.JoinRoom(roleUid, player, frame);
-
                 player.lastRoomUid = roomUid;
-                player.lastRoleUid = roleUid;
             }
 
             OnPlayerJoinRoom(roomUid, player, ret);
@@ -222,9 +220,9 @@ namespace Games
         private NetLeftRoomResult LeftRoom(NetworkingPlayer player, Binary frame)
         {
             // 房间UID
-            int roomUid = frame.StreamData.GetBasicType<int>();
+            ulong roomUid = frame.StreamData.GetBasicType<ulong>();
             // 角色UID
-            int roleUid = frame.StreamData.GetBasicType<int>();
+            ulong roleUid = frame.StreamData.GetBasicType<ulong>();
 
             return LeftRoom(roomUid, roleUid, player);
         }
@@ -234,7 +232,7 @@ namespace Games
             return LeftRoom(player.lastRoomUid, player.lastRoleUid, player, isDisconnected);
         }
 
-        public NetLeftRoomResult LeftRoom(int roomUid, int roleUid, NetworkingPlayer player = null, bool isDisconnected = false)
+        public NetLeftRoomResult LeftRoom(ulong roomUid, ulong roleUid, NetworkingPlayer player = null, bool isDisconnected = false)
         {
             NetLeftRoomResult ret;
 
@@ -268,7 +266,7 @@ namespace Games
         private void JoinWatchRoom(NetworkingPlayer player, Binary frame)
         {
             // 房间UID
-            int roomUid = frame.StreamData.GetBasicType<int>();
+            ulong roomUid = frame.StreamData.GetBasicType<ulong>();
 
             NetJoinRoomResult ret;
 
@@ -283,7 +281,7 @@ namespace Games
                 room.JoinWatchRoom(player);
                 ret = NetJoinRoomResult.Successed;
                 player.lastRoomUid = roomUid;
-                player.lastRoleUid = -1;
+                player.lastRoleUid = 0;
             }
 
             OnPlayerJoinWatchRoom(roomUid, player, ret);
@@ -301,7 +299,7 @@ namespace Games
         private void LeftWatchRoom(NetworkingPlayer player, Binary frame)
         {
             // 房间UID
-            int roomUid = frame.StreamData.GetBasicType<int>();
+            ulong roomUid = frame.StreamData.GetBasicType<ulong>();
 
             LeftWatchRoom(roomUid, player);
         }
@@ -311,7 +309,7 @@ namespace Games
             LeftWatchRoom(player.lastRoomUid,  player, isDisconnected);
         }
 
-        public void LeftWatchRoom(int roomUid,  NetworkingPlayer player = null, bool isDisconnected = false)
+        public void LeftWatchRoom(ulong roomUid,  NetworkingPlayer player = null, bool isDisconnected = false)
         {
             NetLeftRoomResult ret;
 

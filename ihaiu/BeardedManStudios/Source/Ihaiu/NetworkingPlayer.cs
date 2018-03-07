@@ -12,9 +12,9 @@ namespace BeardedManStudios.Forge.Networking
     public partial class NetworkingPlayer
     {
         // 最后一次的 房间UID
-        public int lastRoomUid;
+        public ulong lastRoomUid;
 
         // 最后一次的 角色UID
-        public int lastRoleUid;
+        public ulong lastRoleUid;
     }
 }

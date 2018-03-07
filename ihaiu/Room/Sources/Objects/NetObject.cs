@@ -14,7 +14,7 @@ using System.Linq;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     /// <summary>
     /// The representation of an object on the network, this object can have
@@ -446,7 +446,7 @@ namespace Games
                     ObjectMapper.Instance.MapBytes(data, Metadata);
 
                 bool useMask = networker.IsTCPClient;
-                Binary createRequest = new Binary(CreateTimestep, useMask, data, Receivers.Server, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, networker.IsTcp, RouterIds.NETWORK_OBJECT_ROUTER_ID);
+                Binary createRequest = new Binary(CreateTimestep, useMask, data, Receivers.Server, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, networker.IsTcp, RouterIds.NETWORK_OBJECT_ROUTER_ID, Networker.RoomUid);
 
                 RoomScene.BaseNetworkEvent request = (RoomScene sender) =>
                 {
@@ -524,7 +524,7 @@ namespace Games
 
                 BMSByte createdByteData = ObjectMapper.BMSByte(serverId);
 
-                Binary createdFrame = new Binary(Networker.Time.Timestep, Networker.IsTCPClient, createdByteData, Receivers.Server, MessageGroupIds.GetId("NO_CREATED_" + NetworkId), Networker.IsTcp, RouterIds.CREATED_OBJECT_ROUTER_ID);
+                Binary createdFrame = new Binary(Networker.Time.Timestep, Networker.IsTCPClient, createdByteData, Receivers.Server, MessageGroupIds.GetId("NO_CREATED_" + NetworkId), Networker.IsTcp, RouterIds.CREATED_OBJECT_ROUTER_ID, Networker.RoomUid);
 
                 networker.ClientSend(createdFrame, true);
             }
@@ -727,7 +727,7 @@ namespace Games
                 ObjectMapper.Instance.MapBytes(data, Metadata);
 
 
-            Binary createObject = new Binary(CreateTimestep, false, data, Receivers.All, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, Networker.IsTcp, RouterIds.NETWORK_OBJECT_ROUTER_ID);
+            Binary createObject = new Binary(CreateTimestep, false, data, Receivers.All, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, Networker.IsTcp, RouterIds.NETWORK_OBJECT_ROUTER_ID, Networker.RoomUid);
 
             if (targetHash != 0)
                 return createObject;
@@ -792,7 +792,7 @@ namespace Games
 
                     if (targetData.Size > 0 && networker != null)
                     {
-                        Binary targetCreateObject = new Binary(timestep, false, targetData, Receivers.Target, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, networker.IsTcp, RouterIds.ACCEPT_MULTI_ROUTER_ID);
+                        Binary targetCreateObject = new Binary(timestep, false, targetData, Receivers.Target, MessageGroupIds.CREATE_NETWORK_OBJECT_REQUEST, networker.IsTcp, RouterIds.ACCEPT_MULTI_ROUTER_ID, networker.RoomUid);
 
                         networker.ServerSend(player, targetCreateObject, true);
                     }
@@ -1367,7 +1367,7 @@ namespace Games
         {
             //用路由器生成一个二进制帧
             // Generate a binary frame with a router
-            Binary rpcFrame = new Binary(timestep, Networker.IsTCPClient, data, receivers, MessageGroupIds.GetId("NO_RPC_" + NetworkId + "_" + methodId), Networker.IsTcp, RouterIds.RPC_ROUTER_ID);
+            Binary rpcFrame = new Binary(timestep, Networker.IsTCPClient, data, receivers, MessageGroupIds.GetId("NO_RPC_" + NetworkId + "_" + methodId), Networker.IsTcp, RouterIds.RPC_ROUTER_ID, Networker.RoomUid);
             rpcFrame.SetSender(sender);
 
             if (targetPlayer != null && Networker.IsServer)
@@ -1415,7 +1415,7 @@ namespace Games
                 sendBinaryData.Append(data);
 
                 // Generate a binary frame with a router
-                Binary frame = new Binary(Networker.Time.Timestep, Networker.IsTCPClient, sendBinaryData, receivers, MessageGroupIds.GetId("NO_BIN_DATA_" + NetworkId), Networker.IsTcp, RouterIds.BINARY_DATA_ROUTER_ID);
+                Binary frame = new Binary(Networker.Time.Timestep, Networker.IsTCPClient, sendBinaryData, receivers, MessageGroupIds.GetId("NO_BIN_DATA_" + NetworkId), Networker.IsTcp, RouterIds.BINARY_DATA_ROUTER_ID, Networker.RoomUid);
 
                 Networker.Send(frame, true, skipPlayer);
             }

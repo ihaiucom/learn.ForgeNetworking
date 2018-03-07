@@ -29,5 +29,11 @@
         public const int LOBBY_JOIN_WATCH_ROOM = 9;
         // 大厅路由ID -- 离开观看房间
         public const int LOBBY_LEFT_WATCH_ROOM = 10;
+
+
+        // 房间路由ID -- 玩家加入房间
+        public const int ROOM_JOIN_ROOM = 11;
+        // 房间路由ID -- 玩家离开房间
+        public const int ROOM_LEFT_ROOM = 12;
     }
 }

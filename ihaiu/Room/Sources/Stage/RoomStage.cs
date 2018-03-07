@@ -8,13 +8,28 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     /// <summary>
     /// 关卡
     /// </summary>
     public class RoomStage
     {
+        // 关卡设置
+        public StageSetting Setting { get; protected set; }
+
+        // 关卡场景
+        public RoomScene Scene { get; protected set; }
+
+        // 房间
+        public NetRoomBase Room { get; protected set; }
+
+        public void Initialize(NetRoomInfo roomInfo)
+        {
+            Scene = new RoomScene(this);
+        }
+
+
 
     }
 }

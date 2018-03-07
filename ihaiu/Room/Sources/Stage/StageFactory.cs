@@ -4,13 +4,19 @@ using System.Collections.Generic;
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      2/28/2018 2:51:44 PM
+*  @CreateTime      3/6/2018 8:31:06 PM
 *  @Description:    
 * ==============================================================================
 */
 namespace Rooms.Ihaiu.Forge.Networking
 {
-    public class Lobby
+    public class StageFactory
     {
+        public static RoomStage Create(NetRoomInfo roomInfo)
+        {
+            RoomStage stage = new RoomStageNormal();
+            stage.Initialize(roomInfo);
+            return stage;
+        }
     }
 }

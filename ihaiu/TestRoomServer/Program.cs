@@ -7,6 +7,7 @@ namespace TestRoomServer
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
             string read = string.Empty;

@@ -9,21 +9,21 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     public abstract class LobbyBase
     {
 
-        public delegate void RoomEvent(int roomUid);
-        public delegate void RoomFailedEvent(int roomUid, string error);
+        public delegate void RoomEvent(ulong roomUid);
+        public delegate void RoomFailedEvent(ulong roomUid, string error);
 
 
-        public delegate void RoomPlayerJoinEvent(int roomUid, NetworkingPlayer player, NetJoinRoomResult ret);
-        public delegate void RoomPlayerLeftEvent(int roomUid, int roleUid, NetworkingPlayer player, NetLeftRoomResult ret);
+        public delegate void RoomPlayerJoinEvent(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret);
+        public delegate void RoomPlayerLeftEvent(ulong roomUid, ulong roleUid, NetworkingPlayer player, NetLeftRoomResult ret);
 
 
-        public delegate void RoomPlayerJoinWatchEvent(int roomUid, NetworkingPlayer player, NetJoinRoomResult ret);
-        public delegate void RoomPlayerLeftWatchEvent(int roomUid, NetworkingPlayer player, NetLeftRoomResult ret);
+        public delegate void RoomPlayerJoinWatchEvent(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret);
+        public delegate void RoomPlayerLeftWatchEvent(ulong roomUid, NetworkingPlayer player, NetLeftRoomResult ret);
 
 
         // 创建房间成功
@@ -41,20 +41,20 @@ namespace Games
         // 玩家 离开观看房间
         public event RoomPlayerLeftWatchEvent playerLeftWatchRoom;
 
-        protected void OnCreateRoomSuccessed(int roomUid)
+        protected void OnCreateRoomSuccessed(ulong roomUid)
         {
             if (createRoomSuccessed != null)
                 createRoomSuccessed(roomUid);
         }
 
 
-        protected void OnCreateRoomFailed(int roomUid, string error)
+        protected void OnCreateRoomFailed(ulong roomUid, string error)
         {
             if (createRoomFailed != null)
                 createRoomFailed(roomUid, error);
         }
 
-        protected void OnPlayerJoinRoom(int roomUid, NetworkingPlayer player, NetJoinRoomResult ret)
+        protected void OnPlayerJoinRoom(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret)
         {
             if (playerJoinRoom != null)
             {
@@ -62,7 +62,7 @@ namespace Games
             }
         }
 
-        protected void OnPlayerLeftRoom(int roomUid, int roleUid, NetworkingPlayer player, NetLeftRoomResult ret)
+        protected void OnPlayerLeftRoom(ulong roomUid, ulong roleUid, NetworkingPlayer player, NetLeftRoomResult ret)
         {
             if (playerLeftRoom != null)
             {
@@ -71,7 +71,7 @@ namespace Games
         }
 
 
-        protected void OnPlayerJoinWatchRoom(int roomUid, NetworkingPlayer player, NetJoinRoomResult ret)
+        protected void OnPlayerJoinWatchRoom(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret)
         {
             if (playerJoinWatchRoom != null)
             {
@@ -80,7 +80,7 @@ namespace Games
         }
 
 
-        protected void OnPlayerLeftWatchRoom(int roomUid, NetworkingPlayer player, NetLeftRoomResult ret)
+        protected void OnPlayerLeftWatchRoom(ulong roomUid, NetworkingPlayer player, NetLeftRoomResult ret)
         {
             if (playerLeftWatchRoom != null)
             {

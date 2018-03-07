@@ -8,14 +8,26 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     /// <summary>
     /// 角色信息
     /// </summary>
     public class NetRoleInfo
     {
-        public int uid;
+        public ulong uid;
         public string name;
+
+        // 玩家加入
+        internal void OnPlayerJoined()
+        {
+
+        }
+
+        // 玩家离开
+        internal void OnPlayerLeft()
+        {
+
+        }
     }
 }

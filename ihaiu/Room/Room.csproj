@@ -56,13 +56,13 @@
     <Compile Include="Sources\Room\NetRoomBase.cs" />
     <Compile Include="Sources\Room\NetRoomClient.cs" />
     <Compile Include="Sources\Room\NetRoomInfo.cs" />
-    <Compile Include="Sources\Room\NetRoomPlayer.cs" />
     <Compile Include="Sources\Room\NetRoomServer.cs" />
     <Compile Include="Sources\Room\RoomEnums.cs" />
     <Compile Include="Sources\Stage\RoomScene.cs" />
     <Compile Include="Sources\Stage\RoomStage.cs" />
     <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
     <Compile Include="Sources\Stage\RoomStageNormal.cs" />
+    <Compile Include="Sources\Stage\StageSetting.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

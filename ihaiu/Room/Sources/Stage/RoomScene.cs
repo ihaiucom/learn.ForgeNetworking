@@ -14,7 +14,7 @@ using System.Threading;
 *  @Description:    
 * ==============================================================================
 */
-namespace Games
+namespace Rooms.Ihaiu.Forge.Networking
 {
     /// <summary>
     /// 场景
@@ -66,10 +66,27 @@ namespace Games
 
 
 
+
         /// <summary>
         /// Socket
         /// </summary>
         public NetWorker Networker { get; protected set; }
+
+        /// <summary>
+        /// RoomStage
+        /// </summary>
+        public RoomStage RoomStage { get; protected set; }
+
+
+        /// <summary>
+        /// NetRoomBase
+        /// </summary>
+        public NetRoomBase Room { get; protected set; }
+
+        /// <summary>
+        /// 房间ID
+        /// </summary>
+        public ulong RoomUid { get; protected set; }
 
 
         /// <summary>
@@ -168,22 +185,25 @@ namespace Games
         private uint currentNetworkObjectId = 0;
 
 
-        public RoomScene(NetWorker networker)
+        public RoomScene(RoomStage roomStage)
         {
-            this.Networker = networker;
-            IsServer = networker is IServer;
-            IsClient = networker is IClient;
-            IsTcp = networker is BaseTCP;
-            IsTCPClient = networker is TCPClient;
-            IsUDPClient = networker is UDPClient;
-            IsUDPServer = networker is UDPServer;
+            this.RoomStage = roomStage;
+            this.Networker = roomStage.Room.lobby.Socket;
+            this.Room = roomStage.Room;
+            this.RoomUid = Room.roomId;
+
+            IsServer = Networker is IServer;
+            IsClient = Networker is IClient;
+            IsTcp = Networker is BaseTCP;
+            IsTCPClient = Networker is TCPClient;
+            IsUDPClient = Networker is UDPClient;
+            IsUDPServer = Networker is UDPServer;
 
 
             NetworkObjectDict = new Dictionary<uint, NetworkObject>();
             NetworkObjectList = new List<NetworkObject>();
 
             NetworkInitialize();
-
         }
 
         public void Dispance()
@@ -204,64 +224,42 @@ namespace Games
 
         public virtual void Send(FrameStream frame, bool reliable = false)
         {
-            if (Networker is TCPServer)
-                ((TCPServer)Networker).SendAll(frame);
-            else if (Networker is TCPClient)
-                ((TCPClient)Networker).Send(frame);
-            else if (Networker is BaseUDP)
-                ((BaseUDP)Networker).Send(frame, true);
+            if (Room is NetRoomServer)
+                ((NetRoomServer)Room).Send(frame, reliable);
+            else
+                ((NetRoomClient)Room).Send(frame, reliable);
         }
 
 
         public virtual void Send(FrameStream frame, bool reliable = false, NetworkingPlayer skipPlayer = null)
         {
-            if (Networker is TCPServer)
-                ((TCPServer)Networker).SendAll(frame, skipPlayer);
-            else if (Networker is TCPClient)
-                ((TCPClient)Networker).Send(frame);
-            else if (Networker is UDPServer)
-                ((UDPServer)Networker).Send(frame, reliable, skipPlayer);
-            else if (Networker is UDPClient)
-                ((UDPClient)Networker).Send(frame, reliable);
+            if (Room is NetRoomServer)
+                ((NetRoomServer)Room).Send(frame, reliable, skipPlayer);
+            else
+                ((NetRoomClient)Room).Send(frame, reliable);
         }
 
         public virtual void ClientSend(FrameStream frame, bool reliable = false)
         {
-            if(IsUDPClient)
-            {
-                ((UDPClient)Networker).Send(frame, reliable);
-            }
-            else
-            {
-                ((TCPClient)Networker).Send(frame);
-            }
+            ((NetRoomClient)Room).Send(frame, reliable);
         }
 
 
         public virtual void ServerSend(FrameStream clientFrame, FrameStream frame, bool reliable = false)
         {
-            if (IsUDPServer)
-                ((UDPServer)Networker).Send(frame.Sender, frame, reliable);
-            else
-                ((TCPServer)Networker).Send(frame.Sender.TcpClientHandle, frame);
+            ((NetRoomServer)Room).Send(frame.Sender, frame, reliable);
         }
 
 
         public virtual void ServerSend(NetworkingPlayer player, FrameStream frame, bool reliable = false)
         {
-            if (IsUDPServer)
-                ((UDPServer)Networker).Send(player, frame, reliable);
-            else
-                ((TCPServer)Networker).Send(player.TcpClientHandle, frame);
+            ((NetRoomServer)Room).Send(player, frame, reliable);
         }
 
 
         public virtual void ServerSendAll(FrameStream frame, bool reliable = false, NetworkingPlayer skipPlayer = null)
         {
-            if (IsUDPServer)
-                ((UDPServer)Networker).Send(frame, reliable, skipPlayer);
-            else
-                ((TCPServer)Networker).SendAll(frame, skipPlayer);
+            ((NetRoomServer)Room).Send(frame, reliable);
         }
 
 
