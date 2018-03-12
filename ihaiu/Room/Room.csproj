@@ -62,6 +62,7 @@
     <Compile Include="Sources\Stage\RoomStage.cs" />
     <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
     <Compile Include="Sources\Stage\RoomStageNormal.cs" />
+    <Compile Include="Sources\Stage\StageFactory.cs" />
     <Compile Include="Sources\Stage\StageSetting.cs" />
   </ItemGroup>
   <ItemGroup />

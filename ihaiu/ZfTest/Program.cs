@@ -14,6 +14,19 @@ namespace ZfTest
     {
         static void Main(string[] args)
         {
+
+
+            //Matrix4x4 m = Matrix4x4.LookAt(Vector3.one, new Vector3(50, 100, -50),  Vector3.up);
+            //m.MultiplyPoint(new Vector3(10, 20, 30));
+        
+            Matrix4x4 m = Matrix4x4.identity;
+            m.SetRow(0, new Vector4(2, 2, 3 , 4));
+            Vector3 p = m.MultiplyPoint(new Vector3(10, 20, 30));
+            Loger.Log(m);
+
+            Loger.Log(p);
+            Console.ReadLine();
+            return;
             string host = "127.0.0.1";
             ushort port = 13300;
             string read = string.Empty;
