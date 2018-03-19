@@ -80,6 +80,8 @@ namespace ihaiu
         {
             ProtoMsg msg = new ProtoMsg();
 
+
+
             //将缓冲区设置为现在有可用字节的长度
             byte[] bytes = new byte[9];
 
@@ -89,29 +91,80 @@ namespace ihaiu
             stream.Read(bytes, 0, 6);
             int length = BitConverter.ToInt32(bytes, 0);
             int propId = BitConverter.ToInt16(bytes, 4);
-            length -= 6 - 9;
+            int bodylength = length - 6 - 9;
 
             // 包体
             byte[] body = null;
-            if(length > 0)
+            if(bodylength > 0)
             {
-                body = new byte[length];
-                stream.Read(body, 6, length);
+                body = new byte[bodylength];
+                stream.Read(body, 0, bodylength);
             }
-           
+
 
             // 包尾 包尾结构: 1个字节表示包尾类型, 随后8个字符表示类型参数
-            stream.Read(bytes, 6 + length, 9);
-            byte fromType = bytes[0];
-            long fromId = BitConverter.ToInt64(bytes, 1);
+            stream.Read(bytes, 0, 9);
+            byte fromtype = bytes[0];
+            long fromid = BitConverter.ToInt64(bytes, 1);
 
             msg.protoId     = propId;
             msg.bytes       = body;
-            msg.fromType    = fromType;
-            msg.fromId      = fromId;
+            msg.fromType = fromtype;
+            msg.fromId = fromid;
 
             return msg;
         }
+
+
+        /// <summary>
+        /// 读取当前的客户端流，并从中取出下一组数据
+        /// </summary>
+        /// <param name =“playerClient”>要从</ param>中读取的客户端
+        /// <param name =“usingMask”>更改算法以查找要使用的字节中的掩码</ param>
+        /// <returns>为这个帧读取的字节</ returns>
+        protected ProtoMsg GetNextBytesNoPackEnd(NetworkStream stream, int available, bool usingMask)
+        {
+            ProtoMsg msg = new ProtoMsg();
+
+
+
+            //将缓冲区设置为现在有可用字节的长度
+            byte[] bytes = new byte[6];
+
+            // 包头结构: 前四个字节表示数据包长度, 随后两字节表示消息类型
+            // int32 :总长度, 包含包头及包尾长度
+            // int16 :消息类型
+            stream.Read(bytes, 0, 6);
+            int length = BitConverter.ToInt32(bytes, 0);
+            int propId = BitConverter.ToInt16(bytes, 4);
+            int bodylength = length - 6;
+
+            // 包体
+            byte[] body = null;
+            if (bodylength > 0)
+            {
+                body = new byte[bodylength];
+                stream.Read(body, 0, bodylength);
+            }
+
+
+            // 包尾 包尾结构: 1个字节表示包尾类型, 随后8个字符表示类型参数
+            //stream.Read(bytes, 0, 9);
+            //byte fromtype = bytes[0];
+            //long fromid = BitConverter.ToInt64(bytes, 1);
+
+            msg.protoId = propId;
+            msg.bytes = body;
+            //msg.fromType = fromtype;
+            //msg.fromId = fromid;
+
+            return msg;
+        }
+
+       
+
+
+
 
 
         public ProtoMsg GenerateProtoPing()

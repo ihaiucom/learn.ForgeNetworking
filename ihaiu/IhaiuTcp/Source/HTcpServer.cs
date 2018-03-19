@@ -164,7 +164,7 @@ namespace ihaiu
                 {
                     //从帧中获取原始字节并发送
                     // Get the raw bytes from the frame and send them
-                    byte[] data = frame.GetData();
+                    byte[] data = frame.GetDataNoPackEnd();
 
                     RawWrite(client, data);
                     return true;
@@ -476,7 +476,7 @@ namespace ihaiu
                                     Players[i].Ping();
 
                                     // 读取消息
-                                    ProtoMsg protoMsg = GetNextBytes(playerStream, available, false);
+                                    ProtoMsg protoMsg = GetNextBytesNoPackEnd(playerStream, available, false);
                                        
 
                                     //客户端已经告诉服务器它正在断开连接

@@ -24,7 +24,7 @@ namespace ihaiu
             //| 4字节消息长度 | 2字节消息类型 | 二进制流 | 1字符类型 | 8字节类型参数 |
             // | -----------------| ----------| ------------| ---------------------|
 
-            int length = 6 + bytes.Length  + 9;
+            int length = 6 + bytes.Length + 9;
             byte[] data = new byte[length];
             BitConverter.GetBytes(length);
 
@@ -58,5 +58,47 @@ namespace ihaiu
 
             return data;
         }
+
+        public byte[] GetDataNoPackEnd()
+        {
+            //| ----------包头-------------- | ---包体------ | --------包尾-------- -|
+            //| 4字节消息长度 | 2字节消息类型 | 二进制流 | 1字符类型 | 8字节类型参数 |
+            // | -----------------| ----------| ------------| ---------------------|
+
+            int length = 6 + bytes.Length;
+            byte[] data = new byte[length];
+            BitConverter.GetBytes(length);
+
+            // length
+            int index = 0;
+            int count = sizeof(Int32);
+            Buffer.BlockCopy(BitConverter.GetBytes(length), 0, data, index, count);
+
+            // protoId
+            index += count;
+            count = sizeof(Int16);
+            Buffer.BlockCopy(BitConverter.GetBytes((Int16)protoId), 0, data, index, count);
+
+            // body
+            index += count;
+            count = bytes.Length;
+            Buffer.BlockCopy(bytes, 0, data, index, count);
+
+
+            //// formType
+            //index += count;
+            //count = sizeof(byte);
+            //data[index] = fromType;
+
+
+            //// fromId
+            //index += count;
+            //count = sizeof(long);
+            //Buffer.BlockCopy(BitConverter.GetBytes(fromId), 0, data, index, count);
+
+
+            return data;
+        }
+
     }
 }

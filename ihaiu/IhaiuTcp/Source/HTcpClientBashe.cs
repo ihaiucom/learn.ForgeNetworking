@@ -108,7 +108,7 @@ namespace ihaiu
             {
                 //从帧中获取原始字节并发送
                 // Get the raw bytes from the frame and send them
-                byte[] data = frame.GetData();
+                byte[] data = frame.GetDataNoPackEnd();
                 RawWrite(data);
             }
         }
@@ -214,6 +214,7 @@ namespace ihaiu
             if (stream == null) //Some reason the stream is null! //某些原因流为空！
                 return ReadState.Continue;
 
+           // Loger.LogFormat("stream.CanRead={0}", stream.CanRead);
             //如果流不再可读，则断开连接
             // If the stream no longer can read then disconnect
             if (!stream.CanRead)
@@ -234,7 +235,7 @@ namespace ihaiu
 
             
             // 读取消息
-            ProtoMsg protoMsg = GetNextBytes(stream, available, false);
+            ProtoMsg protoMsg = GetNextBytesNoPackEnd(stream, available, false);
             //客户端已经告诉服务器它正在断开连接
             if (protoMsg.protoId == ProtoId.ConnectionClose)
             {
@@ -283,7 +284,7 @@ namespace ihaiu
         /// </summary>
         public override void Ping()
         {
-            protoClient.SendPing();
+            //protoClient.SendPing();
         }
 
         /// <summary>

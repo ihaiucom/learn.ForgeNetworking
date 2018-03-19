@@ -54,7 +54,7 @@ namespace ihaiu
                 // There was in issue reading or executing from the network so disconnect
                 // TODO:  Add more logging here and an exception with an inner exception being
                 // the exception that was thrown
-                BMSLog.LogException(e);
+                Loger.LogException(e);
                 //Console.WriteLine("CRASH: " + e.Message);
                 Disconnect(true);
             }

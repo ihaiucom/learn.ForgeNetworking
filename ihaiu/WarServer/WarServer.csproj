@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{7CCAA6F3-A099-400E-8D57-D72FE8DF6590}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IhaiuTcp</RootNamespace>
-    <AssemblyName>IhaiuTcp</AssemblyName>
+    <RootNamespace>WarServer</RootNamespace>
+    <AssemblyName>WarServer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,9 +35,6 @@
   <ItemGroup>
     <Reference Include="IhaiuLog">
       <HintPath>..\lib\IhaiuLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\lib\protobuf-net.dll</HintPath>
@@ -49,31 +49,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\HBaseTCP.cs" />
-    <Compile Include="Source\HTcpClient.cs" />
-    <Compile Include="Source\HTcpClientBashe.cs" />
-    <Compile Include="Source\HTcpServer.cs" />
-    <Compile Include="Source\ProtoBase.cs" />
-    <Compile Include="Source\ProtoClient.cs" />
-    <Compile Include="Source\ProtoErrorId.cs" />
-    <Compile Include="Source\ProtoId.cs" />
-    <Compile Include="Source\ProtoItem.cs" />
-    <Compile Include="Source\ProtoList.cs" />
-    <Compile Include="Source\ProtoList_ClientListener.cs" />
-    <Compile Include="Source\ProtoList_ClientSender.cs" />
-    <Compile Include="Source\ProtoList_ServerListener.cs" />
-    <Compile Include="Source\ProtoList_ServerSender.cs" />
-    <Compile Include="Source\ProtoMsg.cs" />
-    <Compile Include="Source\ProtoPB.cs" />
-    <Compile Include="Source\ProtoServer.cs" />
-    <Compile Include="Source\ProtoUtils.cs" />
-    <Compile Include="Source\QuickLZ\QuickLZ.cs" />
+    <Compile Include="Sources\MasterClient.cs" />
+    <Compile Include="Sources\MasterClientParameter.cs" />
+    <Compile Include="Sources\ProtoMaster.cs" />
+    <Compile Include="Sources\ProtoPB_Login.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
       <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IhaiuTcp\IhaiuTcp.csproj">
+      <Project>{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}</Project>
+      <Name>IhaiuTcp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
