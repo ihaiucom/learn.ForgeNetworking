@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Threading;
 using ihaiu;
+using Rooms.Ihaiu.Forge.Networking;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,18 +17,19 @@ namespace ihaiu
 {
     public class MasterClient
     {
-        private const int PING_INTERVAL = 10000;
+        private const int PING_INTERVAL = 1000;
 
         public bool IsRunning { get; private set; }
 
         public MasterClientParameter parameter = new MasterClientParameter();
 
-        internal HTcpClient     tcpClient;
-        internal ProtoMaster     protoMaster;
+        internal HTcpClient  tcpClient;
+        internal ProtoMaster protoMaster;
+        internal LobbyServer lobbyServer;
+
 
         public MasterClient()
         {
-            //Connect(host, port);
         }
 
         public void Init(MasterClientParameter parameter = null)
@@ -40,7 +42,7 @@ namespace ihaiu
         /// <summary>
         /// 连接服务器
         /// </summary>
-        public void Connect(string host, ushort port)
+        public void ConnectMaster(string host, ushort port)
         {
             tcpClient = new HTcpClient();
             tcpClient.connectAttemptFailed += OnConnectAttemptFailed;
@@ -54,52 +56,61 @@ namespace ihaiu
         }
 
         // 启动Ping
-        private void StarPing()
+        private void StarMasterPing()
         {
-            Log("StarPing");
+            Log("MasterClient StarPing");
             Task.Queue(() =>
             {
-                Log("BeginPing");
+                Log("MasterClient BeginPing");
                 while (tcpClient.IsBound)
                 {
-                    protoMaster.C_Ping_1();
+                    protoMaster.C_Ping();
                     Thread.Sleep(PING_INTERVAL);
                 }
 
-                Log("EndPing");
-            }, PING_INTERVAL);
+                Log("MasterClient EndPing");
+            }, 0);
+        }
+
+        /// <summary>
+        /// 启动大厅服
+        /// </summary>
+        public void StarLobbyServer()
+        {
+            lobbyServer = new LobbyServer(int.MaxValue, parameter.localServerIp, parameter.localServerPort);
         }
 
 
         private void OnConnectAttemptFailed(NetWorker tcpClient)
         {
-            Log("OnConnectAttemptFailed");
+            Log("MasterClient OnConnectAttemptFailed");
         }
 
         private void OnBindSuccessful(NetWorker tcpClient)
         {
-            Log("OnBindSuccessful");
-            StarPing();
+            Log("MasterClient OnBindSuccessful");
+            StarMasterPing();
         }
 
         private void OnPlayerConnected(NetworkingPlayer server, NetWorker tcpClient)
         {
-            Log("OnPlayerConnected");
+            Log("MasterClient OnPlayerConnected");
         }
 
 
         private void OnDisconnected(NetWorker tcpClient)
         {
-            Log("OnDisconnected");
+            Log("MasterClient OnDisconnected");
         }
 
         private void OnForcedDisconnect(NetWorker tcpClient)
         {
-            Log("OnDisconnected");
+            Log("MasterClient OnDisconnected");
         }
+
         private void OnPlayerDisconnected(NetworkingPlayer server, NetWorker tcpClient)
         {
-            Log("OnPlayerDisconnected");
+            Log("MasterClient OnPlayerDisconnected");
         }
         
 

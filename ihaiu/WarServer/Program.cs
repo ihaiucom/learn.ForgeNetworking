@@ -54,7 +54,7 @@ namespace ihaiu
             // 测试客户登录
             MasterClient server = new MasterClient();
             server.ToggleLogging();
-            server.Connect(host, 13002);
+            server.ConnectMaster(host, 13002);
 
             while (true)
             {

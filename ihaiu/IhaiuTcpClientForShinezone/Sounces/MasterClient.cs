@@ -39,7 +39,7 @@ namespace ihaiu
 
             accountLogin.loginSuccessEvent += (string res) =>
             {
-                accountLogin.EnterGame(parameter.serverId, parameter.serverIp, parameter.serverPort);
+                accountLogin.EnterGame(parameter.masterServerId, parameter.masterServerIp, parameter.masterServerPort);
             };
 
             accountLogin.loginEnterEvent += (ulong accountId, string accountName, string session) =>
@@ -47,7 +47,7 @@ namespace ihaiu
                 parameter.accountId = accountId;
                 parameter.session = session;
                 authObj.from_web_M = session;
-                Connect(parameter.serverIp, parameter.serverPort);
+                ConnectMaster(parameter.masterServerIp, parameter.masterServerPort);
             };
         }
 
@@ -62,7 +62,7 @@ namespace ihaiu
         /// <summary>
         /// 连接服务器
         /// </summary>
-        public void Connect(string host, ushort port)
+        public void ConnectMaster(string host, ushort port)
         {
             tcpClient = new HTcpClient();
             tcpClient.connectAttemptFailed += OnConnectAttemptFailed;

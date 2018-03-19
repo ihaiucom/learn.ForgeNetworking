@@ -1,0 +1,47 @@
+
+¶
+battle_inner.proto"$
+OUTER_B2BM_Ping
+	timestamp ("=
+!OUTER_B2BM_RegNewBattleServer_Req
+
+ip (	
+port ("4
+"OUTER_B2BM_RegNewBattleServer_Resp
+result (")
+BI_SkillInfo
+
+id (
+level ("(
+BI_TrapInfo
+
+id (
+level ("*
+BI_WeaponInfo
+
+id (
+level ("¿
+BattlePlayerInfo
+char_id (
+name (	
+level (
+hero_id (
+
+hero_level (
+skill (2.BI_SkillInfo
+trap (2.BI_TrapInfo
+weapon (2.BI_WeaponInfo"c
+OUTER_BM2B_MPVE_CreateRoom_Req
+info (2.BattlePlayerInfo
+copy_id (
+room_id ("B
+OUTER_BM2B_MPVE_CreateRoom_Resp
+result (
+room_id ("!
+BI_BattleOverData
+data ("K
+OUTER_B2BM_RoomEnd_Req
+room_id ( 
+data (2.BI_BattleOverData")
+OUTER_B2BM_RoomEnd_Resp
+result (

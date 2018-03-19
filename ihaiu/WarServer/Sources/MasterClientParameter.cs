@@ -12,8 +12,13 @@ namespace ihaiu
 {
     public class MasterClientParameter
     {
-        public int      serverId    = 3;
-        public string   serverIp    = "172.16.52.101";
-        public ushort   serverPort  = 23001;
+        public int      masterServerId    = 3;
+        public string   masterServerIp    = "172.16.52.101";
+        public ushort   masterServerPort  = 23001;
+
+        public string localServerIp     = "127.0.0.1";
+        public ushort localServerPort   = 16000;
+
+
     }
 }

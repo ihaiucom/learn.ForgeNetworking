@@ -16,9 +16,9 @@ namespace ihaiu
         public string gameId = "_self_game";
         public string channel = "default_self";
 
-        public int      serverId    = 3;
-        public string   serverIp    = "172.16.52.101";
-        public ushort   serverPort  = 23001;
+        public int      masterServerId    = 3;
+        public string   masterServerIp    = "172.16.52.101";
+        public ushort   masterServerPort  = 23001;
 
         public string username = "warserver01";
         public string password = "";

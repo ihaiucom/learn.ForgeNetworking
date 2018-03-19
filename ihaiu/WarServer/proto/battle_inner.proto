@@ -1,0 +1,75 @@
+message OUTER_B2BM_Ping
+{
+	required uint64 timestamp		= 1;	// 当前时间
+}
+
+message OUTER_B2BM_RegNewBattleServer_Req
+{
+	required string ip				= 1;	// 战斗服对外ip
+	required uint32 port			= 2;	// 战斗服对外端口
+}
+
+message OUTER_B2BM_RegNewBattleServer_Resp
+{
+	required uint32 result			= 1;	// 0表示成功, 非0表示失败
+}
+
+message BI_SkillInfo
+{
+	required uint32 id				= 1;
+	required uint32 level			= 2;
+}
+
+message BI_TrapInfo
+{
+	required uint32 id				= 1;
+	required uint32 level			= 2;
+}
+
+message BI_WeaponInfo
+{
+	required uint32 id				= 1;
+	required uint32 level			= 2;
+}
+
+message BattlePlayerInfo
+{
+	required uint64 char_id			= 1;	// 玩家id
+	required string name			= 2;
+	required uint32 level			= 3;
+	required uint32 hero_id			= 4;
+	required uint32 hero_level		= 5;
+	repeated BI_SkillInfo skill		= 6;
+	repeated BI_TrapInfo trap		= 7;
+	repeated BI_WeaponInfo weapon	= 8;
+}
+
+message OUTER_BM2B_MPVE_CreateRoom_Req
+{
+	repeated BattlePlayerInfo info	= 1;	// 玩家信息
+	required uint32 copy_id			= 2;	// 副本id
+	required uint32 room_id			= 3;	// 房间id, 0表示创建房间失败
+}
+
+message OUTER_BM2B_MPVE_CreateRoom_Resp
+{
+	required uint32 result			= 1;	// 0表示成功, 非0表示失败
+	required uint32 room_id			= 2;	// 房间id, 0表示创建房间失败
+}
+
+// 战斗结算数据
+message BI_BattleOverData
+{
+	optional bytes 	data			= 1;	// 消息内容
+}
+
+message OUTER_B2BM_RoomEnd_Req
+{
+	required uint32 room_id			= 1;	// 房间id
+	required BI_BattleOverData data	= 2;	// 消息内容
+}
+
+message OUTER_B2BM_RoomEnd_Resp
+{
+	required uint32 result			= 1;	// 0表示成功, 非0表示失败
+}

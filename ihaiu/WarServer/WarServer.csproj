@@ -54,7 +54,7 @@
     <Compile Include="Sources\MasterClient.cs" />
     <Compile Include="Sources\MasterClientParameter.cs" />
     <Compile Include="Sources\ProtoMaster.cs" />
-    <Compile Include="Sources\ProtoPB_Login.cs" />
+    <Compile Include="Sources\ProtoPacket_Master.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -67,6 +67,10 @@
     <ProjectReference Include="..\IhaiuTcp\IhaiuTcp.csproj">
       <Project>{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}</Project>
       <Name>IhaiuTcp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Room\Room.csproj">
+      <Project>{5C7CB144-B73D-4F5E-9196-86A7097F055D}</Project>
+      <Name>Room</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
