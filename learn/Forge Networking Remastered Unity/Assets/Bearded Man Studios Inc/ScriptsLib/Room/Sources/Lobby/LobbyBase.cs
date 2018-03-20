@@ -9,7 +9,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
     public abstract class LobbyBase
     {
@@ -30,6 +30,10 @@ namespace Rooms.Ihaiu.Forge.Networking
         public event RoomEvent createRoomSuccessed;
         // 创建房间失败
         public event RoomFailedEvent createRoomFailed;
+
+
+        // 房间结束
+        public event NetRoomBase.RoomOverEvent roomOver;
 
         // 玩家 加入房间
         public event RoomPlayerJoinEvent playerJoinRoom;
@@ -52,6 +56,15 @@ namespace Rooms.Ihaiu.Forge.Networking
         {
             if (createRoomFailed != null)
                 createRoomFailed(roomUid, error);
+        }
+
+
+        internal void OnRoomOver(NetRoomBase room)
+        {
+            if (roomOver != null)
+            {
+                roomOver(room);
+            }
         }
 
         protected void OnPlayerJoinRoom(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret)

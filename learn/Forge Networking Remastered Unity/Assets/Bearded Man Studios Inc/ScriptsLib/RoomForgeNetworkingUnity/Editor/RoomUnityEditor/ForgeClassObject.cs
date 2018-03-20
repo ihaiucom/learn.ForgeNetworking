@@ -52,14 +52,14 @@ namespace Rooms.Forge.Networking.UnityEditor
 			this.Filename = Path.GetFileName(FileLocation);
 			this.ExactFilename = Path.GetFileNameWithoutExtension(FileLocation);
 
-			if (ExactFilename == "NetworkManager")
+			if (ExactFilename == "RoomNetworkManager")
 				return;
 
 			List<float> _interpolationValues = new List<float>();
 			JSONNode typeData = null;
 			JSONNode typeHelperData = null;
 			JSONNode interpolData = null;
-			Type currentType = GetType("BeardedManStudios.Forge.Networking.Generated." + this.ExactFilename);
+			Type currentType = GetType("Rooms.Forge.Networking.Generated." + this.ExactFilename);
 			GeneratedRPCAttribute aRPC = (GeneratedRPCAttribute)Attribute.GetCustomAttribute(currentType, typeof(GeneratedRPCAttribute));
 			GeneratedRPCVariableNamesAttribute aNames = (GeneratedRPCVariableNamesAttribute)Attribute.GetCustomAttribute(currentType, typeof(GeneratedRPCVariableNamesAttribute));
 			GeneratedInterpolAttribute aInterpol = (GeneratedInterpolAttribute)Attribute.GetCustomAttribute(currentType, typeof(GeneratedInterpolAttribute));
@@ -105,7 +105,7 @@ namespace Rooms.Forge.Networking.UnityEditor
 				Type factoryInterface = currentType.GetInterface("INetworkObjectFactory");
 				bool isMonobehavior = currentType.IsSubclassOf(typeof(MonoBehaviour));
 
-				if (baseType.FullName == "BeardedManStudios.Forge.Networking.NetworkObject")
+				if (baseType.FullName == "Rooms.Forge.Networking.NetworkObject")
 				{
 					ObjectClassType = ForgeBaseClassType.NetworkObject;
 					IdentityValue = ++IDENTITIES;

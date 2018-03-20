@@ -8,7 +8,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 	[GeneratedInterpol("{\"inter\":[0.15,0.15,0]")]
 	public partial class TestUnitNetworkObject : NetworkObject
 	{
-		public const int IDENTITY = 6;
+		public const int IDENTITY = 7;
 
 		private byte[] _dirtyFields = new byte[1];
 
@@ -238,7 +238,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		private void Initialize()
 		{
-            Loger.LogFormat("TestUnitNetworkObject Initialize,  NetworkId={0}", NetworkId);
 			if (readDirtyFlags == null)
 				readDirtyFlags = new byte[1];
 

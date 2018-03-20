@@ -1,7 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Threading;
 using ihaiu;
-using Rooms.Ihaiu.Forge.Networking;
+using Rooms.Forge.Networking;
 using System;
 using System.Collections.Generic;
 using System.Threading;

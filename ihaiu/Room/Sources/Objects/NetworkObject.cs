@@ -14,7 +14,7 @@ using System.Linq;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
     /// <summary>
     /// The representation of an object on the network, this object can have

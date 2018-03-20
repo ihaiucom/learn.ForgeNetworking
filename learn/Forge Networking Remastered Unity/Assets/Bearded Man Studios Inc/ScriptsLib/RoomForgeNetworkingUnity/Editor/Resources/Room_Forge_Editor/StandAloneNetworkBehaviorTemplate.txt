@@ -1,8 +1,10 @@
+using System;
 using BeardedManStudios.Forge.Networking;
+using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine;
 
-namespace BeardedManStudios.Forge.Networking.Generated
+namespace Rooms.Forge.Networking.Generated
 {
 	[GeneratedRPC("{\"types\":[>:generatedTypes:<]")]
 	[GeneratedRPCVariableNames("{\"types\":[>:generatedHelperTypes:<]")]

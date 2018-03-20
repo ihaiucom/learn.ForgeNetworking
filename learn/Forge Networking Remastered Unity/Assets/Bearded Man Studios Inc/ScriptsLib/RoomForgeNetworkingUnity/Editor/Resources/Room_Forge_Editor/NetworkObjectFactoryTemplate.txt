@@ -2,11 +2,11 @@ using BeardedManStudios.Forge.Networking.Frame;
 using System;
 using MainThreadManager = BeardedManStudios.Forge.Networking.Unity.MainThreadManager;
 
-namespace BeardedManStudios.Forge.Networking.Generated
+namespace Rooms.Forge.Networking.Generated
 {
-	public partial class NetworkObjectFactory : NetworkObjectFactoryBase
+	public partial class RoomNetworkObjectFactory : RoomNetworkObjectFactoryBase
 	{
-		public override void NetworkCreateObject(NetWorker networker, int identity, uint id, FrameStream frame, Action<NetworkObject> callback)
+		public override void NetworkCreateObject(RoomScene networker, int identity, uint id, FrameStream frame, Action<NetworkObject> callback)
 		{
 			if (networker.IsServer)
 			{

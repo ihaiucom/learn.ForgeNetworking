@@ -21,7 +21,7 @@ namespace Rooms.Forge.Networking.UnityEditor
 		/// <summary>
 		/// This is the editor directory to pull any extra files from
 		/// </summary>
-		public const string EDITOR_RESOURCES_DIR = "BMS_Forge_Editor";
+		public const string EDITOR_RESOURCES_DIR = "Room_Forge_Editor";
 		/// <summary>
 		/// REGEX for matching words on so that the user doesn't type invalid characters
 		/// </summary>
@@ -59,11 +59,11 @@ namespace Rooms.Forge.Networking.UnityEditor
 		/// <summary>
 		/// This is the generated folder path
 		/// </summary>
-		private const string GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/Generated";
+		private const string GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/RoomGenerated";
 		/// <summary>
 		/// This is the user generated folder path
 		/// </summary>
-		private const string USER_GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/Generated/UserGenerated";
+		private const string USER_GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/RoomGenerated/UserGenerated";
 		/// <summary>
 		/// This is the wizard data stored by the user previously
 		/// </summary>
@@ -147,7 +147,7 @@ namespace Rooms.Forge.Networking.UnityEditor
 
 		#region Initialize and Constructor
 		// Add menu named "Network Editor" to the Window menu
-		[MenuItem("Window/Forge Networking/Network Contract Wizard %g")]
+		[MenuItem("Window/Forge Networking/Room Network Contract Wizard %r")]
 		public static void Init()
 		{
 			if (_instance == null)
@@ -950,7 +950,7 @@ namespace Rooms.Forge.Networking.UnityEditor
 					correctFiles.Add(new ForgeClassObject(userFiles[i]));
 			}
 
-			if (!ForgeClassObject.HasExactFilename(correctFiles, "NetworkObjectFactory"))
+			if (!ForgeClassObject.HasExactFilename(correctFiles, "RoomNetworkObjectFactory"))
 				MakeForgeFactory(); //We do not have the Forge Factory, we need to make this!
 
 			for (int i = 0; i < correctFiles.Count; ++i)

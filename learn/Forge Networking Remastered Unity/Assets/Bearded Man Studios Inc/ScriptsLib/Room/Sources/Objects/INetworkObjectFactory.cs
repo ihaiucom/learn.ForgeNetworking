@@ -9,9 +9,9 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
-    public interface INetObjectFactory
+    public interface INetworkObjectFactory
     {
         /// <summary>
         ///在网络上有一个请求来创建一个NetworkObject类型

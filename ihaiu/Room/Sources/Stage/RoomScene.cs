@@ -14,7 +14,7 @@ using System.Threading;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
     /// <summary>
     /// 场景
@@ -62,7 +62,7 @@ namespace Rooms.Ihaiu.Forge.Networking
         /// 用于创建网络对象的工厂，只有1个工厂
         /// 任何网络应用程序都需要 （共享代码库）
         /// </summary>
-        public INetObjectFactory Factory { get; set; }
+        public INetworkObjectFactory Factory { get; set; }
 
 
 

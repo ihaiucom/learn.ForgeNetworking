@@ -15,10 +15,10 @@ namespace BeardedManStudios.Forge.Networking.Unity
 		public GameObject[] ExampleProximityPlayerNetworkObject = null;
 		public GameObject[] NetworkCameraNetworkObject = null;
 		public GameObject[] TestNetworkObject = null;
+		public GameObject[] TestUnitMonoNetworkObject = null;
 		public GameObject[] ZfTestCubeNetworkObject = null;
 		public GameObject[] ZfTestPlayerCubeNetworkObject = null;
 		public GameObject[] ZfTestRpcMoveCubeNetworkObject = null;
-		public GameObject[] TestUnitMonoNetworkObject = null;
 
 		private void SetupObjectCreatedEvent()
 		{
@@ -151,6 +151,29 @@ namespace BeardedManStudios.Forge.Networking.Unity
 						objectInitialized(newObj, obj);
 				});
 			}
+			else if (obj is TestUnitMonoNetworkObject)
+			{
+				MainThreadManager.Run(() =>
+				{
+					NetworkBehavior newObj = null;
+					if (!NetworkBehavior.skipAttachIds.TryGetValue(obj.NetworkId, out newObj))
+					{
+						if (TestUnitMonoNetworkObject.Length > 0 && TestUnitMonoNetworkObject[obj.CreateCode] != null)
+						{
+							var go = Instantiate(TestUnitMonoNetworkObject[obj.CreateCode]);
+							newObj = go.GetComponent<NetworkBehavior>();
+						}
+					}
+
+					if (newObj == null)
+						return;
+						
+					newObj.Initialize(obj);
+
+					if (objectInitialized != null)
+						objectInitialized(newObj, obj);
+				});
+			}
 			else if (obj is ZfTestCubeNetworkObject)
 			{
 				MainThreadManager.Run(() =>
@@ -207,29 +230,6 @@ namespace BeardedManStudios.Forge.Networking.Unity
 						if (ZfTestRpcMoveCubeNetworkObject.Length > 0 && ZfTestRpcMoveCubeNetworkObject[obj.CreateCode] != null)
 						{
 							var go = Instantiate(ZfTestRpcMoveCubeNetworkObject[obj.CreateCode]);
-							newObj = go.GetComponent<NetworkBehavior>();
-						}
-					}
-
-					if (newObj == null)
-						return;
-						
-					newObj.Initialize(obj);
-
-					if (objectInitialized != null)
-						objectInitialized(newObj, obj);
-				});
-			}
-			else if (obj is TestUnitMonoNetworkObject)
-			{
-				MainThreadManager.Run(() =>
-				{
-					NetworkBehavior newObj = null;
-					if (!NetworkBehavior.skipAttachIds.TryGetValue(obj.NetworkId, out newObj))
-					{
-						if (TestUnitMonoNetworkObject.Length > 0 && TestUnitMonoNetworkObject[obj.CreateCode] != null)
-						{
-							var go = Instantiate(TestUnitMonoNetworkObject[obj.CreateCode]);
 							newObj = go.GetComponent<NetworkBehavior>();
 						}
 					}
@@ -313,6 +313,18 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			
 			return netBehavior;
 		}
+		[Obsolete("Use InstantiateTestUnitMono instead, its shorter and easier to type out ;)")]
+		public TestUnitMonoBehavior InstantiateTestUnitMonoNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(TestUnitMonoNetworkObject[index]);
+			var netBehavior = go.GetComponent<TestUnitMonoBehavior>();
+			var obj = netBehavior.CreateNetworkObject(Networker, index);
+			go.GetComponent<TestUnitMonoBehavior>().networkObject = (TestUnitMonoNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
 		[Obsolete("Use InstantiateZfTestCube instead, its shorter and easier to type out ;)")]
 		public ZfTestCubeBehavior InstantiateZfTestCubeNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
 		{
@@ -344,18 +356,6 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			var netBehavior = go.GetComponent<ZfTestRpcMoveCubeBehavior>();
 			var obj = netBehavior.CreateNetworkObject(Networker, index);
 			go.GetComponent<ZfTestRpcMoveCubeBehavior>().networkObject = (ZfTestRpcMoveCubeNetworkObject)obj;
-
-			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
-			
-			return netBehavior;
-		}
-		[Obsolete("Use InstantiateTestUnitMono instead, its shorter and easier to type out ;)")]
-		public TestUnitMonoBehavior InstantiateTestUnitMonoNetworkObject(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
-		{
-			var go = Instantiate(TestUnitMonoNetworkObject[index]);
-			var netBehavior = go.GetComponent<TestUnitMonoBehavior>();
-			var obj = netBehavior.CreateNetworkObject(Networker, index);
-			go.GetComponent<TestUnitMonoBehavior>().networkObject = (TestUnitMonoNetworkObject)obj;
 
 			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
 			
@@ -572,6 +572,48 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			
 			return netBehavior;
 		}
+		public TestUnitMonoBehavior InstantiateTestUnitMono(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
+		{
+			var go = Instantiate(TestUnitMonoNetworkObject[index]);
+			var netBehavior = go.GetComponent<TestUnitMonoBehavior>();
+
+			NetworkObject obj = null;
+			if (!sendTransform && position == null && rotation == null)
+				obj = netBehavior.CreateNetworkObject(Networker, index);
+			else
+			{
+				metadata.Clear();
+
+				if (position == null && rotation == null)
+				{
+					metadata.Clear();
+					byte transformFlags = 0x1 | 0x2;
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+					ObjectMapper.Instance.MapBytes(metadata, go.transform.position, go.transform.rotation);
+				}
+				else
+				{
+					byte transformFlags = 0x0;
+					transformFlags |= (byte)(position != null ? 0x1 : 0x0);
+					transformFlags |= (byte)(rotation != null ? 0x2 : 0x0);
+					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
+
+					if (position != null)
+						ObjectMapper.Instance.MapBytes(metadata, position.Value);
+
+					if (rotation != null)
+						ObjectMapper.Instance.MapBytes(metadata, rotation.Value);
+				}
+
+				obj = netBehavior.CreateNetworkObject(Networker, index, metadata.CompressBytes());
+			}
+
+			go.GetComponent<TestUnitMonoBehavior>().networkObject = (TestUnitMonoNetworkObject)obj;
+
+			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
+			
+			return netBehavior;
+		}
 		public ZfTestCubeBehavior InstantiateZfTestCube(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
 		{
 			var go = Instantiate(ZfTestCubeNetworkObject[index]);
@@ -693,48 +735,6 @@ namespace BeardedManStudios.Forge.Networking.Unity
 			}
 
 			go.GetComponent<ZfTestRpcMoveCubeBehavior>().networkObject = (ZfTestRpcMoveCubeNetworkObject)obj;
-
-			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
-			
-			return netBehavior;
-		}
-		public TestUnitMonoBehavior InstantiateTestUnitMono(int index = 0, Vector3? position = null, Quaternion? rotation = null, bool sendTransform = true)
-		{
-			var go = Instantiate(TestUnitMonoNetworkObject[index]);
-			var netBehavior = go.GetComponent<TestUnitMonoBehavior>();
-
-			NetworkObject obj = null;
-			if (!sendTransform && position == null && rotation == null)
-				obj = netBehavior.CreateNetworkObject(Networker, index);
-			else
-			{
-				metadata.Clear();
-
-				if (position == null && rotation == null)
-				{
-					metadata.Clear();
-					byte transformFlags = 0x1 | 0x2;
-					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
-					ObjectMapper.Instance.MapBytes(metadata, go.transform.position, go.transform.rotation);
-				}
-				else
-				{
-					byte transformFlags = 0x0;
-					transformFlags |= (byte)(position != null ? 0x1 : 0x0);
-					transformFlags |= (byte)(rotation != null ? 0x2 : 0x0);
-					ObjectMapper.Instance.MapBytes(metadata, transformFlags);
-
-					if (position != null)
-						ObjectMapper.Instance.MapBytes(metadata, position.Value);
-
-					if (rotation != null)
-						ObjectMapper.Instance.MapBytes(metadata, rotation.Value);
-				}
-
-				obj = netBehavior.CreateNetworkObject(Networker, index, metadata.CompressBytes());
-			}
-
-			go.GetComponent<TestUnitMonoBehavior>().networkObject = (TestUnitMonoNetworkObject)obj;
 
 			FinalizeInitialization(go, netBehavior, obj, position, rotation, sendTransform);
 			

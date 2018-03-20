@@ -1,16 +1,20 @@
+using System;
 using BeardedManStudios.Forge.Networking;
+using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine;
 
-namespace BeardedManStudios.Forge.Networking.Generated
+namespace Rooms.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"Vector3\"]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"val\"]]")]
-	public abstract partial class ZfTestRpcMoveCubeBehavior : NetworkBehavior
+	[GeneratedRPC("{\"types\":[>:generatedTypes:<]")]
+	[GeneratedRPCVariableNames("{\"types\":[>:generatedHelperTypes:<]")]
+	public abstract partial class >:className:< : NetworkBehavior
 	{
-		public const byte RPC_MOVE = 0 + 5;
+		>:FOREACH constRpcs:<
+		public const byte RPC_>:[0]:< = >:[idx]:< + 5;
+		>:ENDFOREACH:<
 		
-		public ZfTestRpcMoveCubeNetworkObject networkObject = null;
+		public >:networkObject:< networkObject = null;
 
 		public override void Initialize(NetworkObject obj)
 		{
@@ -18,11 +22,13 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (networkObject != null && networkObject.AttachedBehavior != null)
 				return;
 			
-			networkObject = (ZfTestRpcMoveCubeNetworkObject)obj;
+			networkObject = (>:networkObject:<)obj;
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
-			networkObject.RegisterRpc("Move", Move, typeof(Vector3));
+			>:FOREVERY rpcs:<
+			networkObject.RegisterRpc(">:[0]:<", >:[0]:<>:[1]:<);
+			>:ENDFOREVERY:<
 
 			networkObject.onDestroy += DestroyGameObject;
 
@@ -78,7 +84,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override void Initialize(NetWorker networker, byte[] metadata = null)
 		{
-			Initialize(new ZfTestRpcMoveCubeNetworkObject(networker, createCode: TempAttachCode, metadata: metadata));
+			Initialize(new >:networkObject:<(networker, createCode: TempAttachCode, metadata: metadata));
 		}
 
 		private void DestroyGameObject(NetWorker sender)
@@ -89,7 +95,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 
 		public override NetworkObject CreateNetworkObject(NetWorker networker, int createCode, byte[] metadata = null)
 		{
-			return new ZfTestRpcMoveCubeNetworkObject(networker, this, createCode, metadata);
+			return new >:networkObject:<(networker, this, createCode, metadata);
 		}
 
 		protected override void InitializedTransform()
@@ -97,11 +103,13 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.SnapInterpolations();
 		}
 
+		>:FOREVERY rpcs:<
 		/// <summary>
 		/// Arguments:
-		/// Vector3 val
+>:[2]:<
 		/// </summary>
-		public abstract void Move(RpcArgs args);
+		public abstract void >:[0]:<(RpcArgs args);
+		>:ENDFOREVERY:<
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

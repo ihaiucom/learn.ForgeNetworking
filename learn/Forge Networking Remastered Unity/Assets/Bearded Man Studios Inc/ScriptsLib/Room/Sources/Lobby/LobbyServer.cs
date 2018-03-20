@@ -12,7 +12,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
     public class LobbyServer : LobbyBase
     {
@@ -129,6 +129,28 @@ namespace Rooms.Ihaiu.Forge.Networking
 
         // 房间字典
         public Dictionary<ulong, NetRoomServer> roomDict = new Dictionary<ulong, NetRoomServer>();
+
+
+        /// <summary>
+        /// 获取房间列表
+        /// </summary>
+        public List<NetRoomServer> GetRoomList()
+        {
+            List<NetRoomServer> list = new List<NetRoomServer>(roomDict.Values);
+            return list;
+        }
+
+        /// <summary>
+        /// 获取房间
+        /// </summary>
+        public NetRoomServer GetRoom(ulong roomId)
+        {
+            if(roomDict.ContainsKey(roomId))
+            {
+                return roomDict[roomId];
+            }
+            return null;
+        }
 
 
         /// <summary>

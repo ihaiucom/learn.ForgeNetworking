@@ -43,6 +43,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 						availableCallback = true;
 						obj = new TestNetworkObject(networker, id, frame);
 						break;
+					case TestUnitMonoNetworkObject.IDENTITY:
+						availableCallback = true;
+						obj = new TestUnitMonoNetworkObject(networker, id, frame);
+						break;
 					case TestUnitNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new TestUnitNetworkObject(networker, id, frame);
@@ -58,10 +62,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					case ZfTestRpcMoveCubeNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new ZfTestRpcMoveCubeNetworkObject(networker, id, frame);
-						break;
-					case TestUnitMonoNetworkObject.IDENTITY:
-						availableCallback = true;
-						obj = new TestUnitMonoNetworkObject(networker, id, frame);
 						break;
 				}
 

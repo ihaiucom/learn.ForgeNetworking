@@ -11,7 +11,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Ihaiu.Forge.Networking
+namespace Rooms.Forge.Networking
 {
     public class NetRoomClient : NetRoomBase
     {

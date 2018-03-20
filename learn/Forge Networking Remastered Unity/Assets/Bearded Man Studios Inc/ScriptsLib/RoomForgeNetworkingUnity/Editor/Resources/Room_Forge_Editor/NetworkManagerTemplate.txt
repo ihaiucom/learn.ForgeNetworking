@@ -2,9 +2,9 @@ using BeardedManStudios.Forge.Networking.Generated;
 using System;
 using UnityEngine;
 
-namespace BeardedManStudios.Forge.Networking.Unity
+namespace Rooms.Forge.Networking.Unity
 {
-	public partial class NetworkManager : MonoBehaviour
+	public partial class RoomNetworkManager : MonoBehaviour
 	{
 		public delegate void InstantiateEvent(INetworkBehavior unityGameObject, NetworkObject obj);
 		public event InstantiateEvent objectInitialized;
