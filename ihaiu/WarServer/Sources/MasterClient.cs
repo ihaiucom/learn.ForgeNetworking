@@ -17,7 +17,7 @@ namespace ihaiu
 {
     public class MasterClient
     {
-        private const int PING_INTERVAL = 1000;
+        private const int PING_INTERVAL = 10000;
 
         public bool IsRunning { get; private set; }
 
@@ -36,12 +36,16 @@ namespace ihaiu
         {
             if (parameter == null) parameter = this.parameter;
             this.parameter = parameter;
-           
         }
 
         /// <summary>
         /// 连接服务器
         /// </summary>
+        public void ConnectMaster()
+        {
+            ConnectMaster(parameter.masterServerIp, parameter.masterServerPort);
+        }
+
         public void ConnectMaster(string host, ushort port)
         {
             tcpClient = new HTcpClient();
@@ -77,7 +81,17 @@ namespace ihaiu
         /// </summary>
         public void StarLobbyServer()
         {
-            lobbyServer = new LobbyServer(int.MaxValue, parameter.localServerIp, parameter.localServerPort);
+            lobbyServer = new LobbyServer(int.MaxValue, parameter.lobbyServerIp, parameter.lobbyServerPort);
+            lobbyServer.roomOver += OnRoomOver;
+            protoMaster.C_RegNewBattleServer(parameter.lobbyServerIp, parameter.lobbyServerPort);
+        }
+
+        /// <summary>
+        /// 房间结束
+        /// </summary>
+        private void OnRoomOver(NetRoomBase room)
+        {
+            protoMaster.C_RoomEnd(room.roomId);
         }
 
 
@@ -89,6 +103,7 @@ namespace ihaiu
         private void OnBindSuccessful(NetWorker tcpClient)
         {
             Log("MasterClient OnBindSuccessful");
+            StarLobbyServer();
             StarMasterPing();
         }
 
@@ -133,6 +148,7 @@ namespace ihaiu
         public void Dispose()
         {
             tcpClient.Disconnect(true);
+            lobbyServer.Dispose();
             IsRunning = false;
         }
     }

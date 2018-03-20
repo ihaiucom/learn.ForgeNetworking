@@ -95,7 +95,10 @@ namespace ihaiu
             IProtoItem item = protoListListener.GetItemByOpcode(msg.protoId);
 
             if(item != null)
-                Loger.LogTag("Proto", "<= " +  item);
+            {
+                if(item.opcode != 5001)
+                    Loger.LogTag("Proto", "<= " + item);
+            }
             else
                 Loger.LogTag("Proto", "<= " + msg.protoId + "没找到对应的协议");
 
@@ -123,7 +126,8 @@ namespace ihaiu
                 return;
             }
 
-            Loger.LogTag("Proto", "-> " + item);
+            if(item.opcode != 5001)
+                Loger.LogTag("Proto", "-> " + item);
 
             ProtoMsg msg = ProtoToData<T>(protoMsg);
 

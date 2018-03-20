@@ -1,16 +1,13 @@
--- 服务器与客户端直接的协议号必须大于等于10000
+-- ��������ͻ���ֱ�ӵ�Э��ű�����ڵ���10000
 local _mt =
 {
-	OUTER_B2BM_Ping						= 1;
-	OUTER_B2BM_RegNewBattleServer_Req	= 2;
-	OUTER_B2BM_RegNewBattleServer_Resp	= 3;
-	OUTER_BM2B_EnterGame_Req			= 4;
-	OUTER_BM2B_EnterGame_Resp			= 5;
-	OUTER_BM2B_GameOver_Req				= 6;
-	OUTER_BM2B_GameOver_Resp			= 7;
+	OUTER_B2BM_Ping						= 5001,
+	OUTER_B2BM_RegNewBattleServer_Req	= 5002,
+	OUTER_B2BM_RegNewBattleServer_Resp	= 5003,
+	OUTER_BM2B_MPVE_CreateRoom_Req		= 5004,
+	OUTER_BM2B_MPVE_CreateRoom_Resp		= 5005,
+	OUTER_B2BM_RoomEnd_Req				= 5006,
+	OUTER_B2BM_RoomEnd_Resp				= 5007,
 }
-
--- 注册并检测消息
-lx.cluster_opcode.registerMsgTypeTable(_mt)
 
 return _mt

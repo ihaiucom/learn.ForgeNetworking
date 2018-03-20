@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,50 +12,20 @@ namespace ihaiu
     {
         static void Main(string[] args)
         {
-            string host = "172.16.52.101";
-            ushort port = 13002;
             string read = string.Empty;
-            bool setInputArg = false;
 
-            Dictionary<string, string> arguments = ArgumentParser.Parse(args);
+            MasterClientParameter parameter = MasterClientParameter.Load();
+            parameter.Print();
 
-            if (args.Length > 0)
-            {
-                if (arguments.ContainsKey("host"))
-                    host = arguments["host"];
 
-                if (arguments.ContainsKey("port"))
-                    ushort.TryParse(arguments["port"], out port);
-
-            }
-            else if(setInputArg)
-            {
-                Console.WriteLine("不输入参数将会是默认的设置.");
-                Console.WriteLine("Enter Host IP (Default: 172.16.52.101):");
-                read = Console.ReadLine();
-                if (string.IsNullOrEmpty(read))
-                    host = "172.16.52.101";
-                else
-                    host = read;
-
-                Console.WriteLine("Enter Port (Default: 13002):");
-                read = Console.ReadLine();
-                if (string.IsNullOrEmpty(read))
-                    port = 13002;
-                else
-                {
-                    ushort.TryParse(read, out port);
-                }
-            }
-
-            Console.WriteLine(string.Format("Hosting ip [{0}] on port [{1}]", host, port));
             PrintHelp();
 
 
             // 测试客户登录
             MasterClient server = new MasterClient();
+            server.Init(parameter);
             server.ToggleLogging();
-            server.ConnectMaster(host, 13002);
+            server.ConnectMaster();
 
             while (true)
             {
@@ -73,20 +44,6 @@ namespace ihaiu
                         Console.WriteLine("Logging has been enabled");
                     else
                         Console.WriteLine("Logging has been disabled");
-                }
-                else if (read == "r" || read == "restart")
-                {
-                    lock (server)
-                    {
-                        if (server.IsRunning)
-                        {
-                            Console.WriteLine("Server stopped.");
-                            server.Dispose();
-                        }
-                    }
-
-                    Console.WriteLine("Restarting...");
-                    Console.WriteLine(string.Format("Hosting ip [{0}] on port [{1}]", host, port));
                 }
                 else if (read == "q" || read == "quit")
                 {
@@ -109,7 +66,6 @@ namespace ihaiu
         {
             Console.WriteLine(@"Commands Available
 (s)top - Stops hosting
-(r)estart - Restarts the hosting service even when stopped
 (l)og - Toggles logging (starts off)
 (q)uit - Quits the application
 (h)elp - Get a full list of comands");

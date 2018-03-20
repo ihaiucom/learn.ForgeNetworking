@@ -15,11 +15,15 @@ namespace Rooms.Ihaiu.Forge.Networking
     {
 
         public delegate void RoomPlayerEvent(ulong roleUid, NetworkingPlayer player);
-       
+        public delegate void RoomOverEvent(NetRoomBase room);
+
         // 玩家 加入房间
         public event RoomPlayerEvent playerJoinRoom;
         // 玩家 离开房间
         public event RoomPlayerEvent playerLeftRoom;
+
+        // 房间 结束
+        public event RoomOverEvent roomOver;
 
 
         public ulong roomId;
@@ -61,6 +65,23 @@ namespace Rooms.Ihaiu.Forge.Networking
             {
                 playerLeftRoom(roleUid, player);
             }
+        }
+
+        // 调事件 -- 房间结束
+        public void OnRoomOver()
+        {
+            if(roomOver != null)
+            {
+                roomOver(this);
+            }
+        }
+
+        /// <summary>
+        /// 房间结束
+        /// </summary>
+        public virtual void SetRoomOver()
+        {
+            OnRoomOver();
         }
     }
 }

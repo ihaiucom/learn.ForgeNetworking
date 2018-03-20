@@ -2,6 +2,7 @@
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using BeardedManStudios.Source.Forge.Networking;
+using BeardedManStudios.Threading;
 using System;
 using System.Collections.Generic;
 /** 
@@ -32,6 +33,20 @@ namespace Rooms.Ihaiu.Forge.Networking
             this.serverLobby = lobby;
 
             Initialize(lobby, roomInfo);
+
+            // TODO 测试房间结束
+            Task.Queue(() =>
+            {
+                Loger.LogFormat("房间{0}将结束", roomId);
+                SetRoomOver();
+            }, 10000);
+            Loger.LogFormat("10秒后 房间{0}将结束", roomId);
+        }
+
+        public override void SetRoomOver()
+        {
+            serverLobby.OnRoomOver(this);
+            base.SetRoomOver();
         }
 
         /// <summary>

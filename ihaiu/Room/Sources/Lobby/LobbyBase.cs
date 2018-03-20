@@ -31,6 +31,10 @@ namespace Rooms.Ihaiu.Forge.Networking
         // 创建房间失败
         public event RoomFailedEvent createRoomFailed;
 
+
+        // 房间结束
+        public event NetRoomBase.RoomOverEvent roomOver;
+
         // 玩家 加入房间
         public event RoomPlayerJoinEvent playerJoinRoom;
         // 玩家 离开房间
@@ -52,6 +56,15 @@ namespace Rooms.Ihaiu.Forge.Networking
         {
             if (createRoomFailed != null)
                 createRoomFailed(roomUid, error);
+        }
+
+
+        internal void OnRoomOver(NetRoomBase room)
+        {
+            if (roomOver != null)
+            {
+                roomOver(room);
+            }
         }
 
         protected void OnPlayerJoinRoom(ulong roomUid, NetworkingPlayer player, NetJoinRoomResult ret)

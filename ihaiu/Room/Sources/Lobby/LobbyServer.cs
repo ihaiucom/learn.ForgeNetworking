@@ -132,6 +132,28 @@ namespace Rooms.Ihaiu.Forge.Networking
 
 
         /// <summary>
+        /// 获取房间列表
+        /// </summary>
+        public List<NetRoomServer> GetRoomList()
+        {
+            List<NetRoomServer> list = new List<NetRoomServer>(roomDict.Values);
+            return list;
+        }
+
+        /// <summary>
+        /// 获取房间
+        /// </summary>
+        public NetRoomServer GetRoom(ulong roomId)
+        {
+            if(roomDict.ContainsKey(roomId))
+            {
+                return roomDict[roomId];
+            }
+            return null;
+        }
+
+
+        /// <summary>
         /// 创建房间
         /// </summary>
         private void CreateRoom(NetworkingPlayer player, Binary frame)
