@@ -19,11 +19,12 @@ namespace Rooms.Forge.Networking
         /// </ summary>
         /// <param name =“networker”>即将创建NetworkObject的控制器的NetWorker </ param>
         /// <param name =“identity”> NetworkObject的标识为int，以便该工厂知道要创建哪种NetworkObject </ param>
+        /// <param name =“classId”> 派生类ID，用于创建哪个派生类</ param>
         /// <param name =“id”>服务器分配了这个新的NetworkObject（如果客户端）的id </ param>
         /// <param name =“frame”>在网络上接收到的关于这个创建的数据</ param>
         /// <param name =“callback”>成功创建的网络对象的回调</ param>
         /// <returns> </ returns>
-        void NetworkCreateObject(RoomScene networker, int identity, uint id, FrameStream frame, System.Action<NetworkObject> callback);
+        void NetworkCreateObject(RoomScene networker, int identity, int classId, uint id, FrameStream frame, System.Action<NetworkObject> callback);
 
     }
 }

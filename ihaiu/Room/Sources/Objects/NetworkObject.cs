@@ -53,18 +53,6 @@ namespace Rooms.Forge.Networking
         public delegate void NetworkObjectEvent(NetworkObject networkObject);
 
         /// <summary>
-        /// A generic delegate for events to fire off while passing a INetworkBehavior and NetworkObject source
-        /// </summary>
-        /// <param name="behavior"></param>
-        /// <param name="networkObject">The object source for this event</param>
-        /// <summary>
-        ///传递一个INetworkBehavior和NetworkObject源的事件通用委托
-        /// </ summary>
-        /// <param name =“behavior”> </ param>
-        /// <param name =“networkObject”>这个事件的对象来源</ param>
-        public delegate void NetworkBehaviorEvent(INetworkBehavior behavior, NetworkObject networkObject);
-
-        /// <summary>
         /// Used to create events that require BMSByte data
         /// </summary>
         /// <param name="data">The data that was read</param>
@@ -85,10 +73,11 @@ namespace Rooms.Forge.Networking
         ///在网络上创建对象时使用
         /// </ summary>
         /// <param name =“identity”>标识用于知道这是什么类型的网络对象</ param>
+        /// <param name =“classId”>标识派生类ID</ param>
         /// <param name =“hash”>哈希ID（如果发送）匹配客户端创建的对象与服务器将异步响应的ID </ param>
         /// <param name =“id”>这个网络对象的id </ param>
         /// <param name =“frame”>该对象创建的帧数据（默认值）</ param>
-        public delegate void CreateEvent(int identity, int hash, uint id, FrameStream frame);
+        public delegate void CreateEvent(int identity, int classId, int hash, uint id, FrameStream frame);
 
         /// <summary>
         /// Used for when any field event occurs, will pass the target field as a param
@@ -126,11 +115,12 @@ namespace Rooms.Forge.Networking
         /// TODO: COMMENT THIS
         /// </summary>
         /// <param name="networker"></param>
+        /// <param name="classId">派生类ID</param>
         /// <param name="identity"></param>
         /// <param name="id"></param>
         /// <param name="frame"></param>
         /// <param name="callback"></param>
-        public delegate void CreateRequestEvent(RoomScene networker, int identity, uint id, FrameStream frame, Action<NetworkObject> callback);
+        public delegate void CreateRequestEvent(RoomScene networker, int identity, int classId, uint id, FrameStream frame, Action<NetworkObject> callback);
 
         /// <summary>
         /// 每当这个networkobject有其拥有的玩家改变了
@@ -232,25 +222,6 @@ namespace Rooms.Forge.Networking
 
         public int GlobalHash { get { return Networker.GlobalHash; } set { Networker.GlobalHash = value; } }
 
-        /// <summary>
-        /// The object that has already been created and is pending an initialize
-        /// </summary>
-        /// <summary>
-        ///已经创建的对象，正在等待初始化
-        /// </ summary>
-        private INetworkBehavior pendingBehavior = null;
-
-        /// <summary>
-        /// 这是对正在控制这个对象的附加行为的引用
-        /// This is a reference to the attached behavior that is controlling this object
-        /// </summary>
-        public INetworkBehavior AttachedBehavior { get; set; }
-
-        /// <summary>
-        /// 在提供的暂挂行为已经初始化时发生
-        /// Occurs when the pending behavior supplied has been initialized 
-        /// </summary>
-        public event NetworkBehaviorEvent pendingInitialized;
 
         /// <summary>
         /// 用于确定上次该对象已被更新的时间
@@ -263,6 +234,12 @@ namespace Rooms.Forge.Networking
         /// Used to identify what type (subtype) of object this is
         /// </summary>
         public abstract int UniqueIdentity { get; }
+
+        /// <summary>
+        /// 用于标识派生类ID
+        /// Used to identify what type (subtype) of object this is
+        /// </summary>
+        public abstract int ClassId { get; }
 
         /// <summary>
         /// 创建这个对象的时间步
@@ -400,9 +377,8 @@ namespace Rooms.Forge.Networking
         /// </ summary>
         /// <param name =“networker”>这个对象将被附加到的网络工具</ param>
         /// <param name =“forceId”>如果是0，则第一个打开的id将会从网络中使用</ param>
-        public NetworkObject(RoomScene networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null)
+        public NetworkObject(RoomScene networker, int createCode = 0, byte[] metadata = null)
         {
-            pendingBehavior = networkBehavior;
             UpdateInterval = DEFAULT_UPDATE_INTERVAL;
             CreateCode = createCode;
 
@@ -437,7 +413,7 @@ namespace Rooms.Forge.Networking
                 Networker.objectCreateAttach += CreatedOnNetwork;
                 //TODO: MOVED HERE (#1)
 
-                BMSByte data = ObjectMapper.BMSByte(UniqueIdentity, hash, CreateCode);
+                BMSByte data = ObjectMapper.BMSByte(UniqueIdentity, ClassId, hash, CreateCode);
                 WritePayload(data);
 
                 // Write if the object has metadata
@@ -714,7 +690,7 @@ namespace Rooms.Forge.Networking
 
             //要发送给所有未请求创建该对象的客户端的数据
             // The data that is to be sent to all the clients who did not request this object to be created
-            BMSByte data = ObjectMapper.BMSByte(UniqueIdentity, targetHash, NetworkId, CreateCode);
+            BMSByte data = ObjectMapper.BMSByte(UniqueIdentity, ClassId, targetHash, NetworkId, CreateCode);
 
             //为此对象编写所有最新的数据
             // Write all of the most up to date data for this object
@@ -768,7 +744,7 @@ namespace Rooms.Forge.Networking
 
                         indexes.Add(targetData.Size);
 
-                        ObjectMapper.Instance.MapBytes(targetData, obj.UniqueIdentity, 0, obj.NetworkId, obj.CreateCode);
+                        ObjectMapper.Instance.MapBytes(targetData, obj.UniqueIdentity, obj.ClassId, 0, obj.NetworkId, obj.CreateCode);
 
                         //为此对象编写所有最新的数据
                         // Write all of the most up to date data for this object
@@ -845,15 +821,7 @@ namespace Rooms.Forge.Networking
             if (onReady != null)
                 onReady(Networker);
 
-            if (pendingBehavior != null)
-            {
-                pendingBehavior.Initialize(this);
-
-                if (pendingInitialized != null)
-                    pendingInitialized(pendingBehavior, this);
-            }
-            else
-                Networker.OnObjectCreated(this);
+            Networker.OnObjectCreated(this);
         }
 
         /// <summary>
@@ -894,14 +862,20 @@ namespace Rooms.Forge.Networking
         ///发起创建的客户端，收到服务器反馈的网络ID
         /// </ summary>
         /// <param name =“identity”>用于描述网络对象的类型/子类型的标识</ param>
+        /// <param name =“classId”>用于描述派生类ID</ param>
         /// <param name =“hash”>已经发送的哈希ID与这个哈希id </ param>匹配
         /// <param name =“id”>服务器给这个网络对象的id </ param>
         /// <param name =“frame”>这个网络对象的初始化数据</ param>
-        private void CreatedOnNetwork(int identity, int hash, uint id, FrameStream frame)
+        private void CreatedOnNetwork(int identity, int classId, int hash, uint id, FrameStream frame)
         {
             //检查网络中的身份是否属于这种类型
             // Check to see if the identity from the network belongs to this type
             if (identity != UniqueIdentity)
+                return;
+
+            //检查网络中的身份是否属于这种类型
+            // Check to see if the identity from the network belongs to this type
+            if (classId != ClassId)
                 return;
 
             //如果哈希不属于这个对象，那么忽略它
