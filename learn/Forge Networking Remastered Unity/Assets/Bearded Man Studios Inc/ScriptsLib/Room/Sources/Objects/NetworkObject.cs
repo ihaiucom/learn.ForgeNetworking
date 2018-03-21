@@ -53,18 +53,6 @@ namespace Rooms.Forge.Networking
         public delegate void NetworkObjectEvent(NetworkObject networkObject);
 
         /// <summary>
-        /// A generic delegate for events to fire off while passing a INetworkBehavior and NetworkObject source
-        /// </summary>
-        /// <param name="behavior"></param>
-        /// <param name="networkObject">The object source for this event</param>
-        /// <summary>
-        ///传递一个INetworkBehavior和NetworkObject源的事件通用委托
-        /// </ summary>
-        /// <param name =“behavior”> </ param>
-        /// <param name =“networkObject”>这个事件的对象来源</ param>
-        public delegate void NetworkBehaviorEvent(INetworkBehavior behavior, NetworkObject networkObject);
-
-        /// <summary>
         /// Used to create events that require BMSByte data
         /// </summary>
         /// <param name="data">The data that was read</param>
@@ -232,25 +220,6 @@ namespace Rooms.Forge.Networking
 
         public int GlobalHash { get { return Networker.GlobalHash; } set { Networker.GlobalHash = value; } }
 
-        /// <summary>
-        /// The object that has already been created and is pending an initialize
-        /// </summary>
-        /// <summary>
-        ///已经创建的对象，正在等待初始化
-        /// </ summary>
-        private INetworkBehavior pendingBehavior = null;
-
-        /// <summary>
-        /// 这是对正在控制这个对象的附加行为的引用
-        /// This is a reference to the attached behavior that is controlling this object
-        /// </summary>
-        public INetworkBehavior AttachedBehavior { get; set; }
-
-        /// <summary>
-        /// 在提供的暂挂行为已经初始化时发生
-        /// Occurs when the pending behavior supplied has been initialized 
-        /// </summary>
-        public event NetworkBehaviorEvent pendingInitialized;
 
         /// <summary>
         /// 用于确定上次该对象已被更新的时间
@@ -400,9 +369,8 @@ namespace Rooms.Forge.Networking
         /// </ summary>
         /// <param name =“networker”>这个对象将被附加到的网络工具</ param>
         /// <param name =“forceId”>如果是0，则第一个打开的id将会从网络中使用</ param>
-        public NetworkObject(RoomScene networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null)
+        public NetworkObject(RoomScene networker, int createCode = 0, byte[] metadata = null)
         {
-            pendingBehavior = networkBehavior;
             UpdateInterval = DEFAULT_UPDATE_INTERVAL;
             CreateCode = createCode;
 
@@ -845,15 +813,7 @@ namespace Rooms.Forge.Networking
             if (onReady != null)
                 onReady(Networker);
 
-            if (pendingBehavior != null)
-            {
-                pendingBehavior.Initialize(this);
-
-                if (pendingInitialized != null)
-                    pendingInitialized(pendingBehavior, this);
-            }
-            else
-                Networker.OnObjectCreated(this);
+            Networker.OnObjectCreated(this);
         }
 
         /// <summary>

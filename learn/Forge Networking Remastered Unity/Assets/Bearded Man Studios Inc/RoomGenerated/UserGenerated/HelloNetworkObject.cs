@@ -254,7 +254,7 @@ namespace Rooms.Forge.Networking.Generated
         }
 
 		public HelloNetworkObject() : base() { Initialize(); }
-		public HelloNetworkObject(RoomScene networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null) : base(networker, networkBehavior, createCode, metadata) { Initialize(); }
+		public HelloNetworkObject(RoomScene networker,  int createCode = 0, byte[] metadata = null) : base(networker,  createCode, metadata) { Initialize(); }
 		public HelloNetworkObject(RoomScene networker, uint serverId, FrameStream frame) : base(networker, serverId, frame) { Initialize(); }
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
