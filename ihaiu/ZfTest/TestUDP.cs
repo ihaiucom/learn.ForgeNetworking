@@ -16,6 +16,117 @@ using System.Threading;
 */
 namespace Games
 {
+    public class UnitBehaviour
+    {
+
+    }
+
+    public class UnitClipBehaviour
+    {
+
+    }
+
+    /// <summary>
+    /// 单位实体代理
+    /// </summary>
+    public partial class UnitAgent
+    {
+
+        public void Init()
+        {
+        }
+    }
+
+
+    /// <summary>
+    /// 技能树
+    /// </summary>
+    public class SkillTree
+    {
+
+    }
+
+    public class Node
+    {
+        public void Enter()
+        {
+            // 客户端挂起
+        }
+
+        public void EnterServer()
+        {
+            // 服务器等待其他客户端，进入该阶段
+            // 如果都进入该阶段，服务器将计算结果通知所有客户端，并执行EnterExe()
+            
+        }
+
+        public void EnterExe(object result)
+        {
+            // 真正进入执行逻辑
+        }
+
+        public void Loop()
+        {
+
+        }
+
+        public void End()
+        {
+
+        }
+    }
+
+
+
+    /// <summary>
+    /// 技能实体代理
+    /// </summary>
+    public class SkillAgent
+    {
+        
+        /// <summary>
+        /// 施法者单位
+        /// </summary>
+        public UnitAgent casterUnit { get; set; }
+
+        /// <summary>
+        /// 技能树
+        /// </summary>
+        public SkillTree skillTree { get; set; }
+
+        public SkillAgent(SkillTree skillTree, UnitAgent casterUnit)
+        {
+            this.casterUnit = casterUnit;
+            this.skillTree = skillTree;
+        }
+
+        /// <summary>
+        /// 启动
+        /// </summary>
+        public void Start()
+        {
+
+        }
+
+        /// <summary>
+        /// 打断
+        /// </summary>
+        public void Kill()
+        {
+
+        }
+
+
+
+        /// <summary>
+        /// 结束
+        /// </summary>
+        protected void OnEnd()
+        {
+
+        }
+    }
+
     public class TestUDP
     {
         private const int PING_INTERVAL = 10000;

@@ -6,7 +6,7 @@ using BeardedManStudios.Forge.Networking.Frame;
 
 namespace Rooms.Forge.Networking
 {
-	public class NetworkObjectFactoryBase : INetworkObjectFactory
+	public class RoomNetworkObjectFactoryBase : INetworkObjectFactory
     {
 		public virtual void NetworkCreateObject(RoomScene networker, int identity, uint id, FrameStream frame, System.Action<NetworkObject> callback)
 		{

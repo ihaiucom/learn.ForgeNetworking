@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace Rooms.Forge.Networking.Generated
 {
+	[GeneratedRPC("{\"types\":[[\"Vector3\"][\"float\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"target\"][\"hp\"]]")]
 	[GeneratedInterpol("{\"inter\":[0,0,0.15]")]
 	public partial class HelloNetworkObject : NetworkObject
 	{
@@ -244,12 +246,60 @@ namespace Rooms.Forge.Networking.Generated
 			if (readDirtyFlags == null)
 				readDirtyFlags = new byte[1];
 
-		}
+
+            RegisterBehaviors();
+            RegisterRpcs();
+
+            RegistrationComplete();
+        }
 
 		public HelloNetworkObject() : base() { Initialize(); }
 		public HelloNetworkObject(RoomScene networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null) : base(networker, networkBehavior, createCode, metadata) { Initialize(); }
 		public HelloNetworkObject(RoomScene networker, uint serverId, FrameStream frame) : base(networker, serverId, frame) { Initialize(); }
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
+	
+	
+        //=================================================================
+        // RPC Begin
+        //-----------------------------------------------------------------
+	
+	
+		public const byte RPC_MOVE = 0 + 5;
+		public const byte RPC_SET_H_P = 1 + 5;
+
+        /// <summary>
+        /// ×¢²áÐÐÎª
+        /// </summary>
+        public virtual void RegisterBehaviors()
+        {
+        }
+
+        /// <summary>
+        /// ×¢²áRpc
+        /// </summary>
+        public virtual void RegisterRpcs()
+		{
+			RegisterRpc("Move", Move, typeof(Vector3));
+			RegisterRpc("SetHP", SetHP, typeof(float));
+		}
+
+		
+
+		/// <summary>
+		/// Arguments:
+		/// Vector3 target
+		/// </summary>
+		public virtual void Move(RpcArgs args){}
+		/// <summary>
+		/// Arguments:
+		/// float hp
+		/// </summary>
+		public virtual void SetHP(RpcArgs args){}
+		
+
+        //-----------------------------------------------------------------
+        // RPC End
+        //=================================================================
 	}
 }

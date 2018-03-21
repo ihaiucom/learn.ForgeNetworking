@@ -776,16 +776,96 @@ namespace Rooms.Forge.Networking.UnityEditor
 			template.AddVariable("variables", variables.ToArray());
 			template.AddVariable("rewinds", rewinds.ToArray());
 			template.AddVariable("interpolateValues", interpolateValues.Replace("\"", "\\\""));
-			return template.Parse();
+
+            RpcVariable(template, cObj, btn);
+            return template.Parse();
 		}
 
-		/// <summary>
-		/// Generate a network behavior from a class object and a button that contains key information about the class
-		/// </summary>
-		/// <param name="cObj">The class object</param>
-		/// <param name="btn">The button containing key information</param>
-		/// <returns>The generated string to save to a file</returns>
-		public string SourceCodeNetworkBehavior(ForgeClassObject cObj, ForgeEditorButton btn)
+
+        public void RpcVariable(TemplateSystem template, ForgeClassObject cObj, ForgeEditorButton btn)
+        {
+            StringBuilder generatedJSON = new StringBuilder();
+            StringBuilder generatedHelperTypesJSON = new StringBuilder();
+
+            string caps = "QWERTYUIOPASDFGHJKLZXCVBNM";
+            List<object[]> rpcs = new List<object[]>();
+            List<object[]> constRpcs = new List<object[]>();
+
+            for (int i = 0; i < btn.RPCVariables.Count; ++i)
+            {
+                StringBuilder innerTypes = new StringBuilder();
+                StringBuilder helperNames = new StringBuilder();
+                StringBuilder innerJSON = new StringBuilder();
+                StringBuilder innerHelperTypesJSON = new StringBuilder();
+                for (int x = 0; x < btn.RPCVariables[i].ArgumentCount; ++x)
+                {
+                    Type t = ForgeClassFieldRPCValue.GetTypeFromAcceptable(btn.RPCVariables[i].FieldTypes[x].Type);
+
+                    helperNames.AppendLine("\t\t/// " + _referenceVariables[t.Name] + " " + btn.RPCVariables[i].FieldTypes[x].HelperName);
+
+                    string fieldHelper = btn.RPCVariables[i].FieldTypes[x].HelperName;
+                    if (x + 1 < btn.RPCVariables[i].ArgumentCount)
+                    {
+                        innerTypes.Append(", typeof(" + _referenceVariables[t.Name] + ")");
+                        innerJSON.Append("\"" + _referenceVariables[t.Name] + "\", ");
+                        innerHelperTypesJSON.Append("\"" + fieldHelper + "\", ");
+
+                    }
+                    else
+                    {
+                        innerTypes.Append(", typeof(" + _referenceVariables[t.Name] + ")");
+                        innerJSON.Append("\"" + _referenceVariables[t.Name] + "\"");
+                        innerHelperTypesJSON.Append("\"" + fieldHelper + "\"");
+                    }
+                }
+
+                object[] rpcData = new object[]
+                {
+                    btn.RPCVariables[i].FieldName,				// The function name
+					innerTypes.ToString(),						// The list of types
+					helperNames.ToString().TrimEnd()
+                };
+
+                string constRpc = "";
+                for (int j = 0; j < btn.RPCVariables[i].FieldName.Length; j++)
+                {
+                    if (constRpc.Length > 0 && caps.Contains(btn.RPCVariables[i].FieldName[j]))
+                        constRpc += "_";
+
+                    constRpc += btn.RPCVariables[i].FieldName[j].ToString().ToUpper();
+                }
+                constRpc = constRpc.Replace("R_P_C_", "");
+
+                object[] constRpcData = new object[]
+                {
+                    constRpc,				                    // The function name
+					innerTypes.ToString(),						// The list of types
+					helperNames.ToString().TrimEnd()
+                };
+
+                rpcs.Add(rpcData);
+                constRpcs.Add(constRpcData);
+                generatedJSON.Append("[");
+                generatedJSON.Append(innerJSON.ToString());
+                generatedJSON.Append("]");
+                generatedHelperTypesJSON.Append("[");
+                generatedHelperTypesJSON.Append(innerHelperTypesJSON.ToString());
+                generatedHelperTypesJSON.Append("]");
+            }
+
+            template.AddVariable("generatedTypes", generatedJSON.ToString().Replace("\"", "\\\""));
+            template.AddVariable("generatedHelperTypes", generatedHelperTypesJSON.ToString().Replace("\"", "\\\""));
+            template.AddVariable("rpcs", rpcs.ToArray());
+            template.AddVariable("constRpcs", constRpcs.ToArray());
+        }
+
+        /// <summary>
+        /// Generate a network behavior from a class object and a button that contains key information about the class
+        /// </summary>
+        /// <param name="cObj">The class object</param>
+        /// <param name="btn">The button containing key information</param>
+        /// <returns>The generated string to save to a file</returns>
+        public string SourceCodeNetworkBehavior(ForgeClassObject cObj, ForgeEditorButton btn)
 		{
 			string behaviorPath = string.Empty;
 
@@ -996,10 +1076,11 @@ namespace Rooms.Forge.Networking.UnityEditor
 							sw.Write(networkObjectData);
 						}
 
-						using (StreamWriter sw = File.CreateText(Path.Combine(_userStoringPath, string.Format("{0}{1}.cs", _editorButtons[i].StrippedSearchName, "Behavior"))))
-						{
-							sw.Write(networkBehaviorData);
-						}
+                        //TODO ZF 去掉行为
+						//using (StreamWriter sw = File.CreateText(Path.Combine(_userStoringPath, string.Format("{0}{1}.cs", _editorButtons[i].StrippedSearchName, "Behavior"))))
+						//{
+						//	sw.Write(networkBehaviorData);
+						//}
 						identity++;
 
 						string strippedName = _editorButtons[i].StrippedSearchName;

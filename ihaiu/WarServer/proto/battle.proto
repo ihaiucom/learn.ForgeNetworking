@@ -1,0 +1,65 @@
+import "item.proto";
+// 战斗同步数据
+message BattleSyncData
+{
+	required uint32 type												= 1;	// 消息类型
+	optional bytes 	data												= 2;	// 消息内容
+	optional uint32 proxie												= 3;	// 代理模式 1客户端、2服务器
+}
+
+// 战斗结算数据
+message BattleOverData
+{
+	required uint32 over_type												= 1;	// 结构类型 0平局 1胜利 2失败
+	required uint32	star													= 2;	// 星星数量
+	optional bytes 	data													= 3;	// 消息内容
+}
+
+// 客户端推送消息
+message CMSG_BattleSync_Req
+{
+	repeated BattleSyncData list												= 1;	// 消息列表
+}
+
+// 服务器广播消息
+message SMSG_BattleSync_Ntf
+{
+	repeated BattleSyncData list												= 1;	// 消息列表
+}
+
+
+// 客户端推送战斗结束
+message CMSG_BattleOver_Req
+{
+	required BattleOverData data												= 1;	// 消息内容
+}
+
+// 服务器广播战斗结束
+message SMSG_BattleOver_Ntf
+{
+	required BattleOverData data												= 1;	// 消息内容
+	repeated ItemInfo		fix_item_list										= 2;	// 固定掉落
+	repeated ItemInfo		rand_item_list										= 3;	// 随机掉落
+	required uint32 		rand_gem_count										= 4;	// 随机宝石掉落
+	required uint32 		rand_gold_count										= 5;	// 随机金币掉落
+	required int32 			is_first_pass										= 6;	// 是否为首次通关 0:非 1：是
+}
+
+// 服务器广播玩家离线、上线 (目前只广播离线)
+message SMSG_BattleLinestate_Ntf
+{
+	required uint32 	char_id												= 1;	// 玩家ID
+	required uint32		state												= 2;	// 0离线 1上线
+}
+
+
+// 客户端请求进入副本
+message CMSG_EnterCopy_Req
+{
+	required uint32	copy_id														= 1;	// 副本id
+}
+
+message SMSG_EnterCopy_Resp
+{
+	required uint32	copy_id														= 1;	// 副本id
+}

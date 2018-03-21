@@ -410,8 +410,8 @@ namespace Rooms.Forge.Networking.UnityEditor
 			if (TiedObject.ExactFilename == "NetworkBehavior") //Ignore this abstract class
 				CanRender = false;
 
-			if (TiedObject.IsNetworkObject)
-				CanRenderRPCS = false;
+			//if (TiedObject.IsNetworkObject)
+			//	CanRenderRPCS = false;
 
 			if (TiedObject.IsNetworkBehavior)
 				CanRenderFields = false;

@@ -1,6 +1,37 @@
 
-¶
-battle_inner.proto"$
+Š
+battle.proto
+item.proto"<
+BattleSyncData
+type (
+data (
+proxie ("?
+BattleOverData
+	over_type (
+star (
+data ("4
+CMSG_BattleSync_Req
+list (2.BattleSyncData"4
+SMSG_BattleSync_Ntf
+list (2.BattleSyncData"4
+CMSG_BattleOver_Req
+data (2.BattleOverData"Á
+SMSG_BattleOver_Ntf
+data (2.BattleOverData 
+fix_item_list (2	.ItemInfo!
+rand_item_list (2	.ItemInfo
+rand_gem_count (
+rand_gold_count (
+is_first_pass (":
+SMSG_BattleLinestate_Ntf
+char_id (
+state ("%
+CMSG_EnterCopy_Req
+copy_id ("&
+SMSG_EnterCopy_Resp
+copy_id (
+ 
+battle_inner.protobattle.proto"$
 OUTER_B2BM_Ping
 	timestamp ("=
 !OUTER_B2BM_RegNewBattleServer_Req
@@ -8,19 +39,18 @@
 ip (	
 port ("4
 "OUTER_B2BM_RegNewBattleServer_Resp
-result (")
-BI_SkillInfo
-
-id (
-level ("(
-BI_TrapInfo
-
-id (
-level ("*
+result ("/
+BI_SkillInfo
+skill_id (
+level ("D
+BI_TrapInfo
+trap_id (
+level (
+active_skills ("*
 BI_WeaponInfo
 
 id (
-level ("¿
+level ("Ÿ
 BattlePlayerInfo
 char_id (
 name (	
@@ -29,19 +59,30 @@
 
 hero_level (
 skill (2.BI_SkillInfo
-trap (2.BI_TrapInfo
-weapon (2.BI_WeaponInfo"c
+trap (2.BI_TrapInfo"c
 OUTER_BM2B_MPVE_CreateRoom_Req
 info (2.BattlePlayerInfo
 copy_id (
 room_id ("B
 OUTER_BM2B_MPVE_CreateRoom_Resp
 result (
-room_id ("!
-BI_BattleOverData
-data ("K
+room_id ("H
 OUTER_B2BM_RoomEnd_Req
-room_id ( 
-data (2.BI_BattleOverData")
+room_id (
+data (2.BattleOverData")
 OUTER_B2BM_RoomEnd_Resp
-result (
+result (
+ë
+
+item.proto";
+ItemInfo
+
+id (
+count (
+change_count ("0
+SMSG_AddItem_Ntf
+	item_list (2	.ItemInfo"3
+SMSG_RemoveItem_Ntf
+	item_list (2	.ItemInfo"9
+SMSG_ItemCountChanged_Ntf
+	item_list (2	.ItemInfo

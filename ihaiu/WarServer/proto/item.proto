@@ -1,0 +1,25 @@
+// 道具信息
+message ItemInfo
+{
+	required uint32	id													= 1;	// 道具基本id
+	required uint32	count												= 2;	// 道具数量	
+	optional int32 change_count											= 3;	// 道具变化数量
+}
+
+// 获得道具
+message SMSG_AddItem_Ntf
+{
+	repeated ItemInfo item_list											= 1;	// 道具
+}
+
+// 删除道具
+message SMSG_RemoveItem_Ntf
+{
+	repeated ItemInfo item_list											= 2;	// 删除道具列表
+}
+
+// 通知道具数量变化
+message SMSG_ItemCountChanged_Ntf
+{
+	repeated ItemInfo item_list											= 1;	// 数量变化道具列表
+}

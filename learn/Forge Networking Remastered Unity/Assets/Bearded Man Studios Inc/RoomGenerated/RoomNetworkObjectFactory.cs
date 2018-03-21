@@ -4,7 +4,7 @@ using MainThreadManager = BeardedManStudios.Forge.Networking.Unity.MainThreadMan
 
 namespace Rooms.Forge.Networking.Generated
 {
-	public partial class RoomNetworkObjectFactory : NetworkObjectFactoryBase
+	public partial class RoomNetworkObjectFactory : RoomNetworkObjectFactoryBase
 	{
 		public override void NetworkCreateObject(RoomScene networker, int identity, uint id, FrameStream frame, Action<NetworkObject> callback)
 		{

@@ -1,4 +1,5 @@
-﻿using Games.PB;
+﻿using BeardedManStudios.Threading;
+using Games.PB;
 using Rooms.Forge.Networking;
 using System;
 using System.Collections.Generic;
@@ -149,11 +150,21 @@ namespace ihaiu
         /// </summary>
         private void S_MPVE_CreateRoom(OUTER_BM2B_MPVE_CreateRoom_Req msg)
         {
-            NetRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = msg.room_id;
-            roomInfo.stageId = (int)msg.copy_id;
-            bool result = client.lobbyServer.CreateRoom(roomInfo);
-            C_MPVE_CreateRoom(result);
+
+            // TODO 测试房间结束
+            Task.Queue(() =>
+            {
+                Loger.LogFormat("房间{0}将结束", msg.room_id);
+                C_RoomEnd(msg.room_id);
+            }, 10000);
+            Loger.LogFormat("10秒后 房间{0}将结束", msg.room_id);
+
+            C_MPVE_CreateRoom(true);
+            //NetRoomInfo roomInfo = new NetRoomInfo();
+            //roomInfo.roomUid = msg.room_id;
+            //roomInfo.stageId = (int)msg.copy_id;
+            //bool result = client.lobbyServer.CreateRoom(roomInfo);
+            //C_MPVE_CreateRoom(result);
         }
 
         // 反馈 创建房间ID
@@ -171,6 +182,10 @@ namespace ihaiu
         {
             OUTER_B2BM_RoomEnd_Req msg = new OUTER_B2BM_RoomEnd_Req();
             msg.room_id = (UInt32) roomId;
+            msg.data = new BattleOverData();
+            msg.data.over_type = 1;
+            msg.data.star = 3;
+            msg.data.data = new byte[] { };
             SendMessage<OUTER_B2BM_RoomEnd_Req>(msg);
         }
 
