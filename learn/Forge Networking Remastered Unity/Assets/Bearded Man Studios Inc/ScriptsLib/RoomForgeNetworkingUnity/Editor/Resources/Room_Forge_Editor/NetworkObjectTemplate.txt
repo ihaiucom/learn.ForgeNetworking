@@ -70,6 +70,7 @@ namespace Rooms.Forge.Networking.Generated
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
+        public override int ClassId { get { return 0; } }
 
 		protected override BMSByte WritePayload(BMSByte data)
 		{
@@ -157,12 +158,13 @@ namespace Rooms.Forge.Networking.Generated
 			
             RegisterBehaviors();
 			RegisterRpcs();
+            ReadMetadata();
 
 			RegistrationComplete();
 		}
 
 		public >:className:<() : base() { Initialize(); }
-		public >:className:<(RoomScene networker, INetworkBehavior networkBehavior = null, int createCode = 0, byte[] metadata = null) : base(networker, networkBehavior, createCode, metadata) { Initialize(); }
+		public >:className:<(RoomScene networker, int createCode = 0, byte[] metadata = null) : base(networker, createCode, metadata) { Initialize(); }
 		public >:className:<(RoomScene networker, uint serverId, FrameStream frame) : base(networker, serverId, frame) { Initialize(); }
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
@@ -179,6 +181,39 @@ namespace Rooms.Forge.Networking.Generated
 
 		
         /// <summary>
+        /// ¶ÁÈ¡Metadata
+        /// </summary>
+        protected virtual void ReadMetadata()
+        {
+            if (Metadata != null)
+            {
+                byte transformFlags = Metadata[0];
+
+                if (transformFlags != 0)
+                {
+                    BMSByte metadataTransform = new BMSByte();
+                    metadataTransform.Clone(Metadata);
+                    metadataTransform.MoveStartIndex(1);
+
+                    if ((transformFlags & 0x01) != 0 && (transformFlags & 0x02) != 0)
+                    {
+                        position = ObjectMapper.Instance.Map<Vector3>(metadataTransform);
+                        rotation = ObjectMapper.Instance.Map<Quaternion>(metadataTransform);
+                    }
+                    else if ((transformFlags & 0x01) != 0)
+                    {
+                        position = ObjectMapper.Instance.Map<Vector3>(metadataTransform);
+                    }
+                    else if ((transformFlags & 0x02) != 0)
+                    {
+                        rotation = ObjectMapper.Instance.Map<Quaternion>(metadataTransform); 
+                    }
+                }
+            }
+
+        }
+		
+        /// <summary>
         /// ×¢²áÐÐÎª
         /// </summary>
         public virtual void RegisterBehaviors()
@@ -188,7 +223,7 @@ namespace Rooms.Forge.Networking.Generated
         /// <summary>
         /// ×¢²áRpc
         /// </summary>
-		public virtual RegisterRpcs()
+		public virtual void RegisterRpcs()
 		{
 			>:FOREVERY rpcs:<
 			RegisterRpc(">:[0]:<", >:[0]:<>:[1]:<);

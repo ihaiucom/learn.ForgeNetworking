@@ -270,16 +270,16 @@ namespace Rooms.Forge.Networking
                 objectCreated(target);
         }
 
-        internal void OnObjectCreateAttach(int identity, int hash, uint id, FrameStream frame)
+        internal void OnObjectCreateAttach(int identity, int classId, int hash, uint id, FrameStream frame)
         {
             if (objectCreateAttach != null)
-                objectCreateAttach(identity, hash, id, frame);
+                objectCreateAttach(identity, classId, hash, id, frame);
         }
 
-        internal void OnObjectCreateRequested(int identity, uint id, FrameStream frame, Action<NetworkObject> callback)
+        internal void OnObjectCreateRequested(int identity, int classId, uint id, FrameStream frame, Action<NetworkObject> callback)
         {
             if (objectCreateRequested != null)
-                objectCreateRequested(this, identity, id, frame, callback);
+                objectCreateRequested(this, identity, classId, id, frame, callback);
         }
 
         internal void OnFactoryObjectCreated(NetworkObject obj)
@@ -316,6 +316,7 @@ namespace Rooms.Forge.Networking
             //获取身份，以便可以选择正确的类型/子类型
             // Get the identity so that the proper type / subtype can be selected
             int identity = frame.StreamData.GetBasicType<int>();
+            int classId = frame.StreamData.GetBasicType<int>();
 
             if (IsServer)
             {
@@ -323,7 +324,7 @@ namespace Rooms.Forge.Networking
                 // The client is requesting to create a new networked object
                 if (Factory != null)
                 {
-                    Factory.NetworkCreateObject(this, identity, 0, frame, (obj) =>
+                    Factory.NetworkCreateObject(this, identity, classId, 0, frame, (obj) =>
                     {
                         networkObjects.Add(obj);
                     });
@@ -341,11 +342,11 @@ namespace Rooms.Forge.Networking
                 {
                     //服务器正在响应创建请求
                     // The server is responding to the create request
-                    OnObjectCreateAttach(identity, hash, id, frame);
+                    OnObjectCreateAttach(identity, classId, hash, id, frame);
                     return;
                 }
 
-                OnObjectCreateRequested(identity, id, frame, (obj) =>
+                OnObjectCreateRequested(identity, classId, id, frame, (obj) =>
                 {
                     if (obj != null)
                         networkObjects.Add(obj);
@@ -355,7 +356,7 @@ namespace Rooms.Forge.Networking
                 // The server is dictating to create a new networked object
                 if (Factory != null)
                 {
-                    Factory.NetworkCreateObject(this, identity, id, frame, (obj) =>
+                    Factory.NetworkCreateObject(this, identity, classId, id, frame, (obj) =>
                     {
                         networkObjects.Add(obj);
                         OnFactoryObjectCreated(obj);

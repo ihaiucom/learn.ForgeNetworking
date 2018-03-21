@@ -641,9 +641,11 @@ namespace Rooms.Forge.Networking.UnityEditor
 			if (!renderSuccessful)
 				return;
 
-			bool generatedMonobehavior = EditorGUILayout.Toggle("Generate MonoBehavior", ActiveButton.BaseType != ForgeBaseClassType.NetworkBehavior);
+            //TODO ZF 去掉generatedMonobehavior
+            //bool generatedMonobehavior = EditorGUILayout.Toggle("Generate MonoBehavior", ActiveButton.BaseType != ForgeBaseClassType.NetworkBehavior);
+            bool generatedMonobehavior = false;
 
-			if (generatedMonobehavior)
+            if (generatedMonobehavior)
 				ActiveButton.BaseType = ForgeBaseClassType.MonoBehavior;
 			else
 				ActiveButton.BaseType = ForgeBaseClassType.NetworkBehavior;
@@ -1030,10 +1032,11 @@ namespace Rooms.Forge.Networking.UnityEditor
 					correctFiles.Add(new ForgeClassObject(userFiles[i]));
 			}
 
-			if (!ForgeClassObject.HasExactFilename(correctFiles, "RoomNetworkObjectFactory"))
-				MakeForgeFactory(); //We do not have the Forge Factory, we need to make this!
+            //TODO ZF 去掉加载的时候检测RoomNetworkObjectFactory
+            //if (!ForgeClassObject.HasExactFilename(correctFiles, "RoomNetworkObjectFactory"))
+            //	MakeForgeFactory(); //We do not have the Forge Factory, we need to make this!
 
-			for (int i = 0; i < correctFiles.Count; ++i)
+            for (int i = 0; i < correctFiles.Count; ++i)
 			{
 				var btn = new ForgeEditorButton(correctFiles[i]);
 
@@ -1113,25 +1116,29 @@ namespace Rooms.Forge.Networking.UnityEditor
 				}
 			}
 
-			string factoryData = SourceCodeFactory();
-			using (StreamWriter sw = File.CreateText(Path.Combine(_storingPath, "NetworkObjectFactory.cs")))
-			{
-				sw.Write(factoryData);
-			}
+            //TODO ZF 去掉 NetworkObjectFactory
+            //string factoryData = SourceCodeFactory();
+            //using (StreamWriter sw = File.CreateText(Path.Combine(_storingPath, "NetworkObjectFactory.cs")))
+            //{
+            //	sw.Write(factoryData);
+            //}
 
-			string networkManagerData = SourceCodeNetworkManager();
-			using (StreamWriter sw = File.CreateText(Path.Combine(_storingPath, "NetworkManager.cs")))
-			{
-				sw.Write(networkManagerData);
-			}
+            //TODO ZF 去掉 NetworkManager
+            //string networkManagerData = SourceCodeNetworkManager();
+            //using (StreamWriter sw = File.CreateText(Path.Combine(_storingPath, "NetworkManager.cs")))
+            //{
+            //    sw.Write(networkManagerData);
+            //}
 
-			//IFormatter previousSavedState = new BinaryFormatter();
-			//using (Stream s = new FileStream(Path.Combine(Application.persistentDataPath, FN_WIZARD_DATA), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-			//{
-			//    previousSavedState.Serialize(s, _editorButtons);
-			//}
 
-			EditorApplication.UnlockReloadAssemblies();
+
+            //IFormatter previousSavedState = new BinaryFormatter();
+            //using (Stream s = new FileStream(Path.Combine(Application.persistentDataPath, FN_WIZARD_DATA), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+            //{
+            //    previousSavedState.Serialize(s, _editorButtons);
+            //}
+
+            EditorApplication.UnlockReloadAssemblies();
 
 			AssetDatabase.Refresh();
 
