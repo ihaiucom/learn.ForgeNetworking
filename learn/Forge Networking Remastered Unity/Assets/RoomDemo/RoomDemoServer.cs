@@ -12,10 +12,6 @@ public class RoomDemoServer : MonoBehaviour {
         server = new LobbyServer(int.MaxValue);
     }
 	
-	void Update ()
-    {
-		
-	}
 
     void OnApplicationQuit()
     {
