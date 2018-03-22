@@ -52,7 +52,7 @@ namespace Rooms.Forge.Networking
         /// <summary>
         /// 玩家, 加入房间
         /// </summary>
-        public NetJoinRoomResult JoinRoom(ulong roleUid, NetworkingPlayer networkingPlayer, Binary frame)
+        public NetJoinRoomResult JoinRoom(ulong roleUid, NetworkingPlayer networkingPlayer, Binary frame, Action<NetJoinRoomResult> callback = null)
         {
             NetJoinRoomResult ret;
             if (playerDict.ContainsKey(roleUid))
@@ -68,6 +68,11 @@ namespace Rooms.Forge.Networking
             }
 
             networkingPlayer.lastRoleUid = roleUid;
+
+            if(callback != null)
+            {
+                callback(ret);
+            }
 
             // 广播玩家加入
             BMSByte data = ObjectMapper.BMSByte(roleUid);

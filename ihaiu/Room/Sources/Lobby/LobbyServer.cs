@@ -214,26 +214,29 @@ namespace Rooms.Forge.Networking
             // 角色UID
             ulong roleUid = frame.StreamData.GetBasicType<ulong>();
 
-            NetJoinRoomResult ret;
+            Action<NetJoinRoomResult> CallResult = (NetJoinRoomResult result) => 
+            {
+                BMSByte data = ObjectMapper.BMSByte(roomUid, (int)result);
+                Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
+                Send(player, sendframe, true);
+            };
 
+            NetJoinRoomResult ret;
             NetRoomServer room;
             if(!roomDict.TryGetValue(roomUid, out room))
             {
                 // 失败 不存在该房间 
                 ret = NetJoinRoomResult.Failed_NoRoom;
+                CallResult(ret);
             }
             else
             {
-                ret = room.JoinRoom(roleUid, player, frame);
+                ret = room.JoinRoom(roleUid, player, frame, CallResult);
                 player.lastRoomUid = roomUid;
             }
 
             OnPlayerJoinRoom(roomUid, player, ret);
 
-
-            BMSByte data = ObjectMapper.BMSByte(roomUid, (int)ret);
-            Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
-            Send(player, sendframe, true);
         }
 
         /// <summary>

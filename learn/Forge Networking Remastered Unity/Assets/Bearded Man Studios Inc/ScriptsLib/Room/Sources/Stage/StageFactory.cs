@@ -12,10 +12,10 @@ namespace Rooms.Forge.Networking
 {
     public class StageFactory
     {
-        public static RoomStage Create(NetRoomInfo roomInfo)
+        public static RoomStage Create(NetRoomBase room, NetRoomInfo roomInfo)
         {
             RoomStage stage = new RoomStageNormal();
-            stage.Initialize(roomInfo);
+            stage.Initialize(room, roomInfo);
             return stage;
         }
     }

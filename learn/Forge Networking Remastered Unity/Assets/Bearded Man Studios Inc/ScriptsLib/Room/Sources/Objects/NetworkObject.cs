@@ -406,6 +406,8 @@ namespace Rooms.Forge.Networking
                 // for this particular create and not another one
                 hash = GlobalHash == -1 ? (GlobalHash += 2) : ++GlobalHash;
 
+                Loger.LogFormat("NetworkObject Client Set Hash={0}, GlobalHash={1}", hash, GlobalHash);
+
                 CreateCode = createCode;
 
                 //告诉这个对象侦听来自服务器的创建网络对象消息
@@ -471,6 +473,9 @@ namespace Rooms.Forge.Networking
                 // Read the hash code that was created by the client so that it can be relayed back for lookup
                 hash = frame.StreamData.GetBasicType<int>();
                 CreateCode = frame.StreamData.GetBasicType<int>();
+
+                Loger.LogFormat("NetworkObject Server Read Hash={0}", hash);
+
 
                 ReadPayload(frame.StreamData, frame.TimeStep);
 
@@ -922,6 +927,9 @@ namespace Rooms.Forge.Networking
             if (ClientRegistered)
                 ClearClientPendingRPC();
 
+
+            Networker.CompleteInitialization(this);
+            CheckNetworkStart();
             return true;
         }
 
@@ -964,6 +972,7 @@ namespace Rooms.Forge.Networking
         public void RegistrationComplete()
         {
             ClientRegistered = true;
+            CheckNetworkStart();
 
             if (NetworkId == 0)
                 return;
@@ -1562,8 +1571,46 @@ namespace Rooms.Forge.Networking
 
             if (onDestroy != null)
                 onDestroy(Networker);
+
+
+            if (Rpc.MainThreadRunner != null)
+                Rpc.MainThreadRunner.Execute(() => { OnDestroy(); });
+            else
+                OnDestroy();
         }
 
         public virtual void InterpolateUpdate() { }
+
+
+
+        /// <summary>
+        /// 检测是否可以可以调OnNetworkStart
+        /// </summary>
+        protected void CheckNetworkStart()
+        {
+            if(NetworkId != 0 && ClientRegistered)
+            {
+                if (Rpc.MainThreadRunner != null)
+                    Rpc.MainThreadRunner.Execute(() => { OnNetworkStart(); });
+                else
+                    OnNetworkStart();
+            }
+        }
+
+        /// <summary>
+        /// 初始化了，并且设置了网络ID
+        /// </summary>
+        protected virtual void OnNetworkStart()
+        {
+
+        }
+
+        /// <summary>
+        /// 销毁
+        /// </summary>
+        protected virtual void OnDestroy()
+        {
+
+        }
     }
 }

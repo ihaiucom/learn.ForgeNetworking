@@ -242,7 +242,7 @@ namespace Rooms.Forge.Networking.Generated
 			}
 		}
 
-		private void Initialize()
+		protected virtual void Initialize()
 		{
 			if (readDirtyFlags == null)
 				readDirtyFlags = new byte[1];

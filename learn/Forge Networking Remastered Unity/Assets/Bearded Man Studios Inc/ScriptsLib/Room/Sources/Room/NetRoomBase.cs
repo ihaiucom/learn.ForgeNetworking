@@ -1,4 +1,5 @@
 ﻿using BeardedManStudios.Forge.Networking;
+using BeardedManStudios.Forge.Networking.Frame;
 using System;
 using System.Collections.Generic;
 /** 
@@ -45,8 +46,25 @@ namespace Rooms.Forge.Networking
             this.roomId = roomInfo.roomUid;
             this.Time = lobby.Socket.Time;
 
-            stage = StageFactory.Create(roomInfo);
+            stage = StageFactory.Create(this, roomInfo);
             scene = stage.Scene;
+        }
+
+        /// <summary>
+        /// 释放，销毁
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (stage != null)
+                stage.Dispose();
+
+            stage = null;
+        }
+
+
+        public virtual void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
+        {
+            scene.OnBinaryMessageReceived(player, frame);
         }
 
         // 调事件 -- 玩家加入

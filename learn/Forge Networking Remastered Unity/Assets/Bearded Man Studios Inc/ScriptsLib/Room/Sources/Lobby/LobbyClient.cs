@@ -56,10 +56,12 @@ namespace Rooms.Forge.Networking
         // 接收二进制数据
         private void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
         {
-            Loger.LogFormat("LobbyClient OnBinaryMessageReceived {0}", player.NetworkId);
+            Loger.LogFormat("LobbyClient OnBinaryMessageReceived player={0} RoomId={1}", player.NetworkId, frame.RoomId);
             if (frame.GroupId == MessageGroupIds.Lobby)
             {
                 byte routerId = frame.RouterId;
+
+                Loger.LogFormat("LobbyClient Lobby OnBinaryMessageReceived player={0}, groupId={1}, routerId={2} ", player.NetworkId, frame.GroupId, routerId);
 
                 switch (routerId)
                 {
@@ -86,13 +88,23 @@ namespace Rooms.Forge.Networking
             }
             else
             {
-                ulong roomUid = frame.StreamData.GetBasicType<ulong>();
-                if(room != null && room.roomId == roomUid)
+                Loger.LogFormat("LobbyClient Room OnBinaryMessageReceived player={0}, groupId={1}, roomUid={2} ", player.NetworkId, frame.GroupId, frame.RoomId);
+
+                if (room != null && room.roomId == frame.RoomId)
                 {
                     room.OnBinaryMessageReceived(player, frame, sender);
                 }
             }
         }
+
+        /// <summary>
+        /// 测试创建房间
+        /// </summary>
+        public void TestCreateRoom(NetRoomInfo roomInfo)
+        {
+            room = new NetRoomClient(this, roomInfo);
+        }
+
 
         /// <summary>
         /// 创建房间
@@ -128,7 +140,7 @@ namespace Rooms.Forge.Networking
         public void JoinRoom()
         {
             BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roleInfo.uid);
-            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
             Send(frame, true);
         }
 
@@ -153,7 +165,7 @@ namespace Rooms.Forge.Networking
         public void LeftRoom()
         {
             BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roleInfo.uid);
-            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_LEFT_ROOM);
             Send(frame, true);
         }
 
@@ -219,6 +231,18 @@ namespace Rooms.Forge.Networking
             OnPlayerLeftWatchRoom(roomUid, player, ret);
         }
 
+        /// <summary>
+        /// 释放，销毁
+        /// </summary>
+        public override void Dispose()
+        {
+            if(room != null)
+                room.Dispose();
+
+            room = null;
+
+            base.Dispose();
+        }
 
     }
 }

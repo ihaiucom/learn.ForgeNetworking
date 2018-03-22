@@ -7,16 +7,17 @@ using Rooms.Forge.Networking.Generated;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Rooms.Forge.Networking.Unity
+
+namespace Rooms.Forge.Networking.Generated
 {
-	public partial class RoomNetworkManager
-	{
+    public partial class RoomNetworkObjectFactory
+    {
         private RoomScene Networker { get; set; }
         private BMSByte metadata = new BMSByte();
 
-        public RoomNetworkManager(RoomScene Networker)
+        public RoomNetworkObjectFactory(RoomScene Networker)
         {
-            this.Networker = this.Networker;
+            this.Networker = Networker;
         }
 
         private void WriteMetadata(Vector3? position = null, Quaternion? rotation = null)

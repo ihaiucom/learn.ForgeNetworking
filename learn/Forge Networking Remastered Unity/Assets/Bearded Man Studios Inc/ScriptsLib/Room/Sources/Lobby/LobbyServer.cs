@@ -2,6 +2,7 @@
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using BeardedManStudios.Source.Forge.Networking;
+using BeardedManStudios.Threading;
 using System;
 using System.Collections.Generic;
 /** 
@@ -68,15 +69,19 @@ namespace Rooms.Forge.Networking
         // 发送消息给指定玩家
         public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
         {
-            ((UDPServer)Socket).Send(player, frame, true);
+            Task.Queue(() =>
+            {
+                ((UDPServer)Socket).Send(player, frame, true);
+            });
         }
 
         // 接收二进制数据
         private void OnBinaryMessageReceived (NetworkingPlayer player, Binary frame, NetWorker sender)
         {
-            Loger.LogFormat("LobbyServer OnBinaryMessageReceived {0}", player.NetworkId);
 
-            if(frame.RoomId != 0)
+            Loger.LogFormat("LobbyServer OnBinaryMessageReceived player={0} RoomId={1}", player.NetworkId, frame.RoomId);
+
+            if (frame.RoomId != 0)
             {
 
                 if (roomDict.ContainsKey(frame.RoomId))
@@ -112,14 +117,6 @@ namespace Rooms.Forge.Networking
                     case RouterIds.LOBBY_LEFT_WATCH_ROOM:
                         LeftWatchRoom(player, frame);
                         break;
-                }
-            }
-            else if(frame.GroupId == MessageGroupIds.ROOM)
-            {
-                ulong roomUid = frame.StreamData.GetBasicType<ulong>();
-                if(roomDict.ContainsKey(roomUid))
-                {
-                    roomDict[roomUid].OnBinaryMessageReceived(player, frame, sender);
                 }
             }
 
@@ -214,6 +211,14 @@ namespace Rooms.Forge.Networking
             // 角色UID
             ulong roleUid = frame.StreamData.GetBasicType<ulong>();
 
+
+            Action<NetJoinRoomResult> CallResult = (NetJoinRoomResult result) =>
+            {
+                BMSByte data = ObjectMapper.BMSByte(roomUid, (int)result);
+                Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
+                Send(player, sendframe, true);
+            };
+
             NetJoinRoomResult ret;
 
             NetRoomServer room;
@@ -221,19 +226,16 @@ namespace Rooms.Forge.Networking
             {
                 // 失败 不存在该房间 
                 ret = NetJoinRoomResult.Failed_NoRoom;
+                CallResult(ret);
             }
             else
             {
-                ret = room.JoinRoom(roleUid, player, frame);
+                ret = room.JoinRoom(roleUid, player, frame, CallResult);
                 player.lastRoomUid = roomUid;
             }
 
             OnPlayerJoinRoom(roomUid, player, ret);
 
-
-            BMSByte data = ObjectMapper.BMSByte(roomUid, (int)ret);
-            Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
-            Send(player, sendframe, true);
         }
 
         /// <summary>
@@ -357,6 +359,22 @@ namespace Rooms.Forge.Networking
                 Send(player, sendframe, true);
             }
 
+        }
+
+
+        /// <summary>
+        /// 释放，销毁
+        /// </summary>
+        public override void Dispose()
+        {
+
+            foreach(var kvp in roomDict)
+            {
+                kvp.Value.Dispose();
+            }
+            roomDict.Clear();
+
+            base.Dispose();
         }
 
 
