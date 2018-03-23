@@ -19,6 +19,7 @@
 
 using BeardedManStudios.Forge.Networking.Frame;
 using BeardedManStudios.Forge.Networking.Nat;
+using BeardedManStudios.Source.Logging;
 using BeardedManStudios.Threading;
 using System;
 using System.Collections.Generic;
@@ -358,7 +359,9 @@ namespace BeardedManStudios.Forge.Networking
                 if (readThreadCancel)
 					return;
 
-				try
+                //incomingEndpoint = string.Empty;
+
+                try
 				{
                     //从网络读取数据包
                     // Read a packet from the network
@@ -381,9 +384,11 @@ namespace BeardedManStudios.Forge.Networking
 					if (udpPlayers.TryGetValue(incomingEndpoint, out player))
 					{
 						FinalizeRemovePlayer(player, true);
-					}
+                    }
 
-					continue;
+                    //ForgeLogger.Error(player.NetworkId + " " + incomingEndpoint);
+
+                    continue;
 				}
 
                 //检查以确保收到消息
@@ -433,6 +438,7 @@ namespace BeardedManStudios.Forge.Networking
                         // will be 71 and the second packet be 69 is a forced disconnect reconnect
                         if (packet[0] == 71 && packet[1] == 69)
 						{
+                            //ForgeLogger.Error("将是71，第二个数据包是69是强制断开连接 NetworkId=" + currentReadingPlayer.NetworkId + "   " + currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
 							udpPlayers.Remove(currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
 							FinalizeRemovePlayer(currentReadingPlayer, true);
 							continue;

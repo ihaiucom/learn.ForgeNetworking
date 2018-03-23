@@ -384,7 +384,7 @@ namespace BeardedManStudios.Forge.Networking
 					{
 						FinalizeRemovePlayer(player, true);
                     }
-                    UnityEngine.Debug.LogError( player.NetworkId + " " + incomingEndpoint + e.ToString());
+                    //UnityEngine.Debug.LogError( player.NetworkId + " " + incomingEndpoint + e.ToString());
 
                     continue;
 				}
@@ -436,7 +436,7 @@ namespace BeardedManStudios.Forge.Networking
                         // will be 71 and the second packet be 69 is a forced disconnect reconnect
                         if (packet[0] == 71 && packet[1] == 69)
 						{
-                            UnityEngine.Debug.LogError("将是71，第二个数据包是69是强制断开连接 NetworkId=" + currentReadingPlayer.NetworkId + "   " + currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
+                            //UnityEngine.Debug.LogError("将是71，第二个数据包是69是强制断开连接 NetworkId=" + currentReadingPlayer.NetworkId + "   " + currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
 							udpPlayers.Remove(currentReadingPlayer.Ip + "+" + currentReadingPlayer.Port);
 							FinalizeRemovePlayer(currentReadingPlayer, true);
 							continue;

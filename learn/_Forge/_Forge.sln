@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Forge", "_Forge.csproj", "{52620500-9422-7086-2897-20BD9F49D7E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Forge.Editor", "_Forge.Editor.csproj", "{7A2DF5B2-44CB-1443-14AC-4A1D8AF9404A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52620500-9422-7086-2897-20BD9F49D7E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52620500-9422-7086-2897-20BD9F49D7E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52620500-9422-7086-2897-20BD9F49D7E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52620500-9422-7086-2897-20BD9F49D7E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2DF5B2-44CB-1443-14AC-4A1D8AF9404A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2DF5B2-44CB-1443-14AC-4A1D8AF9404A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2DF5B2-44CB-1443-14AC-4A1D8AF9404A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2DF5B2-44CB-1443-14AC-4A1D8AF9404A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
