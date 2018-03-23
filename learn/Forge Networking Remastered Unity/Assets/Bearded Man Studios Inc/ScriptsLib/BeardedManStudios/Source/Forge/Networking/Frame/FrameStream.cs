@@ -256,9 +256,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			int length = payload.Length;
 
 			if (isStream)
-				length += 21;  // Group id (4), receivers (1), time step (8), unique id (8)
+				length += 29;  // Group id (4), receivers (1), RoomId(8), time step (8), unique id (8)
 
-			if (frame[0] == Binary.CONTROL_BYTE)
+            if (frame[0] == Binary.CONTROL_BYTE)
 				length += 1;
 
 			// Determine the length of the payload
