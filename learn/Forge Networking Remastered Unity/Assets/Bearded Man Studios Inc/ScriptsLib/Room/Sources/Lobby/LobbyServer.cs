@@ -76,7 +76,7 @@ namespace Rooms.Forge.Networking
         private void OnBinaryMessageReceived (NetworkingPlayer player, Binary frame, NetWorker sender)
         {
 
-            Loger.LogFormat("LobbyServer OnBinaryMessageReceived player={0} RoomId={1}", player.NetworkId, frame.RoomId);
+            //Loger.LogFormat("LobbyServer OnBinaryMessageReceived player={0} RoomId={1}", player.NetworkId, frame.RoomId);
 
             if (frame.RoomId != 0)
             {

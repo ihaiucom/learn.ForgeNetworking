@@ -1,4 +1,5 @@
-﻿using BeardedManStudios.Threading;
+﻿using BeardedManStudios.Forge.Networking;
+using BeardedManStudios.Threading;
 using Rooms.Forge.Networking.Generated;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,8 @@ namespace Rooms.Forge.Networking
             {
                 hero = Factory.InstantiateHero();
             }
+
+            Room.playerLeftRoom += OnPlayerLeftRoom;
         }
 
 
@@ -59,7 +62,9 @@ namespace Rooms.Forge.Networking
         /// </summary>
         public virtual void Dispose()
         {
-            if(hero != null)
+            Room.playerLeftRoom -= OnPlayerLeftRoom;
+
+            if (hero != null)
                 hero.Destroy();
 
             IsRuning = false;
@@ -93,6 +98,14 @@ namespace Rooms.Forge.Networking
         {
             Scene.FixedUpdate();
         }
+
+        protected void OnPlayerLeftRoom(ulong roleUid, NetworkingPlayer player)
+        {
+            Loger.Log("RoomStage OnPlayerLeftRoom" + player.NetworkId);
+            Scene.DestoryPlayerNetworkObjects(player);
+        }
+
+
 
 
     }

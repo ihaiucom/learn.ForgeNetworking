@@ -96,6 +96,7 @@ namespace Rooms.Forge.Networking
         /// </summary>
         public NetLeftRoomResult LeftRoom(ulong roleUid, NetworkingPlayer networkingPlayer)
         {
+            NetLeftRoomResult result = NetLeftRoomResult.Failed_RoomNoPlayer;
             if (playerList.Contains(networkingPlayer))
                 playerList.Remove(networkingPlayer);
 
@@ -106,23 +107,24 @@ namespace Rooms.Forge.Networking
                 if (networkingPlayer != null && networkingPlayer.NetworkId != player.NetworkId)
                 {
                     // 不是同一个终端
-                    return NetLeftRoomResult.Failed_NoSameSocket;
+                    result = NetLeftRoomResult.Failed_NoSameSocket;
                 }
+                else
+                {
+                    playerDict.Remove(roleUid);
 
-                playerDict.Remove(roleUid);
+                    // 广播玩家离开
+                    BMSByte data = ObjectMapper.BMSByte(roleUid);
+                    Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
+                    Send(sendframe, true);
 
-
-                // 广播玩家离开
-                BMSByte data = ObjectMapper.BMSByte(roleUid);
-                Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
-                Send(sendframe, true);
-
-                OnPlayerLeftRoom(roleUid, networkingPlayer);
-                return NetLeftRoomResult.Successed;
+                    result = NetLeftRoomResult.Successed;
+                }
             }
 
-            // 不存在该玩家
-            return NetLeftRoomResult.Failed_RoomNoPlayer;
+            OnPlayerLeftRoom(roleUid, networkingPlayer);
+
+            return result;
         }
 
 

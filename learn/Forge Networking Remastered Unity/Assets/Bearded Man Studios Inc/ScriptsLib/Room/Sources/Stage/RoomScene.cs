@@ -304,6 +304,31 @@ namespace Rooms.Forge.Networking
             NetworkObject.PlayerAccepted(player, currentObjects);
         }
 
+        internal void DestoryPlayerNetworkObjects(NetworkingPlayer player)
+        {
+
+            List<NetworkObject> list = new List<NetworkObject>();
+            lock (NetworkObjectDict)
+            {
+                NetworkObject[] currentObjects;
+                currentObjects = NetworkObjectDict.Values.ToArray();
+
+                for (int i = 0; i < currentObjects.Length; i++)
+                {
+                    if (currentObjects[i].Owner == player)
+                        list.Add(currentObjects[i]);
+                }
+            }
+
+            for(int i = 0; i < list.Count; i ++)
+            {
+                list[i].Destroy();
+            }
+            list.Clear();
+
+
+        }
+
 
         /// <summary>
         ///在收到创建NetworkObject的消息时由NetWorker调用
