@@ -69,10 +69,7 @@ namespace Rooms.Forge.Networking
         // 发送消息给指定玩家
         public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
         {
-            Task.Queue(() =>
-            {
-                ((UDPServer)Socket).Send(player, frame, true);
-            });
+            ((UDPServer)Socket).Send(player, frame, true);
         }
 
         // 接收二进制数据
@@ -86,7 +83,14 @@ namespace Rooms.Forge.Networking
 
                 if (roomDict.ContainsKey(frame.RoomId))
                 {
-                    roomDict[frame.RoomId].OnBinaryMessageReceived(player, frame, sender);
+                    try
+                    {
+                        roomDict[frame.RoomId].OnBinaryMessageReceived(player, frame, sender);
+                    }
+                    catch(Exception e)
+                    {
+                        Loger.LogError(e.ToString());
+                    }
                 }
                 return;
             }

@@ -397,6 +397,7 @@ namespace BeardedManStudios.Forge.Networking
 			}
 			catch (SocketException ex)
 			{
+                Loger.LogError(ex.ToString());
 				if (ex.ErrorCode == (int)SocketError.AccessDenied)
 				{
 					socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, 1);

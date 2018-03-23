@@ -384,7 +384,7 @@ namespace BeardedManStudios.Forge.Networking
 					{
 						FinalizeRemovePlayer(player, true);
                     }
-                    UnityEngine.Debug.LogError(e.ToString() + player + " " + incomingEndpoint);
+                    UnityEngine.Debug.LogError( player.NetworkId + " " + incomingEndpoint + e.ToString());
 
                     continue;
 				}
