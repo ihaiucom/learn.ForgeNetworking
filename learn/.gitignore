@@ -1,6 +1,5 @@
 Api Documentation HTML.zip
 Api Documentation HTML
-_Forge
 Forge Networking Remastered Unity/Library
 Forge Networking Remastered Unity/Temp
 Forge Networking Remastered Unity/AssetsLogs
@@ -8,3 +7,6 @@ Forge Networking Remastered Unity/.vs
 Forge Networking Remastered Unity/*.csproj
 Forge Networking Remastered Unity/*.sln
 Builds
+_Forge/Library
+_Forge/Temp
+_Forge/AssetsLogs
