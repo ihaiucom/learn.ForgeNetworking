@@ -4,19 +4,14 @@ using System.Collections.Generic;
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      3/6/2018 8:31:06 PM
+*  @CreateTime      3/23/2018 7:16:52 PM
 *  @Description:    
 * ==============================================================================
 */
-namespace Rooms.Forge.Networking
+namespace UnityEngine
 {
-    public class StageFactory
+    public class Time
     {
-        public static RoomStage Create(NetRoomBase room, NetRoomInfo roomInfo)
-        {
-            RoomStage stage = new RoomStageNormal();
-            stage.Initialize(room, roomInfo);
-            return stage;
-        }
+        public static float deltaTime = 0.033f;
     }
 }

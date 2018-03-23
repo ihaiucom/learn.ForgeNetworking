@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters;
 //测试的命令空间， 测试完记得删除
 //using UnityEngine;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public struct Quaternion
     {
@@ -297,7 +297,7 @@ namespace Unikon.UnityEngine
             float mag = forward.magnitude;
             if (mag<1e-6)
             {
-                Debug.LogError("error input forward to Quaternion"+forward.ToString());
+                //Debug.LogError("error input forward to Quaternion"+forward.ToString());
                 value = Quaternion.identity;
                 return ;
             }

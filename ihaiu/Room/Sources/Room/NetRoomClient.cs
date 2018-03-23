@@ -28,7 +28,7 @@ namespace Rooms.Forge.Networking
 
 
         // 接收二进制数据
-        public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
+        public override void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
         {
             if (frame.GroupId == MessageGroupIds.ROOM)
             {
@@ -48,7 +48,7 @@ namespace Rooms.Forge.Networking
             }
             else
             {
-                
+                base.OnBinaryMessageReceived(player, frame, sender);
             }
         }
 

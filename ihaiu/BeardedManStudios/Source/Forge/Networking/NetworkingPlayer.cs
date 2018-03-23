@@ -34,7 +34,8 @@ namespace BeardedManStudios.Forge.Networking
 	public partial class NetworkingPlayer
 	{
         // 默认玩家超时断线时间 30秒
-		private const uint PLAYER_TIMEOUT_DISCONNECT = 30000;
+        private const uint PLAYER_TIMEOUT_DISCONNECT = 30000;
+        //private const uint PLAYER_TIMEOUT_DISCONNECT = 3000000;
 
         // 默认发ping间隔时间 5秒
         private const int DEFAULT_PING_INTERVAL = 5000;

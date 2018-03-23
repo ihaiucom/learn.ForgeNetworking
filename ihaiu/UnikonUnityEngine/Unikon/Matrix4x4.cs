@@ -4,7 +4,7 @@
 /// <summary>
 /// https://forum.unity3d.com/threads/how-to-assign-matrix4x4-to-transform.121966/
 /// </summary>
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public struct Matrix4x4
     {

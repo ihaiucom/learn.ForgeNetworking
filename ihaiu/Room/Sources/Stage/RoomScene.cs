@@ -247,7 +247,7 @@ namespace Rooms.Forge.Networking
 
         public virtual void ServerSend(FrameStream clientFrame, FrameStream frame, bool reliable = false)
         {
-            ((NetRoomServer)Room).Send(frame.Sender, frame, reliable);
+            ((NetRoomServer)Room).Send(clientFrame.Sender, frame, reliable);
         }
 
 
@@ -259,7 +259,7 @@ namespace Rooms.Forge.Networking
 
         public virtual void ServerSendAll(FrameStream frame, bool reliable = false, NetworkingPlayer skipPlayer = null)
         {
-            ((NetRoomServer)Room).Send(frame, reliable);
+            ((NetRoomServer)Room).Send(frame, reliable, skipPlayer);
         }
 
 
@@ -304,6 +304,31 @@ namespace Rooms.Forge.Networking
             NetworkObject.PlayerAccepted(player, currentObjects);
         }
 
+        internal void DestoryPlayerNetworkObjects(NetworkingPlayer player)
+        {
+
+            List<NetworkObject> list = new List<NetworkObject>();
+            lock (NetworkObjectDict)
+            {
+                NetworkObject[] currentObjects;
+                currentObjects = NetworkObjectDict.Values.ToArray();
+
+                for (int i = 0; i < currentObjects.Length; i++)
+                {
+                    if (currentObjects[i].Owner == player)
+                        list.Add(currentObjects[i]);
+                }
+            }
+
+            for(int i = 0; i < list.Count; i ++)
+            {
+                list[i].Destroy();
+            }
+            list.Clear();
+
+
+        }
+
 
         /// <summary>
         ///在收到创建NetworkObject的消息时由NetWorker调用
@@ -337,6 +362,8 @@ namespace Rooms.Forge.Networking
                 //获取为该网络对象分配的服务器ID
                 // Get the server assigned id for this network object
                 uint id = frame.StreamData.GetBasicType<uint>();
+
+                Loger.LogFormat("RoomScene Client Read hash={0}, id={1}", hash, id);
 
                 if (hash != 0)
                 {
@@ -544,7 +571,7 @@ namespace Rooms.Forge.Networking
         /// 这个可以调用的messageReceived事件调用的包装器
         /// A wrapper for the messageReceived event call that chindren of this can call
         /// </summary>
-        protected void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame)
+        public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame)
         {
             byte routerId = frame.RouterId;
             if (routerId == RouterIds.RPC_ROUTER_ID || routerId == RouterIds.BINARY_DATA_ROUTER_ID || routerId == RouterIds.CREATED_OBJECT_ROUTER_ID)
@@ -602,6 +629,13 @@ namespace Rooms.Forge.Networking
                 networkObject.ReadBinaryData(frame);
             else if (routerId == RouterIds.CREATED_OBJECT_ROUTER_ID)
                 networkObject.CreateConfirmed(player);
+        }
+
+
+        public void FixedUpdate()
+        {
+            for (int i = 0; i < NetworkObjectList.Count; i++)
+                NetworkObjectList[i].InterpolateUpdate();
         }
 
     }

@@ -17,6 +17,7 @@
 |                                                              |
 \------------------------------+------------------------------*/
 
+using BeardedManStudios.Source.Logging;
 using System;
 
 namespace BeardedManStudios.Forge.Networking.Frame
@@ -256,9 +257,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 			int length = payload.Length;
 
 			if (isStream)
-				length += 21;  // Group id (4), receivers (1), time step (8), unique id (8)
+				length += 29;  // Group id (4), receivers (1), RoomId(8), time step (8), unique id (8)
 
-			if (frame[0] == Binary.CONTROL_BYTE)
+            if (frame[0] == Binary.CONTROL_BYTE)
 				length += 1;
 
 			// Determine the length of the payload
@@ -354,6 +355,10 @@ namespace BeardedManStudios.Forge.Networking.Frame
         /// <param name="player"></param>
 		private void MakeReliable(NetworkingPlayer player)
 		{
+            if(player == null)
+            {
+                ForgeLogger.Error("MakeReliable player=null");
+            }
 			UniqueReliableId = player.GetNextReliableId();
 			IsReliable = true;
 		}

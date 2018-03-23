@@ -1,13 +1,15 @@
 ﻿using System;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public struct Mathf
     {
         /// <summary>
         ///   <para>A tiny floating point value (Read Only).</para>
         /// </summary>
-        public static readonly float Epsilon = !MathfInternal.IsFlushToZeroEnabled ? MathfInternal.FloatMinDenormal : MathfInternal.FloatMinNormal;
+        //public static readonly float Epsilon = !MathfInternal.IsFlushToZeroEnabled ? MathfInternal.FloatMinDenormal : MathfInternal.FloatMinNormal;
+        public static readonly float Epsilon = 1e-6f;
+
         /// <summary>
         ///   <para>The infamous 3.14159265358979... value (Read Only).</para>
         /// </summary>

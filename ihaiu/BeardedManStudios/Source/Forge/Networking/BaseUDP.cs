@@ -52,7 +52,7 @@ namespace BeardedManStudios.Forge.Networking
         protected void ComposerCompleted(UDPPacketComposer composer)
 		{
 #if DEEP_LOGGING
-			Logging.BMSLog.Log($"<<<<<<<<<<<<<<<<<<<<<<<<<<< CONFIRMING: {composer.Frame.UniqueId}");
+			Logging.BMSLog.Log(string.Format("<<<<<<<<<<<<<<<<<<<<<<<<<<< CONFIRMING: {0}", composer.Frame.UniqueId));
 #endif
 
 			lock (pendingComposers)
@@ -166,7 +166,7 @@ namespace BeardedManStudios.Forge.Networking
             if (reliable && !confirmationPacket)
 			{
 #if DEEP_LOGGING
-				Logging.BMSLog.Log($">>>>>>>>>>>>>>>>>>>>>>>>>>> SEND CONFIRM: {uniqueId}");
+				Logging.BMSLog.Log(string.Format(">>>>>>>>>>>>>>>>>>>>>>>>>>> SEND CONFIRM: {0}", uniqueId));
 #endif
 
 				byte[] confirmation = new byte[sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(byte)];

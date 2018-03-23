@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public struct Vector2
     {

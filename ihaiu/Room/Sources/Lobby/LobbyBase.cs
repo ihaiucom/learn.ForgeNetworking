@@ -104,8 +104,10 @@ namespace Rooms.Forge.Networking
         public NetWorker Socket { get; protected set; }
 
 
-
-        public void Dispose()
+        /// <summary>
+        /// 释放，销毁
+        /// </summary>
+        public virtual void Dispose()
         {
             Socket.Disconnect(true);
         }

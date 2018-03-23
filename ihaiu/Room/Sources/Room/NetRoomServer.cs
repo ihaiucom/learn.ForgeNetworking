@@ -21,6 +21,9 @@ namespace Rooms.Forge.Networking
         internal LobbyServer serverLobby;
 
         // 玩家字典
+        public List<NetworkingPlayer> playerList = new List<NetworkingPlayer>();
+
+        // 玩家字典
         public Dictionary<ulong, NetworkingPlayer>      playerDict = new Dictionary<ulong, NetworkingPlayer>();
 
         // 观战玩家列表
@@ -35,12 +38,12 @@ namespace Rooms.Forge.Networking
             Initialize(lobby, roomInfo);
 
             // TODO 测试房间结束
-            Task.Queue(() =>
-            {
-                Loger.LogFormat("房间{0}将结束", roomId);
-                SetRoomOver();
-            }, 10000);
-            Loger.LogFormat("10秒后 房间{0}将结束", roomId);
+            //Task.Queue(() =>
+            //{
+            //    Loger.LogFormat("房间{0}将结束", roomId);
+            //    SetRoomOver();
+            //}, 10000);
+            //Loger.LogFormat("10秒后 房间{0}将结束", roomId);
         }
 
         public override void SetRoomOver()
@@ -69,7 +72,10 @@ namespace Rooms.Forge.Networking
 
             networkingPlayer.lastRoleUid = roleUid;
 
-            if(callback != null)
+            if(!playerList.Contains(networkingPlayer))
+                playerList.Add(networkingPlayer);
+
+            if (callback != null)
             {
                 callback(ret);
             }
@@ -90,29 +96,35 @@ namespace Rooms.Forge.Networking
         /// </summary>
         public NetLeftRoomResult LeftRoom(ulong roleUid, NetworkingPlayer networkingPlayer)
         {
+            NetLeftRoomResult result = NetLeftRoomResult.Failed_RoomNoPlayer;
+            if (playerList.Contains(networkingPlayer))
+                playerList.Remove(networkingPlayer);
+
+
             NetworkingPlayer player;
             if (playerDict.TryGetValue(roleUid, out player))
             {
                 if (networkingPlayer != null && networkingPlayer.NetworkId != player.NetworkId)
                 {
                     // 不是同一个终端
-                    return NetLeftRoomResult.Failed_NoSameSocket;
+                    result = NetLeftRoomResult.Failed_NoSameSocket;
                 }
+                else
+                {
+                    playerDict.Remove(roleUid);
 
-                playerDict.Remove(roleUid);
+                    // 广播玩家离开
+                    BMSByte data = ObjectMapper.BMSByte(roleUid);
+                    Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
+                    Send(sendframe, true);
 
-
-                // 广播玩家离开
-                BMSByte data = ObjectMapper.BMSByte(roleUid);
-                Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
-                Send(sendframe, true);
-
-                OnPlayerLeftRoom(roleUid, networkingPlayer);
-                return NetLeftRoomResult.Successed;
+                    result = NetLeftRoomResult.Successed;
+                }
             }
 
-            // 不存在该玩家
-            return NetLeftRoomResult.Failed_RoomNoPlayer;
+            OnPlayerLeftRoom(roleUid, networkingPlayer);
+
+            return result;
         }
 
 
@@ -147,11 +159,12 @@ namespace Rooms.Forge.Networking
 
 
         // 接收二进制数据
-        public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
-        {
-            byte routerId = frame.RouterId;
+        //public override void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
+        //{
+        //    //byte routerId = frame.RouterId;
+        //    base.OnBinaryMessageReceived(player, frame, sender);
 
-        }
+        //}
 
         // 发送消息, 给指定玩家
         public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
@@ -162,7 +175,7 @@ namespace Rooms.Forge.Networking
         // 发送消息，给所有玩家
         public void Send(FrameStream frame, bool reliable = false)
         {
-            Send(frame, reliable);
+            Send(frame, reliable, null);
         }
 
         protected List<FrameStream> bufferedMessages = new List<FrameStream>();
@@ -171,19 +184,19 @@ namespace Rooms.Forge.Networking
             if (frame.Receivers == Receivers.AllBuffered || frame.Receivers == Receivers.OthersBuffered)
                 bufferedMessages.Add(frame);
 
-            lock (playerDict)
+            lock (playerList)
             {
-                foreach (var kvp in playerDict)
+                foreach (NetworkingPlayer player in playerList)
                 {
-                    if (!PlayerIsReceiver(kvp.Value, frame, skipPlayer))
+                    if (!PlayerIsReceiver(player, frame, skipPlayer))
                         continue;
 
-                    Send(kvp.Value, frame, reliable);
+                    Send(player, frame, reliable);
                 }
             }
 
 
-            lock (playerDict)
+            lock (watchPlayers)
             {
                 foreach (NetworkingPlayer player in watchPlayers)
                 {

@@ -12,17 +12,22 @@ namespace TestRoomServer
         {
             string read = string.Empty;
 
-            LobbyServer server = new LobbyServer(100);
 
-            while(server.Socket.IsBound)
+            LobbyServer lobby = new LobbyServer(int.MaxValue);
+            NetRoomInfo roomInfo = new NetRoomInfo();
+            roomInfo.roomUid = 1;
+            roomInfo.stageId = 1;
+            lobby.CreateRoom(roomInfo);
+
+            while (lobby.Socket.IsBound)
             {
                 read = Console.ReadLine().ToLower();
                 if (read == "s" || read == "stop")
                 {
-                    lock (server)
+                    lock (lobby)
                     {
                         Console.WriteLine("Server stopped.");
-                        server.Dispose();
+                        lobby.Dispose();
                     }
                 }
             }

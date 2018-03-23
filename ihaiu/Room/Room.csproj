@@ -45,6 +45,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoomNetwokObject\Hero.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\BMSUnityExtensions.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\InterpolateQuaternion.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector2.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector3.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector4.cs" />
+    <Compile Include="RoomNetwokObject\Interpolate\UnityObjectMapper.cs" />
+    <Compile Include="RoomNetwokObject\Manager\RoomNetworkManager.cs" />
+    <Compile Include="RoomNetwokObject\Manager\RoomNetworkObjectFactory.cs" />
+    <Compile Include="RoomNetwokObject\Manager\UnityMainThread.cs" />
+    <Compile Include="RoomNetwokObject\RoomGenerated\UserGenerated\UnitNetworkObject.cs" />
+    <Compile Include="RoomNetwokObject\Solider.cs" />
+    <Compile Include="RoomNetwokObject\Tower.cs" />
+    <Compile Include="RoomNetwokObject\UnitClassId.cs" />
     <Compile Include="Sources\Lobby\LobbyBase.cs" />
     <Compile Include="Sources\Lobby\Lobby.cs" />
     <Compile Include="Sources\Lobby\LobbyClient.cs" />
@@ -70,6 +84,14 @@
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
       <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ForgeNetworkingCommon\ForgeNetworkingCommon.csproj">
+      <Project>{9C3AF9D0-B19F-44A6-9068-84B636892BDE}</Project>
+      <Name>ForgeNetworkingCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnikonUnityEngine\UnikonUnityEngine.csproj">
+      <Project>{2d94c609-fd77-47ec-880e-38714ab72b9d}</Project>
+      <Name>UnikonUnityEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
