@@ -18,7 +18,7 @@ namespace Rooms.Forge.Networking
         // 客户端Lobby
         internal LobbyClient clientLobby;
 
-        public NetRoomClient(LobbyClient lobby, NetRoomInfo roomInfo)
+        public NetRoomClient(LobbyClient lobby, IRoomInfo roomInfo)
         {
             this.clientLobby = lobby;
 

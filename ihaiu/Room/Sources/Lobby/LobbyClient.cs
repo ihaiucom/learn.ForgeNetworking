@@ -16,8 +16,8 @@ namespace Rooms.Forge.Networking
 {
     public class LobbyClient : LobbyBase
     {
-        public NetRoleInfo roleInfo;
-        public NetRoomInfo roomInfo;
+        public IRoleInfo roleInfo;
+        public IRoomInfo roomInfo;
         public NetRoomClient room;
         public LobbyClient(string hostAddress = "127.0.0.1", ushort port = 16000)
         {
@@ -100,9 +100,28 @@ namespace Rooms.Forge.Networking
         /// <summary>
         /// 测试创建房间
         /// </summary>
-        public void TestCreateRoom(NetRoomInfo roomInfo)
+        public void TestCreateRoom(IRoomInfo roomInfo)
         {
             room = new NetRoomClient(this, roomInfo);
+        }
+
+        /// <summary>
+        /// 创建并加入房间
+        /// </summary>
+        public void CreateAndJoinRoom()
+        {
+            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roomInfo.stageId);
+
+            byte[] Metadata = roomInfo.Serialize();
+
+            //如果对象具有元数据，则写入
+            ObjectMapper.Instance.MapBytes(data, Metadata != null);
+            if (Metadata != null)
+                ObjectMapper.Instance.MapBytes(data, Metadata);
+
+
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            Send(frame, true);
         }
 
 
@@ -111,7 +130,15 @@ namespace Rooms.Forge.Networking
         /// </summary>
         public void CreateRoom()
         {
-            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roomInfo.stageId);
+            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid);
+
+            byte[] metadata = roomInfo.Serialize();
+
+            //如果对象具有元数据，则写入
+            ObjectMapper.Instance.MapBytes(data, metadata != null);
+            if (metadata != null)
+                ObjectMapper.Instance.MapBytes(data, metadata);
+
             Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
             Send(frame, true);
         }
@@ -140,6 +167,14 @@ namespace Rooms.Forge.Networking
         public void JoinRoom()
         {
             BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roleInfo.uid);
+
+            byte[] metadata = roleInfo.Serialize();
+
+            //如果对象具有元数据，则写入
+            ObjectMapper.Instance.MapBytes(data, metadata != null);
+            if (metadata != null)
+                ObjectMapper.Instance.MapBytes(data, metadata);
+
             Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
             Send(frame, true);
         }

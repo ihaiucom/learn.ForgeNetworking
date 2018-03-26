@@ -38,7 +38,7 @@ namespace Rooms.Forge.Networking
 
         UnitNetworkObject hero;
 
-        public void Initialize(NetRoomBase room, NetRoomInfo roomInfo)
+        public void Initialize(NetRoomBase room, IRoomInfo roomInfo)
         {
             Room = room;
             Scene = new RoomScene(this);

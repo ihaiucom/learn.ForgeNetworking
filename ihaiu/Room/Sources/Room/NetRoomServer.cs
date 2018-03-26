@@ -31,7 +31,7 @@ namespace Rooms.Forge.Networking
 
 
 
-        public NetRoomServer(LobbyServer lobby, NetRoomInfo roomInfo)
+        public NetRoomServer(LobbyServer lobby, IRoomInfo roomInfo)
         {
             this.serverLobby = lobby;
 
@@ -55,8 +55,9 @@ namespace Rooms.Forge.Networking
         /// <summary>
         /// 玩家, 加入房间
         /// </summary>
-        public NetJoinRoomResult JoinRoom(ulong roleUid, NetworkingPlayer networkingPlayer, Binary frame, Action<NetJoinRoomResult> callback = null)
+        public NetJoinRoomResult JoinRoom(IRoleInfo roleInfo, NetworkingPlayer networkingPlayer, Action<NetJoinRoomResult> callback = null)
         {
+            ulong roleUid = roleInfo.uid;
             NetJoinRoomResult ret;
             if (playerDict.ContainsKey(roleUid))
             {

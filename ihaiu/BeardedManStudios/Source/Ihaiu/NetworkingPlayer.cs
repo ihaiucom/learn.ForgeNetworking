@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rooms.Forge.Networking;
+using System;
 /** 
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
@@ -16,5 +17,9 @@ namespace BeardedManStudios.Forge.Networking
 
         // 最后一次的 角色UID
         public ulong lastRoleUid;
+
+        // 最后一次的 角色信息
+        public IRoleInfo lastRoleInfo;
+
     }
 }

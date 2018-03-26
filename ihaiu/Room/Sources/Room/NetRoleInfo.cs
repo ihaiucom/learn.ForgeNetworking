@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BeardedManStudios;
+using BeardedManStudios.Forge.Networking;
+using System;
 using System.Collections.Generic;
 /** 
 * ==============================================================================
@@ -13,10 +15,28 @@ namespace Rooms.Forge.Networking
     /// <summary>
     /// 角色信息
     /// </summary>
-    public class NetRoleInfo
+    public class NetRoleInfo : IRoleInfo
     {
-        public ulong uid;
-        public string name;
+        public bool IsDeserialize { get; set; }
+        public byte[] Metadata { get; set; }
+
+        public byte[] Serialize()
+        {
+            BMSByte metadata = new BMSByte();
+            ObjectMapper.Instance.MapBytes(metadata, uid);
+            ObjectMapper.Instance.MapBytes(metadata, name);
+            return metadata.CompressBytes();
+        }
+
+        public IRoleInfo Deserialize()
+        {
+            IsDeserialize = true;
+            return this;
+        }
+
+
+        public ulong uid { get; set; }
+        public string name { get; set; }
 
         // 玩家加入
         internal void OnPlayerJoined()

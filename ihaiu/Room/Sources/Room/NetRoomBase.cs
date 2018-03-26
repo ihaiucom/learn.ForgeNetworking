@@ -40,11 +40,13 @@ namespace Rooms.Forge.Networking
         /// <summary>
         /// 初始化
         /// </summary>
-        protected virtual void Initialize(LobbyBase lobby, NetRoomInfo roomInfo)
+        protected virtual void Initialize(LobbyBase lobby, IRoomInfo roomInfo)
         {
             this.lobby = lobby;
-            this.roomId = roomInfo.roomUid;
             this.Time = lobby.Socket.Time;
+            this.roomId = roomInfo.roomUid;
+
+
 
             stage = StageFactory.Create(this, roomInfo);
             scene = stage.Scene;
