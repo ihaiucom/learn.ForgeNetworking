@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BeardedManStudios;
+using System;
 using System.Collections.Generic;
 /** 
 * ==============================================================================
@@ -14,9 +15,13 @@ namespace Rooms.Forge.Networking
     {
         bool IsDeserialize { get; set; }
         byte[] Metadata { get; set; }
+
+        void MapBytes(BMSByte data);
         byte[] Serialize();
         IRoomInfo Deserialize();
 
+
+        int classId { get; set; }
         ulong roomUid { get; set; }
         int stageId { get; set; }
 

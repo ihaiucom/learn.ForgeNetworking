@@ -20,21 +20,48 @@ namespace Rooms.Forge.Networking
         public bool IsDeserialize { get; set; }
         public byte[] Metadata { get; set; }
 
-        public byte[] Serialize()
+        public static IRoleInfo Read(BMSByte StreamData)
         {
-            BMSByte metadata = new BMSByte();
-            ObjectMapper.Instance.MapBytes(metadata, uid);
-            ObjectMapper.Instance.MapBytes(metadata, name);
-            return metadata.CompressBytes();
+            IRoleInfo roleInfo = new NetRoleInfo();
+            roleInfo.uid = StreamData.GetBasicType<ulong>();
+            roleInfo.name = StreamData.GetBasicType<string>();
+            if (StreamData.GetBasicType<bool>())
+                roleInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(StreamData);
+
+            roleInfo = roleInfo.Deserialize();
+            return roleInfo;
         }
 
-        public IRoleInfo Deserialize()
+        public virtual void MapBytes(BMSByte data)
+        {
+            ObjectMapper.Instance.MapBytes(data, uid);
+            ObjectMapper.Instance.MapBytes(data, name);
+
+            byte[] metadata = Serialize();
+
+            //如果对象具有元数据，则写入
+            ObjectMapper.Instance.MapBytes(data, metadata != null);
+            if (metadata != null)
+                ObjectMapper.Instance.MapBytes(data, metadata);
+        }
+
+        public virtual byte[] Serialize()
+        {
+            //BMSByte metadata = new BMSByte();
+            //ObjectMapper.Instance.MapBytes(metadata, uid);
+            //ObjectMapper.Instance.MapBytes(metadata, name);
+            //return metadata.CompressBytes();
+            return null;
+        }
+
+        public virtual IRoleInfo Deserialize()
         {
             IsDeserialize = true;
             return this;
         }
 
 
+        public int classId { get; set; }
         public ulong uid { get; set; }
         public string name { get; set; }
 

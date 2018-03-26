@@ -37,6 +37,10 @@ namespace Rooms.Forge.Networking
 
             Initialize(lobby, roomInfo);
 
+            NetworkingPlayer serverPlayer = lobby.Socket.Me;
+            if (!playerList.Contains(serverPlayer))
+                playerList.Add(serverPlayer);
+
             // TODO 测试房间结束
             //Task.Queue(() =>
             //{
@@ -44,6 +48,15 @@ namespace Rooms.Forge.Networking
             //    SetRoomOver();
             //}, 10000);
             //Loger.LogFormat("10秒后 房间{0}将结束", roomId);
+        }
+
+        /// <summary>
+        /// 释放，销毁
+        /// </summary>
+        public override void Dispose()
+        {
+            playerList.Clear();
+            base.Dispose();
         }
 
         public override void SetRoomOver()
@@ -72,8 +85,9 @@ namespace Rooms.Forge.Networking
             }
 
             networkingPlayer.lastRoleUid = roleUid;
+            networkingPlayer.lastRoleInfo = roleInfo;
 
-            if(!playerList.Contains(networkingPlayer))
+            if (!playerList.Contains(networkingPlayer))
                 playerList.Add(networkingPlayer);
 
             if (callback != null)
@@ -82,11 +96,12 @@ namespace Rooms.Forge.Networking
             }
 
             // 广播玩家加入
-            BMSByte data = ObjectMapper.BMSByte(roleUid);
-            Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_JOIN_ROOM, roomId);
-            Send(sendframe, true);
+            BMSByte data = new BMSByte();
+            roleInfo.MapBytes(data);
+            Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Others, MessageGroupIds.ROOM, false, RouterIds.ROOM_JOIN_ROOM, roomId);
+            Send(sendframe, true, networkingPlayer);
 
-            OnPlayerJoinRoom(roleUid, networkingPlayer);
+            OnPlayerJoinRoom(roleInfo, networkingPlayer);
             OnPlayerJoined(networkingPlayer);
             return ret;
         }
@@ -116,8 +131,8 @@ namespace Rooms.Forge.Networking
 
                     // 广播玩家离开
                     BMSByte data = ObjectMapper.BMSByte(roleUid);
-                    Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Target, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
-                    Send(sendframe, true);
+                    Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Others, MessageGroupIds.ROOM, false, RouterIds.ROOM_LEFT_ROOM, roomId);
+                    Send(sendframe, true, networkingPlayer);
 
                     result = NetLeftRoomResult.Successed;
                 }

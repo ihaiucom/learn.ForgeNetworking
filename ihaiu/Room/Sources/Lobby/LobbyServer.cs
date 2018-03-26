@@ -162,20 +162,24 @@ namespace Rooms.Forge.Networking
         /// </summary>
         private void CreateAndJoinRoom(NetworkingPlayer player, Binary frame)
         {
-            IRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = frame.StreamData.GetBasicType<ulong>();
-            roomInfo.stageId = frame.StreamData.GetBasicType<int>();
+            IRoomInfo roomInfo = NetRoomInfo.Read(frame.StreamData);
+            IRoleInfo roleInfo = NetRoleInfo.Read(frame.StreamData);
 
+            if (!roomDict.ContainsKey(roomInfo.roomUid))
+            {
+                CreateRoom(roomInfo, player);
+            }
+            //else
+            //{
+            //    if (player != null)
+            //    {
+            //        BMSByte data = ObjectMapper.BMSByte(true, roomInfo.roomUid, string.Empty);
+            //        Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            //        Send(player, sendframe, true);
+            //    }
+            //}
 
-
-            if (frame.StreamData.GetBasicType<bool>())
-                roomInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(frame.StreamData);
-
-
-            roomInfo = roomInfo.Deserialize();
-            CreateRoom(roomInfo, player);
-
-            JoinRoom();
+            JoinRoom(roomInfo.roomUid, roleInfo, player);
         }
 
 
@@ -184,16 +188,7 @@ namespace Rooms.Forge.Networking
         /// </summary>
         private void CreateRoom(NetworkingPlayer player, Binary frame)
         {
-            IRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = frame.StreamData.GetBasicType<ulong>();
-            roomInfo.stageId = frame.StreamData.GetBasicType<int>();
-
-
-
-            if (frame.StreamData.GetBasicType<bool>())
-                roomInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(frame.StreamData);
-
-
+            IRoomInfo roomInfo = NetRoomInfo.Read(frame.StreamData) ;
             CreateRoom(roomInfo, player);
         }
 
@@ -244,11 +239,17 @@ namespace Rooms.Forge.Networking
         {
             // 房间UID
             ulong roomUid = frame.StreamData.GetBasicType<ulong>();
-            // 角色UID
-            ulong roleUid = frame.StreamData.GetBasicType<ulong>();
+
+            // 角色
+            IRoleInfo roleInfo = new NetRoleInfo();
+            roleInfo.uid = frame.StreamData.GetBasicType<ulong>();
+            roleInfo.name = frame.StreamData.GetBasicType<string>();
+
+            if (frame.StreamData.GetBasicType<bool>())
+                roleInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(frame.StreamData);
 
 
-
+            JoinRoom(roomUid, roleInfo, player);
         }
 
         private void JoinRoom(ulong roomUid, IRoleInfo roleInfo, NetworkingPlayer player)

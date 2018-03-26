@@ -33,17 +33,26 @@ namespace Rooms.Forge.Networking
             if (frame.GroupId == MessageGroupIds.ROOM)
             {
                 byte routerId = frame.RouterId;
-                ulong roleUid = frame.StreamData.GetBasicType<ulong>();
-
-                switch (routerId)
+                if(routerId == RouterIds.ROOM_GET_PLAYERLIST)
                 {
-                    case RouterIds.ROOM_JOIN_ROOM:
-                        OnPlayerJoinRoom(roleUid, player);
-                        break;
+                    List<IRoleInfo> playerList = new List<IRoleInfo>();
+                    OnPlayerListEvent(playerList);
+                }
+                else
+                {
 
-                    case RouterIds.ROOM_LEFT_ROOM:
-                        OnPlayerLeftRoom(roleUid, player);
-                        break;
+                    switch (routerId)
+                    {
+                        case RouterIds.ROOM_JOIN_ROOM:
+                            IRoleInfo roleInfo = NetRoleInfo.Read(frame.StreamData);
+                            OnPlayerJoinRoom(roleInfo, player);
+                            break;
+
+                        case RouterIds.ROOM_LEFT_ROOM:
+                            ulong roleUid = frame.StreamData.GetBasicType<ulong>();
+                            OnPlayerLeftRoom(roleUid, player);
+                            break;
+                    }
                 }
             }
             else

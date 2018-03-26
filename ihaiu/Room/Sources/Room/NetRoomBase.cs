@@ -15,11 +15,16 @@ namespace Rooms.Forge.Networking
     public abstract class NetRoomBase
     {
 
+        public delegate void RoomPlayerInfoListEvent(List<IRoleInfo> players);
+        public delegate void RoomPlayerInfoEvent(IRoleInfo roleInfo, NetworkingPlayer player);
         public delegate void RoomPlayerEvent(ulong roleUid, NetworkingPlayer player);
         public delegate void RoomOverEvent(NetRoomBase room);
 
+
+        // 玩家 获取玩家列表
+        public event RoomPlayerInfoListEvent playerListEvent;
         // 玩家 加入房间
-        public event RoomPlayerEvent playerJoinRoom;
+        public event RoomPlayerInfoEvent playerJoinRoom;
         // 玩家 离开房间
         public event RoomPlayerEvent playerLeftRoom;
 
@@ -69,12 +74,21 @@ namespace Rooms.Forge.Networking
             scene.OnBinaryMessageReceived(player, frame);
         }
 
+        // 调事件 -- 获取玩家列表
+        protected void OnPlayerListEvent(List<IRoleInfo> playerList)
+        {
+            if (playerListEvent != null)
+            {
+                playerListEvent(playerList);
+            }
+        }
+
         // 调事件 -- 玩家加入
-        protected void OnPlayerJoinRoom(ulong roleUid, NetworkingPlayer player)
+        protected void OnPlayerJoinRoom(IRoleInfo roleInfo, NetworkingPlayer player)
         {
             if (playerJoinRoom != null)
             {
-                playerJoinRoom(roleUid, player);
+                playerJoinRoom(roleInfo, player);
             }
         }
 

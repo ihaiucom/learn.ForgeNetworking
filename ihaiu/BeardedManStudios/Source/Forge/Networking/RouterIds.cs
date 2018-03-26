@@ -32,10 +32,12 @@
         // 大厅路由ID -- 离开观看房间
         public const int LOBBY_LEFT_WATCH_ROOM = 11;
 
-
+        
         // 房间路由ID -- 玩家加入房间
         public const int ROOM_JOIN_ROOM = 12;
         // 房间路由ID -- 玩家离开房间
         public const int ROOM_LEFT_ROOM = 13;
+        // 房间路由ID -- 获取玩家列表
+        public const int ROOM_GET_PLAYERLIST = 14;
     }
 }
