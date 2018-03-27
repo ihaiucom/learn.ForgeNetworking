@@ -17,18 +17,22 @@ namespace Rooms.Forge.Networking
 {
     public class LobbyServer : LobbyBase
     {
-
-        public LobbyServer(int connections, string hostAddress = "0.0.0.0", ushort port = 16000)
+        public LobbyServer(int connections)
         {
+
             Socket = new UDPServer(connections);
 
-            Socket.binaryMessageReceived    += OnBinaryMessageReceived;
+            Socket.binaryMessageReceived += OnBinaryMessageReceived;
+            Socket.textMessageReceived += OnTextMessageReceived;
 
-            Socket.playerConnected          += OnPlayerConnected;
-            Socket.playerAccepted           += OnPlayerAccepted;
-            Socket.playerRejected           += OnPlayerRejected;
-            Socket.playerDisconnected       += OnPlayerDisconnected;
+            Socket.playerConnected += OnPlayerConnected;
+            Socket.playerAccepted += OnPlayerAccepted;
+            Socket.playerRejected += OnPlayerRejected;
+            Socket.playerDisconnected += OnPlayerDisconnected;
+        }
 
+        public void Connect(string hostAddress = "0.0.0.0", ushort port = 16000)
+        {
             ((UDPServer)Socket).Connect(hostAddress, port);
         }
 
@@ -72,6 +76,26 @@ namespace Rooms.Forge.Networking
             ((UDPServer)Socket).Send(player, frame, true);
         }
 
+        // 接收文本数据
+        private void OnTextMessageReceived(NetworkingPlayer player, Text frame, NetWorker sender)
+        {
+
+            if (frame.RoomId != 0)
+            {
+                if (roomDict.ContainsKey(frame.RoomId))
+                {
+                    try
+                    {
+                        roomDict[frame.RoomId].OnTextMessageReceived(player, frame, sender);
+                    }
+                    catch (Exception e)
+                    {
+                        Loger.LogError(e.ToString());
+                    }
+                }
+            }
+        }
+
         // 接收二进制数据
         private void OnBinaryMessageReceived (NetworkingPlayer player, Binary frame, NetWorker sender)
         {
@@ -101,6 +125,9 @@ namespace Rooms.Forge.Networking
 
                 switch(routerId)
                 {
+                    case RouterIds.LOBBY_CREATE_AND_JOIN_ROOM:
+                        CreateAndJoinRoom(player, frame);
+                        break;
                     case RouterIds.LOBBY_CREATE_ROOM:
                         CreateRoom(player, frame);
                         break;
@@ -155,20 +182,44 @@ namespace Rooms.Forge.Networking
 
 
         /// <summary>
+        /// 创建并加入房间
+        /// </summary>
+        private void CreateAndJoinRoom(NetworkingPlayer player, Binary frame)
+        {
+            IRoomInfo roomInfo = NetRoomInfo.Read(frame.StreamData);
+            IRoleInfo roleInfo = NetRoleInfo.Read(frame.StreamData);
+
+            if (!roomDict.ContainsKey(roomInfo.roomUid))
+            {
+                CreateRoom(roomInfo, player);
+            }
+            //else
+            //{
+            //    if (player != null)
+            //    {
+            //        BMSByte data = ObjectMapper.BMSByte(true, roomInfo.roomUid, string.Empty);
+            //        Binary sendframe = new Binary(Socket.Time.Timestep, false, data, Receivers.Target, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            //        Send(player, sendframe, true);
+            //    }
+            //}
+
+            JoinRoom(roomInfo.roomUid, roleInfo, player);
+        }
+
+
+        /// <summary>
         /// 创建房间
         /// </summary>
         private void CreateRoom(NetworkingPlayer player, Binary frame)
         {
-            NetRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = frame.StreamData.GetBasicType<ulong>();
-            roomInfo.stageId = frame.StreamData.GetBasicType<int>();
+            IRoomInfo roomInfo = NetRoomInfo.Read(frame.StreamData) ;
             CreateRoom(roomInfo, player);
         }
 
         /// <summary>
         /// 创建房间
         /// </summary>
-        public bool CreateRoom(NetRoomInfo roomInfo, NetworkingPlayer player = null)
+        public bool CreateRoom(IRoomInfo roomInfo, NetworkingPlayer player = null)
         {
             if(roomDict.ContainsKey(roomInfo.roomUid))
             {
@@ -212,9 +263,14 @@ namespace Rooms.Forge.Networking
         {
             // 房间UID
             ulong roomUid = frame.StreamData.GetBasicType<ulong>();
-            // 角色UID
-            ulong roleUid = frame.StreamData.GetBasicType<ulong>();
+            // 角色
+            IRoleInfo roleInfo = NetRoleInfo.Read(frame.StreamData); 
 
+            JoinRoom(roomUid, roleInfo, player);
+        }
+
+        private void JoinRoom(ulong roomUid, IRoleInfo roleInfo, NetworkingPlayer player)
+        {
 
             Action<NetJoinRoomResult> CallResult = (NetJoinRoomResult result) =>
             {
@@ -226,7 +282,7 @@ namespace Rooms.Forge.Networking
             NetJoinRoomResult ret;
 
             NetRoomServer room;
-            if(!roomDict.TryGetValue(roomUid, out room))
+            if (!roomDict.TryGetValue(roomUid, out room))
             {
                 // 失败 不存在该房间 
                 ret = NetJoinRoomResult.Failed_NoRoom;
@@ -234,12 +290,11 @@ namespace Rooms.Forge.Networking
             }
             else
             {
-                ret = room.JoinRoom(roleUid, player, frame, CallResult);
+                ret = room.JoinRoom(roleInfo, player, CallResult);
                 player.lastRoomUid = roomUid;
             }
 
             OnPlayerJoinRoom(roomUid, player, ret);
-
         }
 
         /// <summary>

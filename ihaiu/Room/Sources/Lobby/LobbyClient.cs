@@ -22,18 +22,16 @@ namespace Rooms.Forge.Networking
 
         public LobbyClient()
         {
-
-        }
-
-        public void Connect(string hostAddress = "127.0.0.1", ushort port = 16000)
-        {
             Socket = new UDPClient();
 
             Socket.binaryMessageReceived += OnBinaryMessageReceived;
 
-            Socket.serverAccepted   += OnServerAccepted;
-            Socket.disconnected     += OnDisconnected;
+            Socket.serverAccepted += OnServerAccepted;
+            Socket.disconnected += OnDisconnected;
+        }
 
+        public void Connect(string hostAddress = "127.0.0.1", ushort port = 16000)
+        {
             ((UDPClient)Socket).Connect(hostAddress, port);
         }
 

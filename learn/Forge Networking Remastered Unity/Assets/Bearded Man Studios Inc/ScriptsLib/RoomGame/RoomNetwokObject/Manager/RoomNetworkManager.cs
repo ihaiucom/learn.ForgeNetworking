@@ -1,7 +1,6 @@
 ﻿using BeardedManStudios;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
-using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.SimpleJSON;
 using Rooms.Forge.Networking.Generated;
 using System.Collections.Generic;

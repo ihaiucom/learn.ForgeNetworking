@@ -2,7 +2,6 @@
 using BeardedManStudios.Forge.Networking.Frame;
 using System;
 using System.Collections.Generic;
-using static BeardedManStudios.Forge.Networking.NetWorker;
 /** 
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
@@ -21,11 +20,10 @@ namespace Rooms.Forge.Networking
         public delegate void RoomPlayerEvent(ulong roleUid, NetworkingPlayer player);
         public delegate void RoomOverEvent(NetRoomBase room);
 
-
         // 给外界扩展文本消息
-        public event TextFrameEvent textMessageReceived;
+        public event NetWorker.TextFrameEvent textMessageReceived;
         // 给外界扩展二进制消息
-        public event BinaryFrameEvent binaryMessageReceived;
+        public event NetWorker.BinaryFrameEvent binaryMessageReceived;
         // 玩家 获取玩家列表
         public event RoomPlayerInfoListEvent playerListEvent;
         // 玩家 加入房间

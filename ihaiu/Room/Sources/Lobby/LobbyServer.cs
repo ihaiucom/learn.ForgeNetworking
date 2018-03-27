@@ -17,23 +17,22 @@ namespace Rooms.Forge.Networking
 {
     public class LobbyServer : LobbyBase
     {
-        public LobbyServer()
+        public LobbyServer(int connections)
         {
 
-        }
-
-        public void Connect(int connections, string hostAddress = "0.0.0.0", ushort port = 16000)
-        {
             Socket = new UDPServer(connections);
 
-            Socket.binaryMessageReceived    += OnBinaryMessageReceived;
+            Socket.binaryMessageReceived += OnBinaryMessageReceived;
             Socket.textMessageReceived += OnTextMessageReceived;
 
-            Socket.playerConnected          += OnPlayerConnected;
-            Socket.playerAccepted           += OnPlayerAccepted;
-            Socket.playerRejected           += OnPlayerRejected;
-            Socket.playerDisconnected       += OnPlayerDisconnected;
+            Socket.playerConnected += OnPlayerConnected;
+            Socket.playerAccepted += OnPlayerAccepted;
+            Socket.playerRejected += OnPlayerRejected;
+            Socket.playerDisconnected += OnPlayerDisconnected;
+        }
 
+        public void Connect(string hostAddress = "0.0.0.0", ushort port = 16000)
+        {
             ((UDPServer)Socket).Connect(hostAddress, port);
         }
 

@@ -2,7 +2,6 @@ using BeardedManStudios;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using BeardedManStudios.Forge.Networking.Generated;
-using BeardedManStudios.Forge.Networking.Unity;
 using System;
 using UnityEngine;
 

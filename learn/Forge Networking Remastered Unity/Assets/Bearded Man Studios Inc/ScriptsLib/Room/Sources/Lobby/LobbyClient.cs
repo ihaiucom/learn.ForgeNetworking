@@ -16,18 +16,22 @@ namespace Rooms.Forge.Networking
 {
     public class LobbyClient : LobbyBase
     {
-        public NetRoleInfo roleInfo;
-        public NetRoomInfo roomInfo;
+        public IRoleInfo roleInfo;
+        public IRoomInfo roomInfo;
         public NetRoomClient room;
-        public LobbyClient(string hostAddress = "127.0.0.1", ushort port = 16000)
+
+        public LobbyClient()
         {
             Socket = new UDPClient();
 
             Socket.binaryMessageReceived += OnBinaryMessageReceived;
 
-            Socket.serverAccepted   += OnServerAccepted;
-            Socket.disconnected     += OnDisconnected;
+            Socket.serverAccepted += OnServerAccepted;
+            Socket.disconnected += OnDisconnected;
+        }
 
+        public void Connect(string hostAddress = "127.0.0.1", ushort port = 16000)
+        {
             ((UDPClient)Socket).Connect(hostAddress, port);
         }
 
@@ -52,6 +56,14 @@ namespace Rooms.Forge.Networking
             ((UDPClient)Socket).Send(frame, reliable);
         }
 
+        // 接收文本数据
+        private void OnTextMessageReceived(NetworkingPlayer player, Text frame, NetWorker sender)
+        {
+            if (room != null && room.roomId == frame.RoomId)
+            {
+                room.OnTextMessageReceived(player, frame, sender);
+            }
+        }
 
         // 接收二进制数据
         private void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
@@ -100,9 +112,24 @@ namespace Rooms.Forge.Networking
         /// <summary>
         /// 测试创建房间
         /// </summary>
-        public void TestCreateRoom(NetRoomInfo roomInfo)
+        public void TestCreateRoom(IRoomInfo roomInfo)
         {
             room = new NetRoomClient(this, roomInfo);
+        }
+
+        /// <summary>
+        /// 创建并加入房间
+        /// </summary>
+        public void CreateAndJoinRoom()
+        {
+            BMSByte data = new BMSByte();
+            // RoomInfo
+            roomInfo.MapBytes(data);
+            // RoleInfo
+            roleInfo.MapBytes(data);
+
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            Send(frame, true);
         }
 
 
@@ -111,7 +138,9 @@ namespace Rooms.Forge.Networking
         /// </summary>
         public void CreateRoom()
         {
-            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roomInfo.stageId);
+            BMSByte data = new BMSByte();
+            roomInfo.MapBytes(data);
+
             Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
             Send(frame, true);
         }
@@ -133,13 +162,27 @@ namespace Rooms.Forge.Networking
             }
         }
 
+        /// <summary>
+        /// 获取玩家列表
+        /// </summary>
+        public void GetRoomPlayerList()
+        {
+            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid);
+            roleInfo.MapBytes(data);
+
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.ROOM, false, RouterIds.ROOM_GET_PLAYERLIST);
+            Send(frame, true);
+        }
+
 
         /// <summary>
         /// 加入房间
         /// </summary>
         public void JoinRoom()
         {
-            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid, roleInfo.uid);
+            BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid);
+            roleInfo.MapBytes(data);
+
             Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_JOIN_ROOM);
             Send(frame, true);
         }

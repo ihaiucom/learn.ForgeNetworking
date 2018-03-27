@@ -304,7 +304,7 @@ namespace Rooms.Forge.Networking
             NetworkObject.PlayerAccepted(player, currentObjects);
         }
 
-        internal void DestoryPlayerNetworkObjects(NetworkingPlayer player)
+        public void DestoryPlayerNetworkObjects(NetworkingPlayer player)
         {
 
             List<NetworkObject> list = new List<NetworkObject>();
@@ -571,7 +571,7 @@ namespace Rooms.Forge.Networking
         /// 这个可以调用的messageReceived事件调用的包装器
         /// A wrapper for the messageReceived event call that chindren of this can call
         /// </summary>
-        public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame)
+        public void OnBinaryMessageReceived(NetworkingPlayer player, Binary frame, NetWorker sender)
         {
             byte routerId = frame.RouterId;
             if (routerId == RouterIds.RPC_ROUTER_ID || routerId == RouterIds.BINARY_DATA_ROUTER_ID || routerId == RouterIds.CREATED_OBJECT_ROUTER_ID)
@@ -618,6 +618,8 @@ namespace Rooms.Forge.Networking
             // 在服务器接受客户端时，将服务器现有的所有网络对象 发给该玩家，让他创建
             else if (routerId == RouterIds.ACCEPT_MULTI_ROUTER_ID)
                 CreateMultiNetworkObject(player, (Binary)frame);
+            else
+                Room.OnBinaryMessageEvent(player, frame, sender);
         }
 
         private void ExecuteRouterAction(byte routerId, NetworkObject networkObject, Binary frame, NetworkingPlayer player)

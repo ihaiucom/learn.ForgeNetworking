@@ -12,9 +12,12 @@ public class RoomDemoServer : MonoBehaviour {
     {
         Rpc.MainThreadRunner = UnityMainThread.Instance;
         lobby = new LobbyServer(int.MaxValue);
+        lobby.StageFactory = new StageFactory();
+        lobby.Connect();
+
         NetRoomInfo roomInfo = new NetRoomInfo();
         roomInfo.roomUid = 1;
-        roomInfo.stageId = 1;
+        roomInfo.stageClassId = 1;
         lobby.CreateRoom(roomInfo);
     }
 	

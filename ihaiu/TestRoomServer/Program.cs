@@ -13,9 +13,9 @@ namespace TestRoomServer
             string read = string.Empty;
 
 
-            LobbyServer lobby = new LobbyServer();
+            LobbyServer lobby = new LobbyServer(int.MaxValue);
             lobby.StageFactory = new StageFactory();
-            lobby.Connect(int.MaxValue);
+            lobby.Connect();
 
             NetRoomInfo roomInfo = new NetRoomInfo();
             roomInfo.roomUid = 1;

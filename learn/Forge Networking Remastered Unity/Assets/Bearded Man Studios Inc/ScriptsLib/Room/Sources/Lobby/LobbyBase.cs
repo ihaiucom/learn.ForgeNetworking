@@ -13,7 +13,19 @@ namespace Rooms.Forge.Networking
 {
     public abstract class LobbyBase
     {
+        //===================================================
+        // 工厂类
+        //---------------------------------------------------
 
+        /// <summary>
+        /// 场景工厂
+        /// </summary>
+        public IStageFactory StageFactory { get; set; }
+
+
+        //===================================================
+        // 事件
+        //---------------------------------------------------
         public delegate void RoomEvent(ulong roomUid);
         public delegate void RoomFailedEvent(ulong roomUid, string error);
 

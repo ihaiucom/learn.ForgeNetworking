@@ -17,6 +17,7 @@
 |                                                              |
 \------------------------------+------------------------------*/
 
+using BeardedManStudios.Source.Logging;
 using System;
 
 namespace BeardedManStudios.Forge.Networking.Frame
@@ -356,7 +357,7 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		{
             if(player == null)
             {
-                Loger.LogError("MakeReliable player=null");
+                ForgeLogger.Error("MakeReliable player=null");
             }
 			UniqueReliableId = player.GetNextReliableId();
 			IsReliable = true;

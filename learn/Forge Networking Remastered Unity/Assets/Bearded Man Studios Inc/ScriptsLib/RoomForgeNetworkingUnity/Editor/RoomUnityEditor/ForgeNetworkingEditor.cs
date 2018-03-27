@@ -59,11 +59,11 @@ namespace Rooms.Forge.Networking.UnityEditor
 		/// <summary>
 		/// This is the generated folder path
 		/// </summary>
-		private const string GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/ScriptsLib/RoomGenerated";
+		private const string GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/ScriptsLib/RoomGame/RoomNetwokObject/Generated";
 		/// <summary>
 		/// This is the user generated folder path
 		/// </summary>
-		private const string USER_GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/ScriptsLib/RoomGenerated/UserGenerated";
+		private const string USER_GENERATED_FOLDER_PATH = "Bearded Man Studios Inc/ScriptsLib/RoomGame/RoomNetwokObject/Generated";
 		/// <summary>
 		/// This is the wizard data stored by the user previously
 		/// </summary>

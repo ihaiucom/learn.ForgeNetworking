@@ -376,7 +376,7 @@ namespace BeardedManStudios.Forge.Networking
                     // 统计 宽带接收数据大小
 					BandwidthIn += (ulong)packet.Size;
 				}
-				catch(Exception e)
+				catch
 				{
                     // 如果出错， 就查找该IP PROT的玩家，将该玩家踢掉
 					UDPNetworkingPlayer player;

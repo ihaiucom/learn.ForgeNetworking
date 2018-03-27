@@ -13,17 +13,20 @@ public class RoomDemoClient : MonoBehaviour {
         Rpc.MainThreadRunner = UnityMainThread.Instance;
 
         lobby = new LobbyClient();
+        lobby.StageFactory = new StageFactory();
+
         NetRoomInfo roomInfo = new NetRoomInfo();
         roomInfo.roomUid = 1;
-        roomInfo.stageId = 1;
+        roomInfo.stageClassId = 1;
         lobby.roomInfo = roomInfo;
 
         NetRoleInfo roleInfo = new NetRoleInfo();
         roleInfo.uid = 1;
         roleInfo.name = "ZF";
         lobby.roleInfo = roleInfo;
-
         lobby.Socket.serverAccepted += OnServerAccepted;
+        lobby.Connect();
+
 
         //lobby.TestCreateRoom(roomInfo);
     }

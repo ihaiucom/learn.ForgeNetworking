@@ -3,7 +3,6 @@ using Rooms.Forge.Networking;
 using Rooms.Forge.Networking.Generated;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Solider : UnitNetworkObject
 {
