@@ -55,6 +55,23 @@
     <Compile Include="Sources\MasterClientParameter.cs" />
     <Compile Include="Sources\ProtoMaster.cs" />
     <Compile Include="Sources\ProtoPacket_Master.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Hero.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\BMSUnityExtensions.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\InterpolateQuaternion.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\InterpolateVector2.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\InterpolateVector3.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\InterpolateVector4.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Interpolate\UnityObjectMapper.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\RoomNetworkManager.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\RoomNetworkObjectFactory.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\UnityMainThread.cs" />
+    <Compile Include="Sources\RoomNetwokObject\RoomGenerated\UserGenerated\UnitNetworkObject.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Solider.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Tower.cs" />
+    <Compile Include="Sources\RoomNetwokObject\UnitClassId.cs" />
+    <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
+    <Compile Include="Sources\Stage\RoomStageNormal.cs" />
+    <Compile Include="Sources\Stage\StageFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

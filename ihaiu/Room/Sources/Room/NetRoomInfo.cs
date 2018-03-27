@@ -14,39 +14,80 @@ namespace Rooms.Forge.Networking
 {
     public class NetRoomInfo : IRoomInfo
     {
-        public bool IsDeserialize { get; set; }
-        public byte[] Metadata { get; set; }
+        public int ClassId { get { return 0; } }
+        protected bool IsDeserialize { get; set; }
+        protected byte[] Metadata { get; set; }
 
         public ulong roomUid { get; set; }
-        public int stageId { get; set; }
+        public int stageClassId { get; set; }
 
+        private static Dictionary<int, Type> classDict = new Dictionary<int, Type>();
+        public static void RegistereClasss<T>(int classId) where T : IRoomInfo
+        {
+            classDict[classId] = typeof(T);
+        }
 
         public static IRoomInfo Read(BMSByte StreamData)
         {
-            IRoomInfo roomInfo = new NetRoomInfo();
-            roomInfo.roomUid = StreamData.GetBasicType<ulong>();
-            roomInfo.stageId = StreamData.GetBasicType<int>();
-            if (StreamData.GetBasicType<bool>())
-                roomInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(StreamData);
 
-            roomInfo = roomInfo.Deserialize();
-            return roomInfo;
+            int classId = StreamData.GetBasicType<int>();
+            IRoomInfo info = null;
+
+            if (classDict.ContainsKey(classId) && classDict[classId] != null)
+            {
+                info = (IRoomInfo)Activator.CreateInstance(classDict[classId]);
+            }
+
+            if (info == null)
+            {
+                info = new NetRoomInfo();
+            }
+
+            info.ReadBytes(StreamData);
+            return info;
         }
+
 
         public virtual void MapBytes(BMSByte data)
         {
+            ObjectMapper.Instance.MapBytes(data, ClassId);
             ObjectMapper.Instance.MapBytes(data, roomUid);
-            ObjectMapper.Instance.MapBytes(data, stageId);
+            ObjectMapper.Instance.MapBytes(data, stageClassId);
 
-            byte[] metadata = Serialize();
+            OnMapBytes(data);
 
+            byte[] metadata = SerializeMetadata();
             //如果对象具有元数据，则写入
             ObjectMapper.Instance.MapBytes(data, metadata != null);
             if (metadata != null)
                 ObjectMapper.Instance.MapBytes(data, metadata);
         }
 
-        public byte[] Serialize()
+        public virtual void ReadBytes(BMSByte StreamData)
+        {
+            roomUid = StreamData.GetBasicType<ulong>();
+            stageClassId = StreamData.GetBasicType<int>();
+
+            OnReadBytes(StreamData);
+
+            if (StreamData.GetBasicType<bool>())
+                Metadata = ObjectMapper.Instance.Map<byte[]>(StreamData);
+
+            DeserializeMetadata();
+        }
+
+
+        protected virtual void OnMapBytes(BMSByte data)
+        {
+
+        }
+
+        protected virtual void OnReadBytes(BMSByte StreamData)
+        {
+
+        }
+
+        protected virtual byte[] SerializeMetadata()
         {
             //BMSByte metadata = new BMSByte();
             //ObjectMapper.Instance.MapBytes(metadata, roomUid);
@@ -55,7 +96,7 @@ namespace Rooms.Forge.Networking
             return null;
         }
 
-        public IRoomInfo Deserialize()
+        protected virtual IRoomInfo DeserializeMetadata()
         {
             IsDeserialize = true;
             return this;

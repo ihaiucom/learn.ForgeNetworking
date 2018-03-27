@@ -4,16 +4,16 @@ using System.Collections.Generic;
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      3/1/2018 3:31:31 PM
+*  @CreateTime      3/1/2018 3:30:17 PM
 *  @Description:    
 * ==============================================================================
 */
 namespace Rooms.Forge.Networking
 {
     /// <summary>
-    /// 关卡 -- 普通
+    /// 关卡 -- 活动 -- 金币
     /// </summary>
-    public class RoomStageNormal : RoomStage
+    public class RoomStageActivityGlobal : RoomStage
     {
 
     }

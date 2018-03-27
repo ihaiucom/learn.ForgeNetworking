@@ -45,26 +45,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoomNetwokObject\Hero.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\BMSUnityExtensions.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\InterpolateQuaternion.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector2.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector3.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\InterpolateVector4.cs" />
-    <Compile Include="RoomNetwokObject\Interpolate\UnityObjectMapper.cs" />
-    <Compile Include="RoomNetwokObject\Manager\RoomNetworkManager.cs" />
-    <Compile Include="RoomNetwokObject\Manager\RoomNetworkObjectFactory.cs" />
-    <Compile Include="RoomNetwokObject\Manager\UnityMainThread.cs" />
-    <Compile Include="RoomNetwokObject\RoomGenerated\UserGenerated\UnitNetworkObject.cs" />
-    <Compile Include="RoomNetwokObject\Solider.cs" />
-    <Compile Include="RoomNetwokObject\Tower.cs" />
-    <Compile Include="RoomNetwokObject\UnitClassId.cs" />
     <Compile Include="Sources\Lobby\LobbyBase.cs" />
     <Compile Include="Sources\Lobby\Lobby.cs" />
     <Compile Include="Sources\Lobby\LobbyClient.cs" />
     <Compile Include="Sources\Lobby\LobbyServer.cs" />
     <Compile Include="Sources\Objects\INetworkObjectFactory.cs" />
     <Compile Include="Sources\Objects\INetworkBehavior.cs" />
+    <Compile Include="Sources\Objects\Interpolate\BMSUnityExtensions.cs" />
+    <Compile Include="Sources\Objects\Interpolate\InterpolateQuaternion.cs" />
+    <Compile Include="Sources\Objects\Interpolate\InterpolateVector2.cs" />
+    <Compile Include="Sources\Objects\Interpolate\InterpolateVector3.cs" />
+    <Compile Include="Sources\Objects\Interpolate\InterpolateVector4.cs" />
+    <Compile Include="Sources\Objects\Interpolate\UnityObjectMapper.cs" />
     <Compile Include="Sources\Objects\NetworkObject.cs" />
     <Compile Include="Sources\Room\NetRoleInfo.cs" />
     <Compile Include="Sources\Room\NetRoomBase.cs" />
@@ -72,11 +64,9 @@
     <Compile Include="Sources\Room\NetRoomInfo.cs" />
     <Compile Include="Sources\Room\NetRoomServer.cs" />
     <Compile Include="Sources\Room\RoomEnums.cs" />
+    <Compile Include="Sources\Stage\IStageFactory.cs" />
     <Compile Include="Sources\Stage\RoomScene.cs" />
     <Compile Include="Sources\Stage\RoomStage.cs" />
-    <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
-    <Compile Include="Sources\Stage\RoomStageNormal.cs" />
-    <Compile Include="Sources\Stage\StageFactory.cs" />
     <Compile Include="Sources\Stage\StageSetting.cs" />
   </ItemGroup>
   <ItemGroup />

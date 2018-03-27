@@ -13,10 +13,14 @@ namespace TestRoomServer
             string read = string.Empty;
 
 
-            LobbyServer lobby = new LobbyServer(int.MaxValue);
+            LobbyServer lobby = new LobbyServer();
+            lobby.StageFactory = new StageFactory();
+            lobby.Connect(int.MaxValue);
+
             NetRoomInfo roomInfo = new NetRoomInfo();
             roomInfo.roomUid = 1;
-            roomInfo.stageId = 1;
+            roomInfo.stageClassId = 1;
+
             lobby.CreateRoom(roomInfo);
 
             while (lobby.Socket.IsBound)

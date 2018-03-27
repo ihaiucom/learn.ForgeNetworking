@@ -17,12 +17,17 @@ namespace Rooms.Forge.Networking
 {
     public class LobbyServer : LobbyBase
     {
+        public LobbyServer()
+        {
 
-        public LobbyServer(int connections, string hostAddress = "0.0.0.0", ushort port = 16000)
+        }
+
+        public void Connect(int connections, string hostAddress = "0.0.0.0", ushort port = 16000)
         {
             Socket = new UDPServer(connections);
 
             Socket.binaryMessageReceived    += OnBinaryMessageReceived;
+            Socket.textMessageReceived += OnTextMessageReceived;
 
             Socket.playerConnected          += OnPlayerConnected;
             Socket.playerAccepted           += OnPlayerAccepted;
@@ -70,6 +75,26 @@ namespace Rooms.Forge.Networking
         public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
         {
             ((UDPServer)Socket).Send(player, frame, true);
+        }
+
+        // 接收文本数据
+        private void OnTextMessageReceived(NetworkingPlayer player, Text frame, NetWorker sender)
+        {
+
+            if (frame.RoomId != 0)
+            {
+                if (roomDict.ContainsKey(frame.RoomId))
+                {
+                    try
+                    {
+                        roomDict[frame.RoomId].OnTextMessageReceived(player, frame, sender);
+                    }
+                    catch (Exception e)
+                    {
+                        Loger.LogError(e.ToString());
+                    }
+                }
+            }
         }
 
         // 接收二进制数据
@@ -239,15 +264,8 @@ namespace Rooms.Forge.Networking
         {
             // 房间UID
             ulong roomUid = frame.StreamData.GetBasicType<ulong>();
-
             // 角色
-            IRoleInfo roleInfo = new NetRoleInfo();
-            roleInfo.uid = frame.StreamData.GetBasicType<ulong>();
-            roleInfo.name = frame.StreamData.GetBasicType<string>();
-
-            if (frame.StreamData.GetBasicType<bool>())
-                roleInfo.Metadata = ObjectMapper.Instance.Map<byte[]>(frame.StreamData);
-
+            IRoleInfo roleInfo = NetRoleInfo.Read(frame.StreamData); 
 
             JoinRoom(roomUid, roleInfo, player);
         }

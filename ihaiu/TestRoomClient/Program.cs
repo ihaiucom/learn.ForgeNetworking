@@ -14,6 +14,7 @@ namespace TestRoomClient
             string read = string.Empty;
 
             LobbyClient client = new LobbyClient();
+            client.Connect();
 
             while (client.Socket.IsBound)
             {

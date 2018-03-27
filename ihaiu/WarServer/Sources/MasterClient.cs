@@ -81,8 +81,10 @@ namespace ihaiu
         /// </summary>
         public void StarLobbyServer()
         {
-            lobbyServer = new LobbyServer(int.MaxValue, parameter.lobbyServerIp, parameter.lobbyServerPort);
+            lobbyServer = new LobbyServer();
+            lobbyServer.StageFactory = new StageFactory();
             lobbyServer.roomOver += OnRoomOver;
+            lobbyServer.Connect(int.MaxValue, parameter.lobbyServerIp, parameter.lobbyServerPort);
             protoMaster.C_RegNewBattleServer(parameter.lobbyServerIp, parameter.lobbyServerPort);
         }
 

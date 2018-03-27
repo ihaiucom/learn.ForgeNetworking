@@ -4,19 +4,14 @@ using System.Collections.Generic;
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      3/6/2018 8:31:06 PM
+*  @CreateTime      3/27/2018 2:43:35 PM
 *  @Description:    
 * ==============================================================================
 */
 namespace Rooms.Forge.Networking
 {
-    public class StageFactory
+    public interface IStageFactory
     {
-        public static RoomStage Create(NetRoomBase room, IRoomInfo roomInfo)
-        {
-            RoomStage stage = new RoomStageNormal();
-            stage.Initialize(room, roomInfo);
-            return stage;
-        }
+        RoomStage Create(NetRoomBase room, IRoomInfo roomInfo);
     }
 }

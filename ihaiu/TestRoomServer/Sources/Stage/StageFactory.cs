@@ -1,26 +1,22 @@
-﻿using BeardedManStudios;
-using System;
+﻿using System;
 using System.Collections.Generic;
 /** 
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
 *  @Web      		http://blog.ihaiu.com
-*  @CreateTime      3/26/2018 3:12:27 PM
+*  @CreateTime      3/6/2018 8:31:06 PM
 *  @Description:    
 * ==============================================================================
 */
 namespace Rooms.Forge.Networking
 {
-    public interface IRoleInfo
+    public class StageFactory : IStageFactory
     {
-        int ClassId { get; }
-
-        void MapBytes(BMSByte data);
-        void ReadBytes(BMSByte StreamData);
-
-        ulong uid { get; set; }
-        string name { get; set; }
-
-        
+        public RoomStage Create(NetRoomBase room, IRoomInfo roomInfo)
+        {
+            RoomStage stage = new RoomStageNormal();
+            stage.Initialize(room, roomInfo);
+            return stage;
+        }
     }
 }

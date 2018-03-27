@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IhaiuLog, Version=1.0.6378.32466, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\IhaiuLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,11 +50,26 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Hero.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\RoomNetworkManager.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\RoomNetworkObjectFactory.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Manager\UnityMainThread.cs" />
+    <Compile Include="Sources\RoomNetwokObject\RoomGenerated\UserGenerated\UnitNetworkObject.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Solider.cs" />
+    <Compile Include="Sources\RoomNetwokObject\Tower.cs" />
+    <Compile Include="Sources\RoomNetwokObject\UnitClassId.cs" />
+    <Compile Include="Sources\Stage\RoomStageActivityGlobal.cs" />
+    <Compile Include="Sources\Stage\RoomStageNormal.cs" />
+    <Compile Include="Sources\Stage\StageFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ForgeNetworkingCommon\ForgeNetworkingCommon.csproj">
+      <Project>{9C3AF9D0-B19F-44A6-9068-84B636892BDE}</Project>
+      <Name>ForgeNetworkingCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Room\Room.csproj">
       <Project>{5C7CB144-B73D-4F5E-9196-86A7097F055D}</Project>
       <Name>Room</Name>
@@ -58,6 +77,10 @@
     <ProjectReference Include="..\BeardedManStudios\BeardedManStudios.csproj">
       <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnikonUnityEngine\UnikonUnityEngine.csproj">
+      <Project>{2D94C609-FD77-47EC-880E-38714AB72B9D}</Project>
+      <Name>UnikonUnityEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

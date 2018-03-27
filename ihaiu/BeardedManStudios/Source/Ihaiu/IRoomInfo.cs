@@ -13,17 +13,14 @@ namespace Rooms.Forge.Networking
 {
     public interface IRoomInfo
     {
-        bool IsDeserialize { get; set; }
-        byte[] Metadata { get; set; }
+        int ClassId { get; }
 
         void MapBytes(BMSByte data);
-        byte[] Serialize();
-        IRoomInfo Deserialize();
+        void ReadBytes(BMSByte StreamData);
 
 
-        int classId { get; set; }
         ulong roomUid { get; set; }
-        int stageId { get; set; }
+        int stageClassId { get; set; }
 
 
     }

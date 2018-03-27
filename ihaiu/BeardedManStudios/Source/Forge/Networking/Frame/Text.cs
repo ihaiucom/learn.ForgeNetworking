@@ -34,9 +34,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		public override byte ControlByte { get { return CONTROL_BYTE; } }
 
 		public Text() : base() { }
-		public Text(ulong timestep, bool useMask, Receivers receivers, int groupId, bool isStream) : base(timestep, useMask, receivers, groupId, isStream) { }
-		public Text(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream) : base(timestep, useMask, payload, receivers, groupId, isStream) { }
-		public Text(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream) : base(timestep, useMask, payload, receivers, groupId, isStream) { }
+		public Text(ulong timestep, bool useMask, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, receivers, groupId, isStream, routerId, roomId) { }
+		public Text(ulong timestep, bool useMask, byte[] payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId, roomId) { }
+		public Text(ulong timestep, bool useMask, BMSByte payload, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0) : base(timestep, useMask, payload, receivers, groupId, isStream, routerId, roomId) { }
 		public Text(byte[] frame, int payloadStart, int groupId, NetworkingPlayer sender, byte receivers) : base(frame, payloadStart, groupId, sender, receivers) { }
 
 		/// <summary>
@@ -49,9 +49,9 @@ namespace BeardedManStudios.Forge.Networking.Frame
 		/// <param name="groupId">The unique message group id for this Text frame</param>
 		/// <param name="isStream">If this data is being sent as a stream or in packets</param>
 		/// <returns></returns>
-		public static Text CreateFromString(ulong timestep, string message, bool useMask, Receivers receivers, int groupId, bool isStream)
+		public static Text CreateFromString(ulong timestep, string message, bool useMask, Receivers receivers, int groupId, bool isStream, byte routerId = 0, ulong roomId = 0)
 		{
-			return new Text(timestep, useMask, Encoding.UTF8.GetBytes(message), receivers, groupId, isStream);
+			return new Text(timestep, useMask, Encoding.UTF8.GetBytes(message), receivers, groupId, isStream, routerId, roomId);
 		}
 
 		/// <summary>

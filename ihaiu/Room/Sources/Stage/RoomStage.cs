@@ -1,6 +1,5 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Threading;
-using Rooms.Forge.Networking.Generated;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,28 +29,20 @@ namespace Rooms.Forge.Networking
         // 房间
         public NetRoomBase Room { get; protected set; }
 
-        // 网络对象工厂
-        public RoomNetworkObjectFactory Factory { get; protected set; }
 
         // 房间是否启动
         public bool IsRuning { get; protected set; }
 
-        UnitNetworkObject hero;
-
-        public void Initialize(NetRoomBase room, IRoomInfo roomInfo)
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public virtual void Initialize(NetRoomBase room, IRoomInfo roomInfo)
         {
             Room = room;
             Scene = new RoomScene(this);
-            Factory = new RoomNetworkObjectFactory(Scene);
-            Scene.Factory = Factory;
 
             IsRuning = true;
             StarFixedUpdate();
-
-            if(room is NetRoomClient)
-            {
-                hero = Factory.InstantiateHero();
-            }
 
             Room.playerLeftRoom += OnPlayerLeftRoom;
         }
@@ -63,10 +54,6 @@ namespace Rooms.Forge.Networking
         public virtual void Dispose()
         {
             Room.playerLeftRoom -= OnPlayerLeftRoom;
-
-            if (hero != null)
-                hero.Destroy();
-
             IsRuning = false;
         }
 
@@ -99,10 +86,12 @@ namespace Rooms.Forge.Networking
             Scene.FixedUpdate();
         }
 
-        protected void OnPlayerLeftRoom(ulong roleUid, NetworkingPlayer player)
+        /// <summary>
+        /// 玩家离开房间
+        /// </summary>
+        protected virtual void OnPlayerLeftRoom(ulong roleUid, NetworkingPlayer player)
         {
             Loger.Log("RoomStage OnPlayerLeftRoom" + player.NetworkId);
-            Scene.DestoryPlayerNetworkObjects(player);
         }
 
 
