@@ -146,7 +146,7 @@ namespace Rooms.Forge.Networking.Generated
 			>:ENDFOREVERY:<
 		}
 
-		protected virtual Initialize()
+		protected virtual void Initialize()
 		{
 			if (readDirtyFlags == null)
 				readDirtyFlags = new byte[>:bitwiseSize:<];
