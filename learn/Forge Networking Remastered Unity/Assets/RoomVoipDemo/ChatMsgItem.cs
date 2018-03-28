@@ -51,7 +51,7 @@ public class ChatMsgItem : MonoBehaviour {
         playerNameText.gameObject.SetActive(true);
         audioMsg.gameObject.SetActive(true);
         textMsg.gameObject.SetActive(false);
-        audioMsgText.text = string.Format("语言 {0}秒 {1}", time, audioSamples.Length.Byte2Str());
+        audioMsgText.text = string.Format("语音 {0}秒 {1}", time, audioSamples.Length.Byte2Str());
         playerNameText.text = role.name + " (" + role.uid + ")";
     }
 
