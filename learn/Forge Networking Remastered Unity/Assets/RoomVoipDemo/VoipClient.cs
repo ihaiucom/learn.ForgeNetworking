@@ -67,6 +67,12 @@ public class VoipClient : MonoBehaviour
 
         chatAudioOpenButton.gameObject.SetActive(true);
         chatAudioCloseButton.gameObject.SetActive(false);
+
+        TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1);
+        roleIdInputField.text = ((int)ts.TotalMilliseconds) + "";
+
+        string[] names = new string[] { "张三", "李四", "文杰", "向东", "洪竹", "启哲", "长峰", "晨曦", "晓丹", "佳盈", "长秀", "馨", "嬉羽", "珊儿", "嘉喜", "冲", "灵霏", "耀杨", "建浩", "锦霖", "丰瑜", "鑫楠", "凌锋", "祺鑫", "馨丹", "菲柔", "铸", "国堂", "翌轩", "囡", "正耀", "钧轶", "茂祥", "令鸣", "芸莎", "德龙", "飞宇", "雪飞", "丽凤", "印", "爱飞", "艺卿", "鑫鹏", "胜雄", "世荣", "菲", "蕾", "美越", "华森", "梦翔", "洪林", "甜甜", "骐", "彩云", "思润", "雅琪", "均益", "可可", "斌", "灏", "季薇" };
+        roleNameInputField.text = names[UnityEngine.Random.Range(0, names.Length)];
     }
 	
 	void Update ()
@@ -345,6 +351,7 @@ public class VoipClient : MonoBehaviour
     void OnApplicationQuit()
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
+        VoipAudio.StopVOIP();
         lobby.Dispose();
         lobby = null;
     }

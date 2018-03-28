@@ -118,7 +118,14 @@ public class VoipAudio : MonoBehaviour
         });
     }
 
+    public static void StopVOIP()
+    {
+        if(_install != null)
+            _install.isRuning = false;
+    }
 
+
+    private bool isRuning = false;
     BMSByte writeBuffer = new BMSByte();
     private float WRITE_FLUSH_TIME = 0.5f;
     private float writeFlushTimer = 0.0f;
@@ -127,7 +134,8 @@ public class VoipAudio : MonoBehaviour
 
     private void VOIPWorker()
     {
-        while (lobby.Socket.IsConnected)
+        isRuning = true;
+        while (lobby.Socket.IsConnected && isRuning)
         {
             if (writeFlushTimer >= WRITE_FLUSH_TIME && writeSamples.Count > 0 && Microphoneing == false)
             {
