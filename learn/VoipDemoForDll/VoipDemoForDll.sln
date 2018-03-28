@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoipDemoForDll", "VoipDemoForDll.csproj", "{8817B427-042E-CFE2-EED8-DBD992A3C708}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoipDemoForDll.Editor", "VoipDemoForDll.Editor.csproj", "{DC2EC844-3892-EEB7-1015-716D1625CCBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8817B427-042E-CFE2-EED8-DBD992A3C708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8817B427-042E-CFE2-EED8-DBD992A3C708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8817B427-042E-CFE2-EED8-DBD992A3C708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8817B427-042E-CFE2-EED8-DBD992A3C708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC2EC844-3892-EEB7-1015-716D1625CCBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2EC844-3892-EEB7-1015-716D1625CCBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2EC844-3892-EEB7-1015-716D1625CCBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2EC844-3892-EEB7-1015-716D1625CCBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

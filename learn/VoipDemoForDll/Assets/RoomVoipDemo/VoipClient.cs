@@ -352,7 +352,8 @@ public class VoipClient : MonoBehaviour
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
         VoipAudio.StopVOIP();
-        lobby.Dispose();
+        if(lobby != null)
+            lobby.Dispose();
         lobby = null;
     }
 
