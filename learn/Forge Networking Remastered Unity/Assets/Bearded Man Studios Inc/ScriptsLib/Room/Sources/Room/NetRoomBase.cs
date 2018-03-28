@@ -56,11 +56,10 @@ namespace Rooms.Forge.Networking
 
 
             if(lobby.StageFactory != null)
-            {
                 stage = lobby.StageFactory.Create(this, roomInfo);
-                if (stage != null)
-                    scene = stage.Scene;
-            }
+
+            if(stage != null)
+                scene = stage.Scene;
         }
 
         /// <summary>

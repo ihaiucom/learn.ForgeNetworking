@@ -97,21 +97,22 @@ namespace Rooms.Forge.Networking
 
         internal override void OnBinaryMessageEvent(NetworkingPlayer player, Binary frame, NetWorker sender)
         {
-            if(frame.Receivers != Receivers.Server)
+            if (frame.Receivers != Receivers.Server)
             {
                 BMSByte data = new BMSByte().Clone(frame.StreamData);
                 if (data != null)
                 {
-                    lock (sendBinaryData)
+                    //lock (sendBinaryData)
                     {
-                        sendBinaryData.Clear();
+                        //sendBinaryData.Clear();
 
                         //将所有数据映射到字节
                         // Map all of the data to bytes
-                        sendBinaryData.Append(data);
+                        //sendBinaryData.Append(data);
+                        //Loger.LogFormat("NetRoomServer OnBinaryMessageEvent sendBinaryData size={0},  data size={1}", sendBinaryData.Size, data.Size);
 
                         // Generate a binary frame with a router
-                        Binary sendframe = new Binary(Time.Timestep, false, sendBinaryData, frame.Receivers, frame.GroupId, false, frame.RouterId, roomId);
+                        Binary sendframe = new Binary(Time.Timestep, false, data, frame.Receivers, frame.GroupId, false, frame.RouterId, roomId);
 
                         NetworkingPlayer skipPlayer = null;
                         if (frame.Receivers != Receivers.All && frame.Receivers != Receivers.AllBuffered && frame.Receivers != Receivers.AllProximity)
@@ -167,7 +168,7 @@ namespace Rooms.Forge.Networking
                     data.InsertRange(0, indexBytes);
 
                     Binary sendframe = new Binary(Time.Timestep, false, data, Receivers.Others, MessageGroupIds.ROOM, false, RouterIds.ROOM_GET_PLAYERLIST, roomId);
-                    Send(sendframe, true, player);
+                    Send(sendframe, true);
                 }
             }
             base.OnBinaryMessageReceived(player, frame, sender);
