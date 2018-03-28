@@ -128,7 +128,7 @@ namespace Rooms.Forge.Networking
             // RoleInfo
             roleInfo.MapBytes(data);
 
-            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_ROOM);
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.Lobby, false, RouterIds.LOBBY_CREATE_AND_JOIN_ROOM);
             Send(frame, true);
         }
 
@@ -170,7 +170,7 @@ namespace Rooms.Forge.Networking
             BMSByte data = ObjectMapper.BMSByte(roomInfo.roomUid);
             roleInfo.MapBytes(data);
 
-            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.ROOM, false, RouterIds.ROOM_GET_PLAYERLIST);
+            Binary frame = new Binary(Socket.Time.Timestep, false, data, Receivers.Server, MessageGroupIds.ROOM, false, RouterIds.ROOM_GET_PLAYERLIST, roomInfo.roomUid);
             Send(frame, true);
         }
 

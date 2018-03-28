@@ -282,6 +282,7 @@ namespace BeardedManStudios.Forge.Networking
 					counter -= PendingPackets[key].rawBytes.Length;
 
 					PendingPackets[key] = PendingPackets[key].DoingRetry(timestep);
+                    //Loger.LogFormat("UDPPaketComposer ResendPackets  Send key={0}", key);
 					Send(PendingPackets[key].rawBytes);
 					ClientWorker.BandwidthOut += (ulong)PendingPackets[key].rawBytes.Length;
 				}
@@ -311,7 +312,9 @@ namespace BeardedManStudios.Forge.Networking
 			if (player != Player)
 				return;
 
-			lock (PendingPackets)
+            //Loger.Log("UDPPacketComposer MessageConfirmed");
+
+            lock (PendingPackets)
 			{
 				UDPPacket foundPacket;
 

@@ -54,8 +54,9 @@ namespace BeardedManStudios.Forge.Networking
 #if DEEP_LOGGING
 			Logging.BMSLog.Log(string.Format("<<<<<<<<<<<<<<<<<<<<<<<<<<< CONFIRMING: {0}", composer.Frame.UniqueId));
 #endif
+            //Loger.Log(string.Format("<<<<<<<<<<<<<<<<<<<<<<<<<<< CONFIRMING: {0}", composer.Frame.UniqueId));
 
-			lock (pendingComposers)
+            lock (pendingComposers)
 			{
 				pendingComposers.Remove(composer);
 			}

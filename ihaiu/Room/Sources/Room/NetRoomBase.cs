@@ -55,7 +55,9 @@ namespace Rooms.Forge.Networking
             this.roomId = roomInfo.roomUid;
 
 
-            stage = lobby.StageFactory.Create(this, roomInfo);
+            if(lobby.StageFactory != null)
+                stage = lobby.StageFactory.Create(this, roomInfo);
+
             if(stage != null)
                 scene = stage.Scene;
         }

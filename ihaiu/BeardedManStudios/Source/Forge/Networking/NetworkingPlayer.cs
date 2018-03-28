@@ -356,6 +356,7 @@ namespace BeardedManStudios.Forge.Networking
 		/// </summary>
 		private void NextComposerInQueue()
 		{
+            //Loger.Log("NetworkingPlayer NextComposerInQueue");
             //如果目前没有排队的作曲家，那么我们可以在这里停下来
             // If there are not currently any queued composers then we can stop here
             if (reliableComposers.Count == 0)

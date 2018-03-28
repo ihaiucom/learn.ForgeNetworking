@@ -62,6 +62,7 @@ namespace BeardedManStudios.Forge.Networking
 
 		public void Send(NetworkingPlayer player, FrameStream frame, bool reliable = false)
 		{
+            //Loger.LogFormat("UDPServer Send frame size={0}", frame.StreamData.Size);
 			UDPPacketComposer composer = new UDPPacketComposer(this, player, frame, reliable);
 
             //如果这个信息是可靠的，那么一定要保持对作曲家的引用
