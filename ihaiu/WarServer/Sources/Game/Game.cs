@@ -1,6 +1,7 @@
 ﻿using Games;
 using System;
 using System.Collections.Generic;
+using WarServers;
 /** 
 * ==============================================================================
 *  @Author      	曾峰(zengfeng75@qq.com) 
@@ -12,6 +13,15 @@ using System.Collections.Generic;
 
 public class Game
 {
-    public static ConfigManager config = new ConfigManager();
+    public static ProgramSetting setting;
+    public static ConfigManager config;
+
+    public static void Install(ProgramSetting setting)
+    {
+        Game.setting = setting;
+
+        config = new ConfigManager();
+        config.Load();
+    }
 
 }

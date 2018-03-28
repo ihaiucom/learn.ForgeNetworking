@@ -9,9 +9,9 @@ using System.IO;
 *  @Description:    
 * ==============================================================================
 */
-namespace ihaiu
+namespace WarServers
 {
-    public class MasterClientParameter
+    public class ProgramSetting
     {
         public int      masterServerId    = 3;
         public string   masterServerIp    = "172.16.52.101";
@@ -19,6 +19,8 @@ namespace ihaiu
 
         public string lobbyServerIp     = "127.0.0.1";
         public ushort lobbyServerPort   = 16000;
+
+        public string configPath = "./";
 
         public void Print()
         {
@@ -33,18 +35,52 @@ namespace ihaiu
             Console.WriteLine("lobbyServerIp=" + lobbyServerIp);
             Console.WriteLine("lobbyServerPort=" + lobbyServerPort);
             Console.WriteLine("");
+
+
+            Console.WriteLine("[Config]");
+            Console.WriteLine("configPath=" + configPath);
+            Console.WriteLine("");
         }
 
 
-        public static MasterClientParameter Load()
+        public static string path = "setting.txt";
+        public static bool IsExists()
         {
-            string setting = "setting.txt";
-            return Load(setting);
+            return File.Exists(path);
         }
 
-        public static MasterClientParameter Load(string path)
+        public void Generate()
         {
-            MasterClientParameter o = new MasterClientParameter();
+            StringWriter sw = new StringWriter();
+
+            sw.WriteLine("[Master]");
+            sw.WriteLine("masterServerId=" + masterServerId);
+            sw.WriteLine("masterServerIp=" + masterServerIp);
+            sw.WriteLine("masterServerPort=" + masterServerPort);
+            sw.WriteLine("");
+
+            sw.WriteLine("[Lobby]");
+            sw.WriteLine("lobbyServerIp=" + lobbyServerIp);
+            sw.WriteLine("lobbyServerPort=" + lobbyServerPort);
+            sw.WriteLine("");
+
+
+            sw.WriteLine("[Config]");
+            sw.WriteLine("configPath=" + configPath);
+            sw.WriteLine("");
+
+            File.WriteAllText(path, sw.ToString());
+        }
+
+
+        public static ProgramSetting Load()
+        {
+            return Load(path);
+        }
+
+        public static ProgramSetting Load(string path)
+        {
+            ProgramSetting o = new ProgramSetting();
 
             Dictionary<string, string> settingDict = new Dictionary<string, string>();
             if (File.Exists(path))
@@ -78,6 +114,11 @@ namespace ihaiu
 
             if (settingDict.ContainsKey("lobbyServerPort"))
                 o.lobbyServerPort = (ushort)Convert.ToUInt32(settingDict["lobbyServerPort"]);
+
+
+
+            if (settingDict.ContainsKey("configPath"))
+                o.configPath = settingDict["configPath"];
 
             return o;
         }

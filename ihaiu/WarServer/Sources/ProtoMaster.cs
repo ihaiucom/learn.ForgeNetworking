@@ -1,5 +1,6 @@
 ﻿using BeardedManStudios.Threading;
 using Games.PB;
+using ihaiu;
 using Rooms.Forge.Networking;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Collections.Generic;
 *  @Description:    
 * ==============================================================================
 */
-namespace ihaiu
+namespace WarServers
 {
     public class ProtoMaster
     {

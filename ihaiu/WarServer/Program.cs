@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ihaiu
+namespace WarServers
 {
     class Program
     {
@@ -14,16 +14,24 @@ namespace ihaiu
         {
             string read = string.Empty;
 
-            MasterClientParameter parameter = MasterClientParameter.Load();
-            parameter.Print();
+            ProgramSetting setting = ProgramSetting.Load();
+            if (!ProgramSetting.IsExists())
+            {
+                setting.Generate();
+            }
+            setting.Print();
 
+            Game.Install(setting);
+
+            Console.ReadLine();
+            return;
 
             PrintHelp();
 
 
             // 测试客户登录
             MasterClient server = new MasterClient();
-            server.Init(parameter);
+            server.Init(setting);
             server.ToggleLogging();
             server.ConnectMaster();
 

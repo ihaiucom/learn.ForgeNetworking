@@ -10,7 +10,7 @@ using System.Collections.Generic;
 */
 namespace ihaiu
 {
-    public class MasterClientParameter
+    public class ProgramSetting
     {
         public string url = "http://172.16.52.101/game_operating_platform/index.php";
         public string gameId = "_self_game";

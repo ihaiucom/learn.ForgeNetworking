@@ -36,6 +36,9 @@
     <Reference Include="IhaiuLog">
       <HintPath>..\lib\IhaiuLog.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\lib\protobuf-net.dll</HintPath>
     </Reference>
@@ -51,8 +54,99 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIHeroConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIHeroConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreAttackHatredConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreDistanceConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreUnitTypeCofnigRenader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreWeightConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AIScoreWeightConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AISoliderConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AISoliderConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AttributePackConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AttributePackConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AvatarConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\AvatarConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ConfigManager.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ConfigManagerEditor.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ConfigManager_List.cs" />
+    <Compile Include="Sources\Game\ConfigReader\DungeonConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\DungeonConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\GlobalConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\GlobalConfigConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\LoadConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\LoadConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\MenuConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\MenuConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\MsgConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\MsgConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\PropConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\PropConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ProtoOpcodeConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ProtoOpcodeReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ProtoRegisterConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ProtoRegisterReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillEffectConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillLevelConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillLevelConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillLinkConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SkillLinkConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SoundConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\SoundConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageBuildCellConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageBuildCellUnitConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageLegionConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageMainbaseConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageRouteConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageUnitConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageWaveConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\StageWaveUnitConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\UnitConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\UnitConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\UnitLevelConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\UnitLevelConfigReader.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ValueConfig.cs" />
+    <Compile Include="Sources\Game\ConfigReader\ValueConfigReader.cs" />
+    <Compile Include="Sources\Game\Game.cs" />
+    <Compile Include="Sources\Game\GameFrame\Attributes\ConfigCsvAttribute.cs" />
+    <Compile Include="Sources\Game\GameFrame\Attributes\HelpAttribute.cs" />
+    <Compile Include="Sources\Game\GameFrame\Attributes\ignoreAttibute.cs" />
+    <Compile Include="Sources\Game\GameFrame\Attributes\ModuleAttribute.cs" />
+    <Compile Include="Sources\Game\GameFrame\Attributes\SortAttribute.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\AbstractParseCsv.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\ConfigReaderCsv.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\ConfigSetting.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\ConfigType.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\CsvData.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\IConfigReader.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\IParseCsv.cs" />
+    <Compile Include="Sources\Game\GameFrame\mConfig\IToCsv.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\BitUtils.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\ColorUtil.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\DateTimeUtils.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\EnumUtil.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\ListUtil.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\RectUtil.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\StringUtils.cs" />
+    <Compile Include="Sources\Game\GameFrame\Utils\VectorUtil.cs" />
+    <Compile Include="Sources\Game\Props\Prop.cs" />
+    <Compile Include="Sources\Game\Props\PropAttachData.cs" />
+    <Compile Include="Sources\Game\Props\PropField.cs" />
+    <Compile Include="Sources\Game\Props\PropGroupType.cs" />
+    <Compile Include="Sources\Game\Props\PropId.cs" />
+    <Compile Include="Sources\Game\Props\PropIdGroup.cs" />
+    <Compile Include="Sources\Game\Props\PropType.cs" />
+    <Compile Include="Sources\Game\Props\PropUnit.cs" />
+    <Compile Include="Sources\Game\Props\PropUnit_Field.cs" />
+    <Compile Include="Sources\Game\Props\PropUnit_State.cs" />
     <Compile Include="Sources\MasterClient.cs" />
-    <Compile Include="Sources\MasterClientParameter.cs" />
+    <Compile Include="Sources\ProgramSetting.cs" />
     <Compile Include="Sources\ProtoMaster.cs" />
     <Compile Include="Sources\ProtoPacket_Master.cs" />
     <Compile Include="Sources\RoomNetwokObject\Hero.cs" />
@@ -89,6 +183,13 @@
       <Project>{5C7CB144-B73D-4F5E-9196-86A7097F055D}</Project>
       <Name>Room</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UnikonUnityEngine\UnikonUnityEngine.csproj">
+      <Project>{2d94c609-fd77-47ec-880e-38714ab72b9d}</Project>
+      <Name>UnikonUnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sources\War\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

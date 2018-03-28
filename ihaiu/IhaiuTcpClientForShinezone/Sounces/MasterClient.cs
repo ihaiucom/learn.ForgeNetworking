@@ -17,7 +17,7 @@ namespace ihaiu
 
         public bool IsRunning { get; private set; }
 
-        public MasterClientParameter parameter = new MasterClientParameter();
+        public ProgramSetting parameter = new ProgramSetting();
         internal ShinezoneAccount   account;
         internal ShinezoneLogin     accountLogin;
 
@@ -30,7 +30,7 @@ namespace ihaiu
             //Connect(host, port);
         }
 
-        public void Init(MasterClientParameter parameter = null)
+        public void Init(ProgramSetting parameter = null)
         {
             if (parameter == null) parameter = this.parameter;
             this.parameter = parameter;
