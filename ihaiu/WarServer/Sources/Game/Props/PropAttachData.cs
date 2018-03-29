@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Common;
-using Games.Wars;
 using System;
 using System.Collections.Generic;
 /** 
@@ -19,6 +18,7 @@ namespace Games
         public int                  uid;
         public List<Prop>           props;
         public List<BuffProp>       buffProps;
+        // 当前 buffId, 用于判断是否可以叠加
         public int                  haloBuffId;
 
         public PropAttachData(int haloBuffId, List<BuffProp> buffProps)

@@ -1,5 +1,4 @@
-﻿# if !UNITY
-namespace UnityEngine
+﻿namespace UnityEngine
 {
     using System;
 
@@ -11,6 +10,4 @@ namespace UnityEngine
         }
     }
 }
-
-#endif 
 
