@@ -526,6 +526,10 @@
       <Project>{1DC34CDD-667A-40BE-9447-45866BF4607D}</Project>
       <Name>BeardedManStudios</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ForgeNetworkingCommon\ForgeNetworkingCommon.csproj">
+      <Project>{9C3AF9D0-B19F-44A6-9068-84B636892BDE}</Project>
+      <Name>ForgeNetworkingCommon</Name>
+    </ProjectReference>
     <ProjectReference Include="..\IhaiuTcp\IhaiuTcp.csproj">
       <Project>{551EF4DF-C82F-4E67-BFAD-08403CA97FA0}</Project>
       <Name>IhaiuTcp</Name>
