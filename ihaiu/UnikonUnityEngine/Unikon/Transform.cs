@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     /// <summary>
     /// Push + Pull Hybrid Model
@@ -36,28 +36,28 @@ namespace Unikon.UnityEngine
         /// <param name="worldPositionStays">If true, the parent-relative position, scale and rotation is modified such that the object keeps the same world space position, rotation and scale as before.</param>
         public void SetParent(Transform parent, bool worldPositionStays)
         {
-            if (_parent == parent)
-                return;
+            //if (_parent == parent)
+            //    return;
 
-            if (_parent == null && gameObject.scene != null)
-                gameObject.scene.RemoveFromRootGameObjects(gameObject);
+            //if (_parent == null && gameObject.scene != null)
+            //    gameObject.scene.RemoveFromRootGameObjects(gameObject);
 
-            if (_parent != null)
-                _parent.RemoveChildInternal(this);     
+            //if (_parent != null)
+            //    _parent.RemoveChildInternal(this);     
             
-            _parent = parent;
+            //_parent = parent;
 
-            if (_parent == null && gameObject.scene != null)
-                gameObject.scene.AddToRootGameObjects(gameObject);
+            //if (_parent == null && gameObject.scene != null)
+            //    gameObject.scene.AddToRootGameObjects(gameObject);
             
-            if (_parent != null)
-                _parent.AddChildInternal(this);
+            //if (_parent != null)
+            //    _parent.AddChildInternal(this);
             
-            if (worldPositionStays)
-                WorldToLocal();
+            //if (worldPositionStays)
+            //    WorldToLocal();
             
-            _localDirty = true;
-            MarkDirty();
+            //_localDirty = true;
+            //MarkDirty();
         }
 
         private void WorldToLocal()
@@ -835,7 +835,8 @@ namespace Unikon.UnityEngine
 
         private static void INTERNAL_CALL_LookAt(Transform self, ref Vector3 worldPosition, ref Vector3 worldUp)
         {
-            throw new NotImplementedException();
+            Vector3 forward = worldPosition - self.position;
+            self.rotation = Quaternion.LookRotation(forward, worldUp);
         }
 
         /// <summary>
@@ -851,7 +852,9 @@ namespace Unikon.UnityEngine
 
         private static void INTERNAL_CALL_TransformDirection(Transform self, ref Vector3 direction, out Vector3 value)
         {
-            throw new NotImplementedException();
+            Quaternion lhs = self.rotation;
+            Vector3 rhs = direction;
+            value = Quaternion.RotateVectorByQuat(self, ref lhs, ref rhs);
         }
 
         /// <summary>
@@ -878,7 +881,9 @@ namespace Unikon.UnityEngine
 
         private static void INTERNAL_CALL_InverseTransformDirection(Transform self, ref Vector3 direction, out Vector3 value)
         {
-            throw new NotImplementedException();
+            Quaternion lhs = Quaternion.Inverse(self.rotation);
+            Vector3 rhs = direction;
+            value = Quaternion.RotateVectorByQuat(self, ref lhs, ref rhs);
         }
 
         /// <summary>
