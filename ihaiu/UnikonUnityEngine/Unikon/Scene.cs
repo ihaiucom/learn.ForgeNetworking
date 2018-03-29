@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public class Scene
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {    
     public sealed class GameObject : Object
     {

@@ -1,6 +1,6 @@
-﻿namespace Unikon.UnityEngine
+﻿namespace UnityEngine
 {
-    public class Coroutine : YieldInstruction
+    public class Coroutine 
     {
         
     }
