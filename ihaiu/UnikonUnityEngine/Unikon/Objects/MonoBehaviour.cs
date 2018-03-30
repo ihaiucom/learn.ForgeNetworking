@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public class MonoBehaviour : Component
     {

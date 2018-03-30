@@ -36,28 +36,28 @@ namespace UnityEngine
         /// <param name="worldPositionStays">If true, the parent-relative position, scale and rotation is modified such that the object keeps the same world space position, rotation and scale as before.</param>
         public void SetParent(Transform parent, bool worldPositionStays)
         {
-            //if (_parent == parent)
-            //    return;
+            if (_parent == parent)
+                return;
 
-            //if (_parent == null && gameObject.scene != null)
-            //    gameObject.scene.RemoveFromRootGameObjects(gameObject);
+            if (_parent == null && gameObject.scene != null)
+                gameObject.scene.RemoveFromRootGameObjects(gameObject);
 
-            //if (_parent != null)
-            //    _parent.RemoveChildInternal(this);     
-            
-            //_parent = parent;
+            if (_parent != null)
+                _parent.RemoveChildInternal(this);
 
-            //if (_parent == null && gameObject.scene != null)
-            //    gameObject.scene.AddToRootGameObjects(gameObject);
-            
-            //if (_parent != null)
-            //    _parent.AddChildInternal(this);
-            
-            //if (worldPositionStays)
-            //    WorldToLocal();
-            
-            //_localDirty = true;
-            //MarkDirty();
+            _parent = parent;
+
+            if (_parent == null && gameObject.scene != null)
+                gameObject.scene.AddToRootGameObjects(gameObject);
+
+            if (_parent != null)
+                _parent.AddChildInternal(this);
+
+            if (worldPositionStays)
+                WorldToLocal();
+
+            _localDirty = true;
+            MarkDirty();
         }
 
         private void WorldToLocal()

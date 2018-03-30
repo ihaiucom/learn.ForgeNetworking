@@ -4,18 +4,12 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using MsgPack;
-using MsgPack.Serialization;
-using ParadoxNotion.Serialization.FullSerializer;
 
 
-namespace Unikon.UnityEngine
+namespace UnityEngine
 {
     public class Object
     {
-        #region Unikon
-        internal MessagePackObject mpo;
-        #endregion
         
         // private int m_InstanceID;        
 
@@ -120,9 +114,9 @@ namespace Unikon.UnityEngine
                 SceneManager.dontAddGameObject = true;
             }
                                     
-            var serializer = UnikonEngine.serializationContext.GetSerializer(original.GetType());            
-            MessagePackObject mpo = serializer.ToMessagePackObject(original);
-            var clone = serializer.FromMessagePackObject(mpo);
+            //var serializer = UnikonEngine.serializationContext.GetSerializer(original.GetType());            
+            //MessagePackObject mpo = serializer.ToMessagePackObject(original);
+            //var clone = serializer.FromMessagePackObject(mpo);
             
             if (gameObject != null)
             {
@@ -137,8 +131,8 @@ namespace Unikon.UnityEngine
                 }
 #endif
                 
-                SceneManager.dontAddGameObject = false;
-                SceneManager.AddGameObject(clone as GameObject);
+                //SceneManager.dontAddGameObject = false;
+                //SceneManager.AddGameObject(clone as GameObject);
 
 //                gameObject.dontAwake = false;
 //                foreach (var component in gameObject.components)
@@ -153,7 +147,8 @@ namespace Unikon.UnityEngine
 //                        
 //                }                
             }
-            return (Object) clone;
+            //return (Object) clone;
+            return null;
         }
 
         public static T Instantiate<T>(T original) where T : Object

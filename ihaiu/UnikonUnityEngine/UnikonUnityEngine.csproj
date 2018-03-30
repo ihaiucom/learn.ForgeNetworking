@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UnikonUnityEngine</RootNamespace>
     <AssemblyName>UnikonUnityEngine</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SERVER</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -49,14 +49,18 @@
     <Compile Include="Unikon\Attributes\HelpURLAttribute.cs" />
     <Compile Include="Unikon\Attributes\HideFlags.cs" />
     <Compile Include="Unikon\Attributes\HideInInspector.cs" />
-    <Compile Include="Unikon\Component.cs" />
+    <Compile Include="Unikon\Debug.cs" />
+    <Compile Include="Unikon\Objects\Component.cs" />
     <Compile Include="Unikon\Coroutine.cs" />
-    <Compile Include="Unikon\GameObject.cs" />
+    <Compile Include="Unikon\Objects\ComponentList.cs" />
+    <Compile Include="Unikon\Objects\GameObject.cs" />
     <Compile Include="Unikon\Mathf.cs" />
     <Compile Include="Unikon\Matrix4x4.cs" />
     <Compile Include="Unikon\Attributes\PropertyAttribute.cs" />
-    <Compile Include="Unikon\MonoBehaviour.cs" />
-    <Compile Include="Unikon\Object.cs" />
+    <Compile Include="Unikon\Objects\MonoBehaviour.cs" />
+    <Compile Include="Unikon\Objects\Object.cs" />
+    <Compile Include="Unikon\Objects\SceneManager.cs" />
+    <Compile Include="Unikon\Objects\UnikonEngine.cs" />
     <Compile Include="Unikon\Quaternion.cs" />
     <Compile Include="Unikon\Ray.cs" />
     <Compile Include="Unikon\Ray2D.cs" />
@@ -64,10 +68,10 @@
     <Compile Include="Unikon\RotationDriveMode.cs" />
     <Compile Include="Unikon\RotationOrder.cs" />
     <Compile Include="Unikon\Attributes\SerializeField.cs" />
-    <Compile Include="Unikon\Scene.cs" />
+    <Compile Include="Unikon\Objects\Scene.cs" />
     <Compile Include="Unikon\Space.cs" />
     <Compile Include="Unikon\Time.cs" />
-    <Compile Include="Unikon\Transform.cs" />
+    <Compile Include="Unikon\Objects\Transform.cs" />
     <Compile Include="Unikon\UnityString.cs" />
     <Compile Include="Unikon\Vector2.cs" />
     <Compile Include="Unikon\Vector3.cs" />
